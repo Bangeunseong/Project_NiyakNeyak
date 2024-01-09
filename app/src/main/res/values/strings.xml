@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Project_NiyakNeyak</string>
+
+    <string name="hint_main_id">Type your ID</string>
+    <string name="hint_main_password">Type your PW</string>
+    <string name="main_login_plain_text">Login</string>
+    <string name="main_login_google_text">Login with Google</string>
+    <string name="main_login_naver_text">Login with Naver</string>
+</resources>
