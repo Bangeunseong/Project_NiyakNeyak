@@ -12,5 +12,10 @@
     <string name="invalid_password_more">Password must be less than 20 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="toolbar_login_title">Login</string>
+    <string name="toolbar_main_title">ProjectNiyakNeyak</string>
+    <string name="action_menu_settings">Settings</string>
 
 </resources>

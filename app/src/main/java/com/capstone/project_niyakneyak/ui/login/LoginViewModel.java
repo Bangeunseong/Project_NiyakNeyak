@@ -41,6 +41,12 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
+    public void logout(String username, String password){
+        if(loginRepository.isLoggedIn()){
+            loginRepository.logout();
+        }
+    }
+
     public void loginDataChanged(String username, String password) {
         if(!isUserNameValid(username) && !isPasswordValid((password))){
             int errorCode = (password.length() <= 5) ? R.string.invalid_password_less : R.string.invalid_password_more;

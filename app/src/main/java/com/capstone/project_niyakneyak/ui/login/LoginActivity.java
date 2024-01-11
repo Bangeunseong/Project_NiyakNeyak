@@ -1,15 +1,19 @@
 package com.capstone.project_niyakneyak.ui.login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,10 +28,30 @@ import com.capstone.project_niyakneyak.ui.login.LoginFormState;
 import com.capstone.project_niyakneyak.ui.login.LoginResult;
 import com.capstone.project_niyakneyak.ui.login.LoginViewModel;
 import com.capstone.project_niyakneyak.ui.login.LoginViewModelFactory;
+import com.capstone.project_niyakneyak.ui.main.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_login, menu);
+        menu.add(0,0,0,R.string.action_menu_settings);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case 0:
+                //TODO: Need to modify (Using AlertDialog should be enough to give users language options)
+                Toast toast = Toast.makeText(LoginActivity.this, "Need to replace with function", Toast.LENGTH_LONG);
+                toast.show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.toolbarLogin.setTitle(R.string.toolbar_login_title);
+        setSupportActionBar(binding.toolbarLogin);
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -123,11 +149,21 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("USER_ID", binding.mainIdEditText.getText().toString());
+        intent.putExtra("USER_PW", binding.mainPwEditText.getText().toString());
+        startActivityIfNeeded(intent, 0);
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+            loginViewModel.logout(data.getStringExtra("USER_ID"), data.getStringExtra("USER_PW"));
+        }
     }
 }
