@@ -36,8 +36,11 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar_main_Layout">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/content_main_meds"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:scrollbarStyle="insideInset"
+            android:scrollbars="vertical"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

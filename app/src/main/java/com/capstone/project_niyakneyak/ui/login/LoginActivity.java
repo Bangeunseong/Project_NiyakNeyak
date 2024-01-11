@@ -101,10 +101,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
                 }
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                finish();
             }
         });
 
@@ -152,6 +148,10 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("USER_ID", binding.mainIdEditText.getText().toString());
         intent.putExtra("USER_PW", binding.mainPwEditText.getText().toString());
+
+        binding.mainIdEditText.setText("");
+        binding.mainPwEditText.setText("");
+
         startActivityIfNeeded(intent, 0);
     }
 
