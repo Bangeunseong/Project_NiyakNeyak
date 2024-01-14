@@ -21,13 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.capstone.project_niyakneyak.R;
-import com.capstone.project_niyakneyak.data.LoginRepository;
 import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding;
-import com.capstone.project_niyakneyak.ui.login.LoggedInUserView;
-import com.capstone.project_niyakneyak.ui.login.LoginFormState;
-import com.capstone.project_niyakneyak.ui.login.LoginResult;
-import com.capstone.project_niyakneyak.ui.login.LoginViewModel;
-import com.capstone.project_niyakneyak.ui.login.LoginViewModelFactory;
 import com.capstone.project_niyakneyak.ui.main.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -144,14 +138,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("USER_ID", binding.mainIdEditText.getText().toString());
         intent.putExtra("USER_PW", binding.mainPwEditText.getText().toString());
-
-        binding.mainIdEditText.setText("");
-        binding.mainPwEditText.setText("");
-
         startActivityIfNeeded(intent, 0);
     }
 

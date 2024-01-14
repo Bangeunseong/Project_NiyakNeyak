@@ -21,4 +21,22 @@
     <string name="action_menu_logout">Logout</string>
     <string name="action_menu_login">Login</string>
 
+    <string name="action_main_rcv_addItem">Add Medication Info.</string>
+
+    <string name="action_main_rcv_add_error">Addition Failed</string>
+    <string name="action_main_rcv_modify_error">Modification Failed</string>
+    <string name="action_main_rcv_delete_error">Deletion Failed</string>
+    <string name="action_main_rcv_search_error">Search Failed</string>
+
+    <string name="dialog_add_form_title">Add Medication Info</string>
+    <string name="dialog_add_form_submit">Submit</string>
+    <string name="dialog_add_form_cancel">Cancel</string>
+    <string name="dialog_add_form_meds_name">Type Medication Name</string>
+    <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
+    <string name="dialog_add_form_meds_date">Configure Medication End Date</string>
+    <string name="dialog_add_form_switch_morning_title">Morning</string>
+    <string name="dialog_add_form_switch_afternoon_title">Afternoon</string>
+    <string name="dialog_add_form_switch_evening_title">Evening</string>
+    <string name="dialog_add_form_switch_latenight_title">Latenight</string>
+
 </resources>

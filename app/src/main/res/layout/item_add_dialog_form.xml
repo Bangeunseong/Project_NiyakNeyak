@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialog_meds_name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_detail_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintWidth_max="360dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dialog_meds_name_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/dialog_add_form_meds_name" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialog_meds_detail_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_date_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_name_layout"
+            app:layout_constraintWidth_max="360dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dialog_meds_detail_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/dialog_add_form_meds_detail" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialog_meds_date_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_detail_layout"
+            app:layout_constraintWidth_max="360dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dialog_meds_date_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/dialog_add_form_meds_date" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_morning"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_date_layout" />
+
+        <Switch
+            android:id="@+id/dialog_meds_time_morning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_add_form_switch_morning_title"
+
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_afternoon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintWidth="300dp" />
+
+        <TextView
+            android:id="@+id/dialog_meds_time_morning_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+
+            app:layout_constraintBottom_toBottomOf="@id/dialog_meds_time_morning"
+            app:layout_constraintEnd_toEndOf="@id/dialog_meds_time_morning"
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintStart_toStartOf="@id/dialog_meds_time_morning"
+            app:layout_constraintTop_toTopOf="@id/dialog_meds_time_morning" />
+
+        <Switch
+            android:id="@+id/dialog_meds_time_afternoon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_add_form_switch_afternoon_title"
+
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_evening"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_morning"
+            app:layout_constraintWidth="300dp" />
+
+        <TextView
+            android:id="@+id/dialog_meds_time_afternoon_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            app:layout_constraintBottom_toBottomOf="@id/dialog_meds_time_afternoon"
+            app:layout_constraintEnd_toEndOf="@id/dialog_meds_time_afternoon"
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintStart_toStartOf="@id/dialog_meds_time_afternoon"
+            app:layout_constraintTop_toTopOf="@id/dialog_meds_time_afternoon" />
+
+        <Switch
+            android:id="@+id/dialog_meds_time_evening"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_add_form_switch_evening_title"
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_latenight"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_afternoon"
+            app:layout_constraintWidth="300dp" />
+
+
+        <TextView
+            android:id="@+id/dialog_meds_time_evening_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintBottom_toBottomOf="@id/dialog_meds_time_evening"
+            app:layout_constraintEnd_toEndOf="@id/dialog_meds_time_evening"
+            app:layout_constraintStart_toStartOf="@id/dialog_meds_time_evening"
+            app:layout_constraintTop_toTopOf="@id/dialog_meds_time_evening" />
+
+        <Switch
+            android:id="@+id/dialog_meds_time_latenight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_add_form_switch_latenight_title"
+            app:layout_constraintBottom_toTopOf="@id/divider2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_evening"
+            app:layout_constraintWidth="300dp" />
+
+        <TextView
+            android:id="@+id/dialog_meds_time_latenight_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintBottom_toBottomOf="@id/dialog_meds_time_latenight"
+            app:layout_constraintEnd_toEndOf="@id/dialog_meds_time_latenight"
+            app:layout_constraintStart_toStartOf="@id/dialog_meds_time_latenight"
+            app:layout_constraintTop_toTopOf="@id/dialog_meds_time_latenight" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_button_layout"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_latenight" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dialog_meds_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider2">
+
+            <Button
+                android:id="@+id/dialog_meds_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_add_form_submit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/dialog_meds_cancel"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/dialog_meds_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_add_form_cancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/dialog_meds_submit"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.core.widget.NestedScrollView>
