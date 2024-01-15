@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.ui.main;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.model.MedsData;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -45,6 +47,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.rcv_title.setText(medsData.get(position).getMeds_name());
         holder.rcv_detail.setText(medsData.get(position).getMeds_detail());
         holder.imageView.setImageResource(R.mipmap.ic_launcher);
+    }
+
+    public void setItems(List<MedsData> medsData){
+        medsData.stream().forEach(data->Log.d("Recycler",data.getMeds_name()));
+        this.medsData = medsData;
+        notifyDataSetChanged();
     }
 
     @Override

@@ -9,8 +9,9 @@ import java.util.List;
 
 public class MedsDataSource {
     private String username;
-    private static final List<MedsData> medsDataList = new ArrayList<>();
-    public MedsDataSource(String username){this.username = username;}
+    private List<MedsData> medsDataList;
+    public MedsDataSource(String username){medsDataList = new ArrayList<>(); this.username = username;}
+
 
     public Result<List<MedsData>> read() {
         //TODO: Search for medication info. by using username
@@ -18,26 +19,35 @@ public class MedsDataSource {
     }
 
     public Result<MedsData> write(MedsData data, int option){
+        boolean flag = false;
         //TODO: Write added data
         switch(option){
             case 0:
-                //medsDataList.add(data);
+                medsDataList.add(data); flag = true;
+                medsDataList.stream().forEach(d->Log.d("Datasource",d.getMeds_name()));
                 Log.d("Addition","Addition Success");
-                return new Result.Success<>(data);
+                break;
             case 1:
                 //TODO: Delete data in Database
+                flag = true;
                 break;
         }
-        return new Result.Error(new Exception("Write Operation Failed!"));
+
+        if(flag) return new Result.Success<>(data);
+        else return new Result.Error(new Exception("Write Operation Failed!"));
     }
 
     public Result<MedsData> search(MedsData target){
-        //TODO: Search for target Data!
+        if(medsDataList.contains(target)) return new Result.Success<>(target);
         return new Result.Error(new Exception("Search Operation Failed!"));
     }
 
     public Result<MedsData> modify(MedsData originData, MedsData changedData){
-        //TODO: Modify data in Database
+        if(medsDataList.contains(originData)){
+            MedsData data = medsDataList.get(medsDataList.indexOf(originData));
+            data.setMeds_name(changedData.getMeds_name());
+            data.setMeds_detail(changedData.getMeds_detail());
+        }
         return new Result.Error(new Exception("Modify Operation Failed!"));
     }
 }

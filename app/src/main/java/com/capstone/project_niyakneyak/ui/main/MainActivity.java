@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
     private Intent intent;
     private ActivityMainBinding binding;
     private MedsViewModel medsViewModel;
+    private RecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
         medsViewModel = new ViewModelProvider(this, new MedsViewModelFactory(intent.getStringExtra("USER_ID")))
                 .get(MedsViewModel.class);
 
+        adapter = new RecyclerAdapter(medsViewModel.getDatas());
+
         binding.contentMainAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
 
         binding.contentMainMeds.setHasFixedSize(true);
         binding.contentMainMeds.setLayoutManager(new LinearLayoutManager(this));
-        binding.contentMainMeds.setAdapter(new RecyclerAdapter(medsViewModel.getDatas()));
+
+        binding.contentMainMeds.setAdapter(adapter);
         binding.contentMainMeds.addItemDecoration(new VerticalItemDecorator(20));
         binding.contentMainMeds.addItemDecoration(new HorizontalItemDecorator(10));
     }
@@ -78,14 +82,13 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
     private void showAddForm(){
         DialogFragment newAddForm = new AddDialogFragment();
         newAddForm.show(getSupportFragmentManager(), "dialog");
-
     }
 
     @Override
     public void onInputedData(@NonNull String meds_name, String meds_detail, String meds_duration, @Nullable String meds_time_morning, @Nullable String meds_time_afternoon, @Nullable String meds_time_evening, @Nullable String meds_time_latenight) {
         if(!meds_name.isEmpty()){
             medsViewModel.addData(new MedsData(intent.getStringExtra("USER_ID"), meds_name, meds_detail));
-            binding.contentMainMeds.getAdapter().notifyDataSetChanged();
+            adapter.setItems(medsViewModel.getDatas());
             medsViewModel.getActionResult().observe(this, new Observer<ActionResult>() {
                 @Override
                 public void onChanged(ActionResult actionResult) {

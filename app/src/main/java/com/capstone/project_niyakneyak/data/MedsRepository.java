@@ -1,9 +1,11 @@
 package com.capstone.project_niyakneyak.data;
 
+import android.util.Log;
 import android.view.SurfaceControl;
 
 import com.capstone.project_niyakneyak.data.model.MedsData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MedsRepository {
@@ -18,12 +20,6 @@ public class MedsRepository {
     public static MedsRepository getInstance(MedsDataSource dataSource){
         if (instance == null) {
             instance = new MedsRepository(dataSource);
-            if(instance.medsData == null){
-                Result<List<MedsData>> result = dataSource.read();
-                if(result instanceof Result.Success){
-                    instance.medsData = ((Result.Success<List<MedsData>>) result).getData();
-                }
-            }
         }
         return instance;
     }
@@ -36,6 +32,7 @@ public class MedsRepository {
     public Result<List<MedsData>> getDatas(){
         Result<List<MedsData>> result = dataSource.read();
         if(result instanceof Result.Success){
+            if(medsData == null) medsData = ((Result.Success<List<MedsData>>)result).getData();
             return result;
         }
         else{
@@ -46,31 +43,52 @@ public class MedsRepository {
 
     public Result<MedsData> addData(MedsData data) {
         Result<MedsData> result = dataSource.write(data, 0);
-        medsData.add(data);
         if(result instanceof Result.Success){
-             return result;
+            if(medsData == null){
+                Result<List<MedsData>> result_read = dataSource.read();
+                if(result_read instanceof Result.Success)
+                    medsData = ((Result.Success<List<MedsData>>)result_read).getData();
+                else medsData = new ArrayList<>();
+            }
+            medsData.stream().forEach(d-> Log.d("repository",d.getMeds_name()));
+            return result;
         }
         else return new Result.Error(new Exception("Cannot connect to database but saved in local repository"));
     }
 
     public Result<MedsData> modifyData(MedsData originData, MedsData changedData){
+
+
         if(medsData.contains(originData)){
             MedsData data = medsData.get(medsData.indexOf(originData));
             data.setMeds_name(changedData.getMeds_name());
             data.setMeds_detail(changedData.getMeds_detail());
 
             Result<MedsData> result = dataSource.modify(originData, changedData);
-            if(result instanceof Result.Success)
+            if(result instanceof Result.Success) {
+                if(medsData == null){
+                    Result<List<MedsData>> result_read = dataSource.read();
+                    if(result_read instanceof Result.Success)
+                        medsData = ((Result.Success<List<MedsData>>)result_read).getData();
+                    else medsData = new ArrayList<>();
+                }
                 return new Result.Success<>(changedData);
+            }
             else return new Result.Error(new Exception("Data modification failed!"));
         }
         return new Result.Error(new Exception("Data does not exists!"));
     }
 
     public Result<MedsData> deleteData(MedsData target){
-        if(medsData.contains(target)){
-            medsData.remove(target);
+        Result<MedsData> result = dataSource.search(target);
+        if(result instanceof Result.Success){
             dataSource.write(target, 1);
+            if(medsData == null){
+                Result<List<MedsData>> result_read = dataSource.read();
+                if(result_read instanceof Result.Success)
+                    medsData = ((Result.Success<List<MedsData>>)result_read).getData();
+                else medsData = new ArrayList<>();
+            }
             return new Result.Success<>(target);
         }
         return new Result.Error(new Exception("Data does not exists!"));
