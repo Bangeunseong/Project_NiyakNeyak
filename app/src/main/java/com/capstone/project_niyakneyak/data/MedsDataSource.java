@@ -24,7 +24,6 @@ public class MedsDataSource {
         switch(option){
             case 0:
                 medsDataList.add(data); flag = true;
-                medsDataList.stream().forEach(d->Log.d("Datasource",d.getMeds_name()));
                 Log.d("Addition","Addition Success");
                 break;
             case 1:
@@ -47,6 +46,8 @@ public class MedsDataSource {
             MedsData data = medsDataList.get(medsDataList.indexOf(originData));
             data.setMeds_name(changedData.getMeds_name());
             data.setMeds_detail(changedData.getMeds_detail());
+            data.setMeds_date(changedData.getMeds_date());
+            data.setMeds_time(changedData.getMeds_time());
         }
         return new Result.Error(new Exception("Modify Operation Failed!"));
     }

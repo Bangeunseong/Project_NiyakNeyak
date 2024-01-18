@@ -5,50 +5,67 @@
     android:id="@+id/item_Layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingVertical="10dp"
+    android:background="@drawable/item_recycler_bg_light_mint"
     android:paddingHorizontal="15dp"
-    android:background="@drawable/shapes">
-
-    <ImageView
-        android:id="@+id/img_rcv_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="90dp"
-        android:minWidth="90dp"
-        android:src="@color/cardview_dark_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0" />
+    android:paddingVertical="10dp">
 
     <TextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Meds name"
+        android:textColor="@color/black_500"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/black_500"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/img_rcv_photo"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingVertical="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintVertical_bias="0.1"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.222" />
 
     <TextView
         android:id="@+id/item_detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Details about Meds"
+        android:paddingVertical="5dp"
+        android:textColor="@color/black_500"
         android:textSize="15sp"
         android:textStyle="italic"
-        android:textColor="@color/black_500"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/img_rcv_photo"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintVertical_bias="0.8"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.157"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_title"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <LinearLayout
+        android:id="@+id/item_content_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/item_modify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/action_main_rcv_modifyItem"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_edit" />
+
+        <ImageButton
+            android:id="@+id/item_delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/action_main_rcv_deleteItem"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_delete" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

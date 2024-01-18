@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class VerticalItemDecorator extends RecyclerView.ItemDecoration {
     private int divHeight;
-    VerticalItemDecorator(int divHeight){this.divHeight = divHeight;}
+    public VerticalItemDecorator(int divHeight){this.divHeight = divHeight;}
     @Override
     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);

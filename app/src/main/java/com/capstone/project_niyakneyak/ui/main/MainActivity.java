@@ -1,7 +1,6 @@
 package com.capstone.project_niyakneyak.ui.main;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
@@ -17,14 +16,19 @@ import android.widget.Toast;
 
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.model.MedsData;
+import com.capstone.project_niyakneyak.data.model.TimeData;
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding;
 import com.capstone.project_niyakneyak.ui.fragment.AddDialogFragment;
+import com.capstone.project_niyakneyak.ui.fragment.ModifyDialogFragment;
 
-public class MainActivity extends AppCompatActivity implements AddDialogFragment.OnCompleteListener {
+import java.text.ParseException;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements AddDialogFragment.OnCompleteListener, ModifyDialogFragment.OnCompleteListener {
     private Intent intent;
     private ActivityMainBinding binding;
     private MedsViewModel medsViewModel;
-    private RecyclerAdapter adapter;
+    private MedsInfoAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +37,15 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
         intent = getIntent();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         binding.toolbar.setTitle(R.string.toolbar_main_title);
         setSupportActionBar(binding.toolbar);
 
+        //View Control Unit
         medsViewModel = new ViewModelProvider(this, new MedsViewModelFactory(intent.getStringExtra("USER_ID")))
                 .get(MedsViewModel.class);
 
-        adapter = new RecyclerAdapter(medsViewModel.getDatas());
+        //RecyclerAdapter for Medication Info.
+        adapter = new MedsInfoAdapter(medsViewModel.getDatas());
 
         binding.contentMainAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,9 +54,8 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
             }
         });
 
-        binding.contentMainMeds.setHasFixedSize(true);
+        binding.contentMainMeds.setHasFixedSize(false);
         binding.contentMainMeds.setLayoutManager(new LinearLayoutManager(this));
-
         binding.contentMainMeds.setAdapter(adapter);
         binding.contentMainMeds.addItemDecoration(new VerticalItemDecorator(20));
         binding.contentMainMeds.addItemDecoration(new HorizontalItemDecorator(10));
@@ -85,10 +89,12 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
     }
 
     @Override
-    public void onInputedData(@NonNull String meds_name, String meds_detail, String meds_duration, @Nullable String meds_time_morning, @Nullable String meds_time_afternoon, @Nullable String meds_time_evening, @Nullable String meds_time_latenight) {
+    public void onInputedData(@NonNull String meds_name, String meds_detail, String meds_duration,
+                              List<TimeData> meds_time) throws ParseException {
         if(!meds_name.isEmpty()){
-            medsViewModel.addData(new MedsData(intent.getStringExtra("USER_ID"), meds_name, meds_detail));
+            medsViewModel.addData(new MedsData(intent.getStringExtra("USER_ID"), meds_name, meds_detail, meds_duration, meds_time));
             adapter.setItems(medsViewModel.getDatas());
+
             medsViewModel.getActionResult().observe(this, new Observer<ActionResult>() {
                 @Override
                 public void onChanged(ActionResult actionResult) {
@@ -97,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
                         Toast.makeText(getApplicationContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
                     if(actionResult.getError() != null)
                         Toast.makeText(getApplicationContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
-
                 }
             });
         }
@@ -105,5 +110,10 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
             Toast toast = Toast.makeText(MainActivity.this, "Addition Canceled!", Toast.LENGTH_LONG);
             toast.show();
         }
+    }
+
+    @Override
+    public void onModifiedData(@NonNull String meds_name, String meds_detail, String meds_duration, List<TimeData> meds_time) throws ParseException {
+
     }
 }
