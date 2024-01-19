@@ -1,5 +1,7 @@
 package com.capstone.project_niyakneyak.ui.main;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -19,17 +21,19 @@ public class MedsViewModel extends ViewModel {
 
     LiveData<ActionResult> getActionResult(){return actionResult;}
 
-    public List<MedsData> getDatas(){
+    public Result<List<MedsData>> getDatas(){
         Result<List<MedsData>> result = medsRepository.getDatas();
         if(result instanceof Result.Success){
-            return ((Result.Success<List<MedsData>>)result).getData();
+            return result;
         }
-        else return null;
+        else return new Result.Error(new Exception("Data cannot be read"));
     }
 
     public void addData(MedsData data){
         Result<MedsData> result = medsRepository.addData(data);
+
         if(result instanceof Result.Success){
+            Log.d("MedsViewModel", "Addition Success");
             MedsData resultData = ((Result.Success<MedsData>)result).getData();
             actionResult.setValue(new ActionResult(new MedsDataView(resultData.getMeds_name())));
         }
@@ -45,6 +49,7 @@ public class MedsViewModel extends ViewModel {
             actionResult.setValue(new ActionResult(new MedsDataView(resultData.getMeds_name())));
         }
         else{
+            Log.d("MedsViewModel", result.toString());
             actionResult.setValue(new ActionResult(R.string.action_main_rcv_modify_error));
         }
     }

@@ -15,20 +15,98 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.capstone.project_niyakneyak.R;
+import com.capstone.project_niyakneyak.data.Result;
 import com.capstone.project_niyakneyak.data.model.MedsData;
-import com.capstone.project_niyakneyak.data.model.TimeData;
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding;
 import com.capstone.project_niyakneyak.ui.fragment.AddDialogFragment;
-import com.capstone.project_niyakneyak.ui.fragment.ModifyDialogFragment;
+import com.capstone.project_niyakneyak.ui.fragment.OnAddedDataListener;
+import com.capstone.project_niyakneyak.ui.fragment.OnChangedDataListener;
+import com.capstone.project_niyakneyak.ui.fragment.OnDeleteDataListener;
 
-import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AddDialogFragment.OnCompleteListener, ModifyDialogFragment.OnCompleteListener {
+public class MainActivity extends AppCompatActivity {
     private Intent intent;
     private ActivityMainBinding binding;
     private MedsViewModel medsViewModel;
     private MedsInfoAdapter adapter;
+
+
+    private OnAddedDataListener added_communicator = new OnAddedDataListener() {
+        @Override
+        public void onAddedData(MedsData target) {
+            if(!target.getMeds_name().isEmpty()){
+                Result<List<MedsData>> result = medsViewModel.getDatas();
+                if(result instanceof Result.Success){
+                    medsViewModel.addData(target);
+                    adapter.addItem(((Result.Success<List<MedsData>>) result).getData().size() - 1);
+                }
+
+                medsViewModel.getActionResult().observe(MainActivity.this, new Observer<ActionResult>() {
+                    @Override
+                    public void onChanged(ActionResult actionResult) {
+                        if(actionResult == null) return;
+                        if(actionResult.getSuccess() != null)
+                            Toast.makeText(getApplicationContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
+                        if(actionResult.getError() != null)
+                            Toast.makeText(getApplicationContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            else{
+                Toast toast = Toast.makeText(MainActivity.this, "Addition Failed!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    };
+    private OnChangedDataListener changed_communicator = new OnChangedDataListener() {
+        @Override
+        public void onChangedData(MedsData origin, MedsData changed) {
+            if(!changed.getMeds_name().isEmpty()){
+                Result<List<MedsData>> result = medsViewModel.getDatas();
+                if(result instanceof Result.Success){
+                    medsViewModel.modifyData(origin, changed);
+                    adapter.changeItem(((Result.Success<List<MedsData>>) result).getData().indexOf(changed));
+                }
+
+                medsViewModel.getActionResult().observe(MainActivity.this, new Observer<ActionResult>() {
+                    @Override
+                    public void onChanged(ActionResult actionResult) {
+                        if(actionResult == null) return;
+                        if(actionResult.getSuccess() != null)
+                            Toast.makeText(getApplicationContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
+                        if(actionResult.getError() != null)
+                            Toast.makeText(getApplicationContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            else{
+                Toast toast = Toast.makeText(MainActivity.this, "Modification Canceled!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    };
+    private OnDeleteDataListener communicator = new OnDeleteDataListener() {
+        @Override
+        public void onDeletedData(MedsData target) {
+            Result<List<MedsData>> result = medsViewModel.getDatas();
+            if(result instanceof Result.Success){
+                int position = ((Result.Success<List<MedsData>>) result).getData().indexOf(target);
+                medsViewModel.deleteData(target); adapter.removeItem(position);
+            }
+            medsViewModel.getActionResult().observe(MainActivity.this, new Observer<ActionResult>() {
+                @Override
+                public void onChanged(ActionResult actionResult) {
+                    if(actionResult == null) return;
+                    if(actionResult.getSuccess() != null)
+                        Toast.makeText(getApplicationContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
+                    if(actionResult.getError() != null)
+                        Toast.makeText(getApplicationContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +123,16 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
                 .get(MedsViewModel.class);
 
         //RecyclerAdapter for Medication Info.
-        adapter = new MedsInfoAdapter(medsViewModel.getDatas());
+        Result<List<MedsData>> result = medsViewModel.getDatas();
+        if(result instanceof Result.Success)
+            adapter = new MedsInfoAdapter(getSupportFragmentManager(), ((Result.Success<List<MedsData>>) result).getData(), changed_communicator, communicator);
+        else adapter = new MedsInfoAdapter(getSupportFragmentManager(), new ArrayList<>(), changed_communicator, communicator);
 
         binding.contentMainAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAddForm();
+                DialogFragment newAddForm = new AddDialogFragment(added_communicator);
+                newAddForm.show(getSupportFragmentManager(), "dialog");
             }
         });
 
@@ -70,50 +152,15 @@ public class MainActivity extends AppCompatActivity implements AddDialogFragment
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case 0:
-                setResult(RESULT_OK, intent); finish();
+                setResult(RESULT_OK, intent);
+                finish();
                 break;
             case 1:
                 //TODO: Need to Modify!
                 Toast.makeText(MainActivity.this, "Add custom settings", Toast.LENGTH_LONG).show();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-
-
-    private void showAddForm(){
-        DialogFragment newAddForm = new AddDialogFragment();
-        newAddForm.show(getSupportFragmentManager(), "dialog");
-    }
-
-    @Override
-    public void onInputedData(@NonNull String meds_name, String meds_detail, String meds_duration,
-                              List<TimeData> meds_time) throws ParseException {
-        if(!meds_name.isEmpty()){
-            medsViewModel.addData(new MedsData(intent.getStringExtra("USER_ID"), meds_name, meds_detail, meds_duration, meds_time));
-            adapter.setItems(medsViewModel.getDatas());
-
-            medsViewModel.getActionResult().observe(this, new Observer<ActionResult>() {
-                @Override
-                public void onChanged(ActionResult actionResult) {
-                    if(actionResult == null) return;
-                    if(actionResult.getSuccess() != null)
-                        Toast.makeText(getApplicationContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
-                    if(actionResult.getError() != null)
-                        Toast.makeText(getApplicationContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        else{
-            Toast toast = Toast.makeText(MainActivity.this, "Addition Canceled!", Toast.LENGTH_LONG);
-            toast.show();
-        }
-    }
-
-    @Override
-    public void onModifiedData(@NonNull String meds_name, String meds_detail, String meds_duration, List<TimeData> meds_time) throws ParseException {
-
     }
 }

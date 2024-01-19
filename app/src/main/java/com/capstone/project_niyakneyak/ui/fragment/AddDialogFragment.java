@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.capstone.project_niyakneyak.R;
+import com.capstone.project_niyakneyak.data.model.MedsData;
 import com.capstone.project_niyakneyak.data.model.TimeData;
 import com.capstone.project_niyakneyak.ui.main.HorizontalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.MedsTimeAdapter;
@@ -36,24 +36,28 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class AddDialogFragment extends DialogFragment {
-    private OnCompleteListener mCallback;
+    private OnAddedDataListener added_communicator;
     private MedsTimeAdapter adapter;
-    private List<TimeData> meds_time;
+    private List<TimeData> timeData;
 
-    public interface OnCompleteListener{
-        void onInputedData(String meds_name, String meds_detail, String meds_duration,
-                           List<TimeData> meds_time) throws ParseException;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        meds_time = new ArrayList<>();
-        try {
-            mCallback = (OnCompleteListener) context;
-        } catch (ClassCastException e) {
-            Log.d("AddDialogFragment", "Activity doesn't implement the OnCompleteListener");
+    //Time Modification Interface -> Does time modification and deletion
+    private OnChangedTimeListener changed = new OnChangedTimeListener() {
+        @Override
+        public void onChangedTime(String time, int position) {
+            timeData.get(position).setTime(time);
+            adapter.changeItem(position);
         }
+    };
+    private OnDeleteTimeListener deleted = new OnDeleteTimeListener() {
+        @Override
+        public void onDeleteTime(int position) {
+            timeData.remove(position);
+            adapter.removeItem(position);
+        }
+    };
+
+    public AddDialogFragment(OnAddedDataListener added_communicator){
+        this.added_communicator = added_communicator;
     }
 
     @NonNull
@@ -63,7 +67,6 @@ public class AddDialogFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_dialog_form, null);
         builder.setCustomTitle(LayoutInflater.from(getActivity()).inflate(R.layout.item_add_dialog_title,null));
         builder.setView(view);
-
 
         final RecyclerView rcv_time = view.findViewById(R.id.dialog_meds_time_rcv);
 
@@ -75,9 +78,10 @@ public class AddDialogFragment extends DialogFragment {
         final Button submit = view.findViewById(R.id.dialog_meds_submit);
         final Button cancel = view.findViewById(R.id.dialog_meds_cancel);
 
-        adapter = new MedsTimeAdapter(meds_time);
+        timeData = new ArrayList<>();
+        adapter = new MedsTimeAdapter(getActivity(), timeData, changed, deleted);
         rcv_time.setHasFixedSize(false);
-        rcv_time.setLayoutManager(new LinearLayoutManager(getContext()));
+        rcv_time.setLayoutManager(new LinearLayoutManager(getActivity()));
         rcv_time.setAdapter(adapter);
         rcv_time.addItemDecoration(new VerticalItemDecorator(20));
         rcv_time.addItemDecoration(new HorizontalItemDecorator(10));
@@ -118,9 +122,9 @@ public class AddDialogFragment extends DialogFragment {
                 final TimePickerDialog timeDlg = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        meds_time.add(new TimeData(String.format("%02d:%02d",hourOfDay,minute), true));
-                        meds_time.stream().forEach(data->{Log.d("TimePickerDialog", data.getTime() + ":" + data.getState());});
-                        adapter.setItems(meds_time);
+                        timeData.add(new TimeData(String.format("%02d:%02d",hourOfDay,minute), true));
+                        timeData.stream().forEach(data->{Log.d("TimePickerDialog", data.getTime() + ":" + data.getState());});
+                        adapter.addItem(timeData.size() - 1);
                     }
                 }, 0, 0, true);
                 timeDlg.show();
@@ -134,20 +138,14 @@ public class AddDialogFragment extends DialogFragment {
                 String meds_detail_text = meds_detail.getText().toString();
                 String meds_date_text = meds_date.getText().toString();
                 dismiss();
-
-                try {
-                    mCallback.onInputedData(meds_name_text,meds_detail_text,meds_date_text, meds_time);
-                } catch (ParseException e) {
-                    Log.d("AddDialog","Parsing Failed!");
-                }
+                added_communicator.onAddedData(new MedsData(meds_name_text.hashCode(), meds_name_text,
+                        meds_detail_text, meds_date_text, timeData));
             }
         });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                dismiss();
-            }
+            public void onClick(View v) {dismiss();}
         });
 
         return builder.create();
