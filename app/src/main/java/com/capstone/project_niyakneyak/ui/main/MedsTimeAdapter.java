@@ -2,12 +2,9 @@ package com.capstone.project_niyakneyak.ui.main;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -16,7 +13,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.capstone.project_niyakneyak.R;
-import com.capstone.project_niyakneyak.data.model.MedsData;
 import com.capstone.project_niyakneyak.ui.fragment.OnChangedTimeListener;
 import com.capstone.project_niyakneyak.data.model.TimeData;
 import com.capstone.project_niyakneyak.ui.fragment.OnDeleteTimeListener;
