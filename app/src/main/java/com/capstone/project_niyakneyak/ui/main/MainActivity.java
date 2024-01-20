@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private OnAddedDataListener added_communicator = new OnAddedDataListener() {
         @Override
         public void onAddedData(MedsData target) {
+            Log.d("MainActivity","Data Addition called");
             if(!target.getMeds_name().isEmpty()){
                 Result<List<MedsData>> result = medsViewModel.getDatas();
                 if(result instanceof Result.Success){
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private OnChangedDataListener changed_communicator = new OnChangedDataListener() {
         @Override
         public void onChangedData(MedsData origin, MedsData changed) {
+            Log.d("MainActivity","Data Modification called");
             if(!changed.getMeds_name().isEmpty()){
                 Result<List<MedsData>> result = medsViewModel.getDatas();
                 if(result instanceof Result.Success){
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
     private OnDeleteDataListener communicator = new OnDeleteDataListener() {
         @Override
         public void onDeletedData(MedsData target) {
+            Log.d("MainActivity","Data Deletion called");
+
             Result<List<MedsData>> result = medsViewModel.getDatas();
             if(result instanceof Result.Success){
                 int position = ((Result.Success<List<MedsData>>) result).getData().indexOf(target);

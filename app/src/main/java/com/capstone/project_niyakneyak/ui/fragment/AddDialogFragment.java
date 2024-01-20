@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,8 +76,6 @@ public class AddDialogFragment extends DialogFragment {
         final TextInputEditText meds_date = view.findViewById(R.id.dialog_meds_date_text);
 
         final Button add_time_btn = view.findViewById(R.id.dialog_meds_time_add_btn);
-        final Button submit = view.findViewById(R.id.dialog_meds_submit);
-        final Button cancel = view.findViewById(R.id.dialog_meds_cancel);
 
         timeData = new ArrayList<>();
         adapter = new MedsTimeAdapter(getActivity(), timeData, changed, deleted);
@@ -122,8 +121,8 @@ public class AddDialogFragment extends DialogFragment {
                 final TimePickerDialog timeDlg = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        timeData.add(new TimeData(String.format("%02d:%02d",hourOfDay,minute), true));
-                        timeData.stream().forEach(data->{Log.d("TimePickerDialog", data.getTime() + ":" + data.getState());});
+                        timeData.add(new TimeData(String.format("%02d:%02d",hourOfDay,minute)));
+                        timeData.stream().forEach(data->{Log.d("TimePickerDialog", data.getTime());});
                         adapter.addItem(timeData.size() - 1);
                     }
                 }, 0, 0, true);
@@ -131,11 +130,11 @@ public class AddDialogFragment extends DialogFragment {
             }
         });
 
-        submit.setOnClickListener(new View.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_add_form_submit, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(DialogInterface dialog, int which) {
                 String meds_name_text = meds_name.getText().toString();
-                String meds_detail_text = meds_detail.getText().toString();
+                String meds_detail_text = "Cause: " + meds_detail.getText().toString();
                 String meds_date_text = meds_date.getText().toString();
                 dismiss();
                 added_communicator.onAddedData(new MedsData(meds_name_text.hashCode(), meds_name_text,
@@ -143,9 +142,11 @@ public class AddDialogFragment extends DialogFragment {
             }
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_add_form_cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {dismiss();}
+            public void onClick(DialogInterface dialog, int which) {
+                dismiss();
+            }
         });
 
         return builder.create();

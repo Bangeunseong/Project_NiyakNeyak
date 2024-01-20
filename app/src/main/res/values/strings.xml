@@ -32,15 +32,15 @@
 
     <string name="dialog_add_form_title">Add Medication Info</string>
     <string name="dialog_modify_form_title">Modify Medication Info</string>
-    <string name="dialog_add_form_submit">Submit</string>
-    <string name="dialog_add_form_cancel">Cancel</string>
+    <string name="dialog_add_form_submit">submit</string>
+    <string name="dialog_add_form_cancel">cancel</string>
     <string name="dialog_add_form_meds_name">Type Medication Name</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
     <string name="dialog_add_form_meds_date">Configure Medication End Date</string>
     <string name="dialog_meds_time_add_title">Configure Timer</string>
 
     <string name="dialog_meds_time_delete_notification_title">Notification</string>
-    <string name="dialog_meds_time_delete_notification_msg">Do you really want to delete Timer?</string>
+    <string name="dialog_meds_time_delete_notification_msg">Do you want to delete?</string>
     <string name="dialog_meds_time_delete_notification_pos_btn">OK</string>
     <string name="dialog_meds_time_delete_notificatino_neg_btn">Cancel</string>
 

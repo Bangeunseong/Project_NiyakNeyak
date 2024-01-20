@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +40,7 @@ import java.util.TimeZone;
 public class ModifyDialogFragment extends DialogFragment {
     private OnChangedDataListener changed_communicator;
     private MedsTimeAdapter adapter;
-    private List<TimeData> timeData;
+    private List<TimeData> timeData = null;
 
     //Time Modification Interface -> Does time modification and deletion
     private OnChangedTimeListener changed = new OnChangedTimeListener() {
@@ -77,8 +80,6 @@ public class ModifyDialogFragment extends DialogFragment {
         final TextInputEditText meds_date = view.findViewById(R.id.dialog_meds_date_text);
 
         final Button add_time_btn = view.findViewById(R.id.dialog_meds_time_add_btn);
-        final Button submit = view.findViewById(R.id.dialog_meds_submit);
-        final Button cancel = view.findViewById(R.id.dialog_meds_cancel);
 
         //Modify layout field data with bundle data
         //Get Arguments from previous page(RecyclerAdapter)
@@ -87,7 +88,8 @@ public class ModifyDialogFragment extends DialogFragment {
         meds_name.setText(data.getMeds_name());
         meds_detail.setText(data.getMeds_detail());
         meds_date.setText(data.getMeds_date());
-        timeData = data.getMeds_time();
+        timeData = new ArrayList<>();
+        data.getMeds_time().stream().forEach(d->{Log.d("OriginData", d.getTime()); timeData.add(new TimeData(d.getTime()));});
 
         //Setting recycler adapter(TimeAdapter)
         adapter = new MedsTimeAdapter(getActivity(), timeData, changed, deleted);
@@ -136,8 +138,8 @@ public class ModifyDialogFragment extends DialogFragment {
                 final TimePickerDialog timeDlg = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        timeData.add(new TimeData(String.format("%02d:%02d",hourOfDay,minute), true));
-                        timeData.stream().forEach(data->{Log.d("TimePickerDialog", data.getTime() + ":" + data.getState());});
+                        timeData.add(new TimeData(String.format("%02d:%02d",hourOfDay,minute)));
+                        timeData.stream().forEach(data->{Log.d("TimePickerDialog", data.getTime());});
                         adapter.addItem(timeData.size() - 1);
                     }
                 }, 0, 0, true);
@@ -146,11 +148,11 @@ public class ModifyDialogFragment extends DialogFragment {
         });
 
         //When submit btn clicked, all data will be transferred to MainActivity and will be saved
-        submit.setOnClickListener(new View.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_add_form_submit, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(DialogInterface dialog, int which) {
                 String meds_name_text = meds_name.getText().toString();
-                String meds_detail_text = meds_detail.getText().toString();
+                String meds_detail_text = "Cause: " + meds_detail.getText().toString();
                 String meds_date_text = meds_date.getText().toString();
                 dismiss();
                 changed_communicator.onChangedData(data, new MedsData(meds_date_text.hashCode(), meds_name_text,
@@ -159,9 +161,14 @@ public class ModifyDialogFragment extends DialogFragment {
         });
 
         //Closes dialog without data transfer(No data modification)
-        cancel.setOnClickListener(new View.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_add_form_cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {dismiss();}
+            public void onClick(DialogInterface dialog, int which) {
+                timeData.clear();
+                data.getMeds_time().stream().forEach(d->{Log.d("OriginData", d.getTime()); timeData.add(d);});
+                adapter.notifyDataSetChanged();
+                dismiss();
+            }
         });
 
         return builder.create();
