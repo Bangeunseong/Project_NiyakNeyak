@@ -134,7 +134,7 @@ public class AddDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String meds_name_text = meds_name.getText().toString();
-                String meds_detail_text = "Cause: " + meds_detail.getText().toString();
+                String meds_detail_text = meds_detail.getText().toString();
                 String meds_date_text = meds_date.getText().toString();
                 dismiss();
                 added_communicator.onAddedData(new MedsData(meds_name_text.hashCode(), meds_name_text,

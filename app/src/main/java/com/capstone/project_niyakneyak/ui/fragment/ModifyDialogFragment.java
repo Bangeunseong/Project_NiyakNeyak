@@ -152,7 +152,7 @@ public class ModifyDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String meds_name_text = meds_name.getText().toString();
-                String meds_detail_text = "Cause: " + meds_detail.getText().toString();
+                String meds_detail_text = meds_detail.getText().toString();
                 String meds_date_text = meds_date.getText().toString();
                 dismiss();
                 changed_communicator.onChangedData(data, new MedsData(meds_date_text.hashCode(), meds_name_text,
