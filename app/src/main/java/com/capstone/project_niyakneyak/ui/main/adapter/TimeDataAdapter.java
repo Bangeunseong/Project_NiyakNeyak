@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.main;
+package com.capstone.project_niyakneyak.ui.main.adapter;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -13,9 +13,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.capstone.project_niyakneyak.R;
-import com.capstone.project_niyakneyak.ui.fragment.OnChangedTimeListener;
+import com.capstone.project_niyakneyak.ui.listener.OnChangedTimeListener;
 import com.capstone.project_niyakneyak.data.model.TimeData;
-import com.capstone.project_niyakneyak.ui.fragment.OnDeleteTimeListener;
+import com.capstone.project_niyakneyak.ui.listener.OnDeleteTimeListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,13 +24,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class MedsTimeAdapter extends RecyclerView.Adapter<MedsTimeAdapter.ViewHolder> {
+public class TimeDataAdapter extends RecyclerView.Adapter<TimeDataAdapter.ViewHolder> {
     private Context context;
     private List<TimeData> timeData;
     private OnChangedTimeListener changed;
     private OnDeleteTimeListener deleted;
 
-    public MedsTimeAdapter(Context context, List<TimeData> timeData, OnChangedTimeListener changed, OnDeleteTimeListener deleted){
+    public TimeDataAdapter(Context context, List<TimeData> timeData, OnChangedTimeListener changed, OnDeleteTimeListener deleted){
         this.context = context; this.timeData = timeData; this.changed = changed; this.deleted = deleted;
     }
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -93,7 +93,7 @@ public class MedsTimeAdapter extends RecyclerView.Adapter<MedsTimeAdapter.ViewHo
                 notification.setPositiveButton(R.string.dialog_meds_time_delete_notification_pos_btn, (dialog, which) -> {
                     holder.mCallback_d.onDeleteTime(holder.getAdapterPosition());
                 });
-                notification.setNegativeButton(R.string.dialog_meds_time_delete_notificatino_neg_btn, (dialog, which) -> {});
+                notification.setNegativeButton(R.string.dialog_meds_time_delete_notification_neg_btn, (dialog, which) -> {});
                 notification.show();
                 return true;
             }
