@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.main;
+package com.capstone.project_niyakneyak.ui.main.adapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,36 +15,40 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.model.MedsData;
 import com.capstone.project_niyakneyak.ui.fragment.ModifyDialogFragment;
-import com.capstone.project_niyakneyak.ui.fragment.OnChangedDataListener;
-import com.capstone.project_niyakneyak.ui.fragment.OnDeleteDataListener;
+import com.capstone.project_niyakneyak.ui.listener.OnChangedDataListener;
+import com.capstone.project_niyakneyak.ui.listener.OnDeleteDataListener;
 
 import java.util.List;
 
 
-public class MedsInfoAdapter extends RecyclerView.Adapter<MedsInfoAdapter.ViewHolder> {
-    private List<MedsData> medsData;
-    private FragmentManager fragmentManager;
-    private OnDeleteDataListener communicator;
-    private OnChangedDataListener changed_communicator;
+public class MedsDataAdapter extends RecyclerView.Adapter<MedsDataAdapter.ViewHolder> {
+    private final List<MedsData> medsData;
+    private final FragmentManager fragmentManager;
+    private final OnDeleteDataListener onDeleteDataListener;
+    private final OnChangedDataListener onChangedDataListener;
 
-    public MedsInfoAdapter(FragmentManager fragmentManager, List<MedsData> medsData, OnChangedDataListener changed_communicator, OnDeleteDataListener communicator){
-        this.fragmentManager = fragmentManager; this.medsData = medsData; this.communicator = communicator; this.changed_communicator = changed_communicator;
+    public MedsDataAdapter(FragmentManager fragmentManager, List<MedsData> medsData, OnChangedDataListener onChangedDataListener, OnDeleteDataListener onDeleteDataListener){
+        this.fragmentManager = fragmentManager; this.medsData = medsData; this.onDeleteDataListener = onDeleteDataListener; this.onChangedDataListener = onChangedDataListener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView rcv_title;
-        private TextView rcv_detail;
-        private ImageButton modifyBtn;
-        private ImageButton deleteBtn;
-        private OnDeleteDataListener mCallback;
-        public ViewHolder(View view, OnDeleteDataListener communicator) {
+        private final TextView rcv_title;
+        private final TextView rcv_detail;
+        private final TextView rcv_duration;
+        private final ImageButton modifyBtn;
+        private final ImageButton deleteBtn;
+        private final OnDeleteDataListener onDeleteDataListener;
+        public ViewHolder(View view, OnDeleteDataListener onDeleteDataListener) {
             super(view);
             // Define click listener for the ViewHolder's View
             rcv_title = itemView.findViewById(R.id.item_title);
             rcv_detail = itemView.findViewById(R.id.item_detail);
+            rcv_duration = itemView.findViewById(R.id.item_duration);
+
             modifyBtn = itemView.findViewById(R.id.item_modify_button);
             deleteBtn = itemView.findViewById(R.id.item_delete_button);
-            mCallback = communicator;
+
+            this.onDeleteDataListener = onDeleteDataListener;
         }
     }
 
@@ -52,19 +56,26 @@ public class MedsInfoAdapter extends RecyclerView.Adapter<MedsInfoAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_meds,parent,false);
-        return new ViewHolder(view, communicator);
+        return new ViewHolder(view, onDeleteDataListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.rcv_title.setText(medsData.get(position).getMeds_name());
-        holder.rcv_detail.setText(medsData.get(position).getMeds_detail());
+        if(medsData.get(position).getMeds_detail() != null)
+            holder.rcv_detail.setText(String.format("Detail: %s",medsData.get(position).getMeds_detail()));
+        else holder.rcv_detail.setText("Detail: ");
+        if(medsData.get(position).getMeds_start_date() != null && medsData.get(position).getMeds_end_date() != null)
+            holder.rcv_duration.setText(String.format("Duration: %s~%s",
+                    medsData.get(position).getMeds_start_date(),
+                    medsData.get(position).getMeds_end_date()));
+        else holder.rcv_duration.setText("Duration: ");
         holder.modifyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle data = new Bundle();
                 data.putSerializable("BeforeModify", medsData.get(holder.getAdapterPosition()));
-                DialogFragment newModifyForm = new ModifyDialogFragment(changed_communicator);
+                DialogFragment newModifyForm = new ModifyDialogFragment(onChangedDataListener);
                 newModifyForm.setArguments(data);
                 newModifyForm.show(fragmentManager, "dialog");
             }
@@ -73,7 +84,7 @@ public class MedsInfoAdapter extends RecyclerView.Adapter<MedsInfoAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 MedsData data = medsData.get(holder.getAdapterPosition());
-                holder.mCallback.onDeletedData(data);
+                holder.onDeleteDataListener.onDeletedData(data);
             }
         });
     }

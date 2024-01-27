@@ -4,15 +4,15 @@ import androidx.annotation.Nullable;
 
 public class ActionResult {
     @Nullable
-    private MedsDataView success;
+    private DataView success;
     @Nullable
     private Integer error;
 
-    ActionResult(@Nullable Integer error){this.error = error;}
-    ActionResult(@Nullable MedsDataView success){this.success = success;}
+    public ActionResult(@Nullable Integer error){this.error = error;}
+    public ActionResult(@Nullable DataView success){this.success = success;}
 
     @Nullable
-    MedsDataView getSuccess(){return success;}
+    public DataView getSuccess(){return success;}
     @Nullable
-    Integer getError(){return error;}
+    public Integer getError(){return error;}
 }

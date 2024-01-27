@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.main;
+package com.capstone.project_niyakneyak.ui.main.decorator;
 
 import android.graphics.Rect;
 import android.view.View;

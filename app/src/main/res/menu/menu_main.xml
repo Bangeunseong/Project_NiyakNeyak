@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_main"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Home"/>
+    <item
+        android:id="@+id/menu_time"
+        android:icon="@android:drawable/ic_menu_month"
+        android:title="Set Timer"/>
+    <item
+        android:id="@+id/menu_time_check"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="Time Check"/>
+    <item
+        android:id="@+id/menu_setting"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Settings"/>
+</menu>

@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.fragment;
+package com.capstone.project_niyakneyak.ui.listener;
 
 import com.capstone.project_niyakneyak.data.model.MedsData;
 

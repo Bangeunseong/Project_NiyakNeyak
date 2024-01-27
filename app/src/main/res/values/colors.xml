@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white_500">#FFFFFF</color>
+    <color name="red_500">#FF0000</color>
+    <color name="blue_500">#000CFF</color>
     <color name="black_500">#000000</color>
+    <color name="gray_500">#737373</color>
     <color name="light_mint_500">#BFFFC4</color>
+    <color name="mint_500">#28DE83</color>
     <color name="purple_500">#6141A5</color>
+    <color name="light_purple_500">#9577D5</color>
+    <color name="transparent">#00000000</color>
+    <color name="dark_gray_500">#6B6B6B</color>
 </resources>
