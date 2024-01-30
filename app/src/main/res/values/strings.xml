@@ -59,6 +59,9 @@
     <string name="dialog_meds_time_tgbtn_friday">fri</string>
     <string name="dialog_meds_time_tgbtn_saturday">sat</string>
 
+    <string name="dialog_meds_time_picker_title">Select time</string>
+    <string name="dialog_meds_time_picker_min_max_error">Please select time between given interval</string>
+
     <string name="dialog_meds_time_delete_notification_title">Notification</string>
     <string name="dialog_meds_time_delete_notification_msg">Do you want to delete?</string>
     <string name="dialog_meds_time_delete_notification_pos_btn">OK</string>

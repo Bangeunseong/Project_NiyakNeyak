@@ -16,15 +16,19 @@ import com.capstone.project_niyakneyak.data.model.TimeData;
 import java.io.Serializable;
 
 public class PatientViewModel extends ViewModel implements Serializable {
-    //Field
+    // Field
+    // Modification result of time
+    private MutableLiveData<ActionResult> timeResult = new MutableLiveData<>();
+    // Action(Addition, Modification, Deletion) result of Medication Info.
     private MutableLiveData<ActionResult> actionResult = new MutableLiveData<>();
     private final PatientRepository patientRepository;
 
-    //Constructor
+    // Constructor
     PatientViewModel(PatientRepository patientRepository){this.patientRepository = patientRepository;}
 
-    //Result for actions(Addition, Modification, Deletion, Search)
+    // Result for actions(Addition, Modification, Deletion, Search)
     public LiveData<ActionResult> getActionResult(){return actionResult;}
+    public LiveData<ActionResult> getTimeResult(){return timeResult;}
 
     public Result<PatientData> getPatientData(){
         Result<PatientData> result = patientRepository.getPatientData();
@@ -33,7 +37,7 @@ public class PatientViewModel extends ViewModel implements Serializable {
     }
 
 
-    //Useful Functions for add, modify, delete, search in MedsData
+    // Useful Functions for add, modify, delete, search in MedsData
     public void add_MedsData(MedsData data){
         Result<MedsData> result = patientRepository.add_MedsData(data);
 
@@ -78,23 +82,13 @@ public class PatientViewModel extends ViewModel implements Serializable {
     }
 
 
-    //Useful Functions for add, modify, delete, search in TimeData
-    public void add_TimeData(TimeData data){
-        Result<TimeData> result = patientRepository.add_TimeData(data);
-        if(result instanceof Result.Success){
-            Log.d("PatientViewModel", "Addition Success(Time)");
-            TimeData resultData = ((Result.Success<TimeData>)result).getData();
-            actionResult.setValue(new ActionResult(new DataView("Added Timer: " + resultData.getTime())));
-        }
-        else actionResult.setValue(new ActionResult(new DataView(result.toString())));
-    }
-
+    //Useful Functions for modify in TimeData
     public void modify_TimeData(TimeData target, TimeData changed){
         Result<TimeData> result = patientRepository.modify_TimeData(target, changed);
         if(result instanceof Result.Success){
             Log.d("PatientViewModel", "Modification Success(Time)");
             TimeData resultData = ((Result.Success<TimeData>)result).getData();
-            actionResult.setValue(new ActionResult(new DataView("Modified Timer: " + resultData.getTime())));
+            timeResult.setValue(new ActionResult(new DataView("Modified Timer: " + resultData.getTime())));
         }
     }
 }

@@ -29,6 +29,7 @@ import com.capstone.project_niyakneyak.ui.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,29 +45,29 @@ public class MainPageFragment extends Fragment {
         @Override
         public void onAddedData(MedsData target) {
             Log.d("MainActivity","Data Addition called");
-            if(!target.getMeds_name().isEmpty()){
-                Result<PatientData> result = patientViewModel.getPatientData();
-                if(result instanceof Result.Success){
-                    patientViewModel.add_MedsData(target);
-                    adapter.addItem(((Result.Success<PatientData>) result).getData().getMedsData().size() - 1);
-                    binding.contentMainGuide.setVisibility(View.GONE);
-                }
-
-                patientViewModel.getActionResult().observe(getActivity(), new Observer<ActionResult>() {
-                    @Override
-                    public void onChanged(ActionResult actionResult) {
-                        if(actionResult == null) return;
-                        if(actionResult.getSuccess() != null)
-                            Toast.makeText(getContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
-                        if(actionResult.getError() != null)
-                            Toast.makeText(getContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-            else{
-                Toast toast = Toast.makeText(getContext(), "Addition Failed!", Toast.LENGTH_LONG);
+            if(target.getMeds_name().isEmpty()){
+                Toast toast = Toast.makeText(getActivity(), "Addition Failed!", Toast.LENGTH_SHORT);
                 toast.show();
+                return;
             }
+
+            Result<PatientData> result = patientViewModel.getPatientData();
+            if(result instanceof Result.Success){
+                patientViewModel.add_MedsData(target);
+                adapter.addItem(((Result.Success<PatientData>) result).getData().getMedsData().size() - 1);
+                binding.contentMainGuide.setVisibility(View.GONE);
+            }
+
+            patientViewModel.getActionResult().observe(requireActivity(), new Observer<ActionResult>() {
+                @Override
+                public void onChanged(ActionResult actionResult) {
+                    if(actionResult == null) return;
+                    if(actionResult.getSuccess() != null)
+                        Toast.makeText(getActivity(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
+                    if(actionResult.getError() != null)
+                        Toast.makeText(getActivity(), actionResult.getError(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     };
 
@@ -74,28 +75,27 @@ public class MainPageFragment extends Fragment {
         @Override
         public void onChangedData(MedsData origin, MedsData changed) {
             Log.d("MainActivity","Data Modification called");
-            if(!changed.getMeds_name().isEmpty()){
-                Result<PatientData> result = patientViewModel.getPatientData();
-                if(result instanceof Result.Success){
-                    patientViewModel.modify_MedsData(origin, changed);
-                    adapter.changeItem(((Result.Success<PatientData>) result).getData().getMedsData().indexOf(changed));
-                }
-
-                patientViewModel.getActionResult().observe(getActivity(), new Observer<ActionResult>() {
-                    @Override
-                    public void onChanged(ActionResult actionResult) {
-                        if(actionResult == null) return;
-                        if(actionResult.getSuccess() != null)
-                            Toast.makeText(getContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
-                        if(actionResult.getError() != null)
-                            Toast.makeText(getContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-            else{
-                Toast toast = Toast.makeText(getContext(), "Modification Canceled!", Toast.LENGTH_LONG);
+            if(changed.getMeds_name().isEmpty()){
+                Toast toast = Toast.makeText(getActivity(), "Modification Canceled!", Toast.LENGTH_SHORT);
                 toast.show();
+                return;
             }
+
+            Result<PatientData> result = patientViewModel.getPatientData();
+            if(result instanceof Result.Success){
+                patientViewModel.modify_MedsData(origin, changed);
+                adapter.changeItem(((Result.Success<PatientData>) result).getData().getMedsData().indexOf(changed));
+            }
+            patientViewModel.getActionResult().observe(requireActivity(), new Observer<ActionResult>() {
+                @Override
+                public void onChanged(ActionResult actionResult) {
+                    if(actionResult == null) return;
+                    if(actionResult.getSuccess() != null)
+                        Toast.makeText(getActivity(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
+                    if(actionResult.getError() != null)
+                        Toast.makeText(getActivity(), actionResult.getError(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     };
 
@@ -110,14 +110,14 @@ public class MainPageFragment extends Fragment {
                 patientViewModel.delete_MedsData(target); adapter.removeItem(position);
                 if(adapter.getItemCount() < 1) binding.contentMainGuide.setVisibility(View.VISIBLE);
             }
-            patientViewModel.getActionResult().observe(getActivity(), new Observer<ActionResult>() {
+            patientViewModel.getActionResult().observe(requireActivity(), new Observer<ActionResult>() {
                 @Override
                 public void onChanged(ActionResult actionResult) {
                     if(actionResult == null) return;
                     if(actionResult.getSuccess() != null)
-                        Toast.makeText(getContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
                     if(actionResult.getError() != null)
-                        Toast.makeText(getContext(), actionResult.getError(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), actionResult.getError(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -137,11 +137,13 @@ public class MainPageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentMainPageBinding.inflate(inflater, container, false);
         Bundle data = getArguments();
+
+        assert data != null;
         patientViewModel = (PatientViewModel) data.getSerializable("PatientViewModel");
         return binding.getRoot();
     }
@@ -153,8 +155,8 @@ public class MainPageFragment extends Fragment {
         //RecyclerAdapter for Medication Info.
         Result<PatientData> result = patientViewModel.getPatientData();
         if(result instanceof Result.Success)
-            adapter = new MedsDataAdapter(getActivity().getSupportFragmentManager(), ((Result.Success<PatientData>) result).getData().getMedsData(), onChangedDataListener, onDeleteDataListener);
-        else adapter = new MedsDataAdapter(getActivity().getSupportFragmentManager(), new ArrayList<>(), onChangedDataListener, onDeleteDataListener);
+            adapter = new MedsDataAdapter(requireActivity().getSupportFragmentManager(), ((Result.Success<PatientData>) result).getData().getMedsData(), onChangedDataListener, onDeleteDataListener);
+        else adapter = new MedsDataAdapter(requireActivity().getSupportFragmentManager(), new ArrayList<>(), onChangedDataListener, onDeleteDataListener);
 
         binding.contentMainMeds.setHasFixedSize(false);
         binding.contentMainMeds.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -168,7 +170,7 @@ public class MainPageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DialogFragment newAddForm = new AddDialogFragment(onAddedDataListener);
-                newAddForm.show(getActivity().getSupportFragmentManager(), "dialog");
+                newAddForm.show(requireActivity().getSupportFragmentManager(), "dialog");
             }
         });
     }
