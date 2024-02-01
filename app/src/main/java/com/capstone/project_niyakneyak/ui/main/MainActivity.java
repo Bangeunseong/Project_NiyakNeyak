@@ -1,19 +1,20 @@
 package com.capstone.project_niyakneyak.ui.main;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding;
 import com.capstone.project_niyakneyak.ui.fragment.MainPageFragment;
+import com.capstone.project_niyakneyak.ui.fragment.SettingFragment;
 import com.capstone.project_niyakneyak.ui.fragment.TimeSettingFragment;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -24,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
     private final FragmentManager fragmentManager = getSupportFragmentManager();
     private MainPageFragment mainPageFragment;
     private TimeSettingFragment timeSettingFragment;
+
+    private SettingFragment settingFragment;
+
 
     class ItemSelectionListener implements NavigationBarView.OnItemSelectedListener{
         @Override
@@ -36,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
             else if(item.getItemId() == R.id.menu_time){
                 binding.toolbar.setTitle(R.string.toolbar_main_timer);
                 transaction.replace(R.id.content_fragment_layout, timeSettingFragment).commitAllowingStateLoss();
+            }else if(item.getItemId()== R.id.menu_setting){
+                binding.toolbar.setTitle("Setting");
+                transaction.replace(R.id.content_fragment_layout, settingFragment).commitAllowingStateLoss();
             }
             return true;
         }
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         mainPageFragment = MainPageFragment.newInstance(patientViewModel);
         timeSettingFragment = TimeSettingFragment.newInstance(patientViewModel);
 
+        settingFragment = SettingFragment.newInstance("blank", "blank");
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.content_fragment_layout, mainPageFragment).commitAllowingStateLoss();
         binding.menuBottomNavigation.setOnItemSelectedListener(new ItemSelectionListener());
