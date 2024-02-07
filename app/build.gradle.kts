@@ -37,6 +37,7 @@ android {
 dependencies {
     implementation("androidx.navigation:navigation-fragment:2.7.6")
     implementation("androidx.navigation:navigation-ui:2.7.6")
+    implementation("com.google.firebase:firebase-inappmessaging:20.4.0")
     val workVersion = "2.9.0"
 
     implementation("androidx.appcompat:appcompat:1.6.1")
