@@ -76,6 +76,24 @@
 
 
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/age_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                app:layout_constraintTop_toBottomOf="@id/profile2_settings">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="나이 : 변수"
+                    android:textSize="18sp" />
+
+
+
+            </LinearLayout>
             <!-- 알림 설정 항목 -->
             <LinearLayout
                 android:id="@+id/notification_settings"
@@ -83,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                app:layout_constraintTop_toBottomOf="@id/profile2_settings">
+                app:layout_constraintTop_toBottomOf="@id/age_settings">
 
                 <TextView
                     android:layout_width="0dp"
