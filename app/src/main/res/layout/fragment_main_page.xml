@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.MainPageFragment">
+    tools:context=".ui.main.fragment.MainPageFragment">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/content_Layout"
@@ -13,7 +13,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:padding="10dp">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -47,14 +47,4 @@
         app:layout_constraintStart_toStartOf="@id/content_Layout"
         app:layout_constraintTop_toTopOf="@id/content_Layout" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/content_main_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:clickable="true"
-        android:contentDescription="@string/action_main_rcv_addItem"
-        android:src="@android:drawable/ic_input_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

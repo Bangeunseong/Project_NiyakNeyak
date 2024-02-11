@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">Project_NiyakNeyak</string>
 
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_data_setting">DataSettingActivity</string>
+
+    <string name="arg_add_data_listener">onAddedDataListener</string>
+    <string name="arg_change_data_listener">onChangedDataListener</string>
+    <string name="arg_origin_data">Medication_Data</string>
+
+
     <string name="hint_main_id">Type your ID</string>
     <string name="hint_main_password">Type your PW</string>
     <string name="main_login_plain_text">Login</string>
@@ -11,8 +20,7 @@
     <string name="invalid_password_less">Password must be more than 5 characters</string>
     <string name="invalid_password_more">Password must be less than 20 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_main">MainActivity</string>
+
 
     <string name="toolbar_login_title">Login</string>
     <string name="toolbar_main_title">Home</string>
@@ -58,6 +66,7 @@
     <string name="dialog_meds_time_tgbtn_thursday">thu</string>
     <string name="dialog_meds_time_tgbtn_friday">fri</string>
     <string name="dialog_meds_time_tgbtn_saturday">sat</string>
+    <string name="dialog_meds_time_timer_error">Currently have no alarm to ring!</string>
 
     <string name="dialog_meds_time_picker_title">Select time</string>
     <string name="dialog_meds_time_picker_min_max_error">Please select time between given interval</string>
@@ -66,7 +75,10 @@
     <string name="dialog_meds_time_delete_notification_msg">Do you want to delete?</string>
     <string name="dialog_meds_time_delete_notification_pos_btn">OK</string>
     <string name="dialog_meds_time_delete_notification_neg_btn">Cancel</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="alarm_title">Time to eat pills!</string>
+    <string name="arg_alarm_obj">AlarmObject</string>
+    <string name="arg_alarm_bundle_obj">AlarmBundleObject</string>
+    <string name="dayNightTheme">DayNightTheme</string>
 
 </resources>

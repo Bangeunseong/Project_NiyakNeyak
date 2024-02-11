@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.NonNull;
 
-import com.capstone.project_niyakneyak.data.LoginDataSource;
-import com.capstone.project_niyakneyak.data.LoginRepository;
+import com.capstone.project_niyakneyak.data.user_resource.LoginDataSource;
+import com.capstone.project_niyakneyak.data.user_resource.LoginRepository;
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
