@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">Project_NiyakNeyak</string>
+
+    <string name="hint_main_id">Type your ID</string>
+    <string name="hint_main_password">Type your PW</string>
+    <string name="main_login_plain_text">Login</string>
+    <string name="main_login_google_text">Login with Google</string>
+    <string name="main_login_naver_text">Login with Naver</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid ID or Email</string>
+    <string name="invalid_password_less">Password must be more than 5 characters</string>
+    <string name="invalid_password_more">Password must be less than 20 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="toolbar_login_title">Login</string>
+    <string name="toolbar_main_title">Home</string>
+    <string name="toolbar_main_timer">Set Timer</string>
+    <string name="toolbar_main_checklist">CheckList</string>
+    <string name="toolbar_main_settings">Settings</string>
+
+    <string name="action_menu_settings">Settings</string>
+    <string name="action_menu_logout">Logout</string>
+    <string name="action_menu_login">Login</string>
+
+    <string name="action_main_rcv_addItem">Add Medication Info.</string>
+    <string name="action_main_rcv_addIntro.">
+        Medication Info. is currently empty,
+        Click <b>+</b> to add.
+    </string>
+    <string name="action_main_rcv_modifyItem">Modify</string>
+    <string name="action_main_rcv_deleteItem">Delete</string>
+
+    <string name="action_main_rcv_add_error">Addition Failed</string>
+    <string name="action_main_rcv_modify_error">Modification Failed</string>
+    <string name="action_main_rcv_delete_error">Deletion Failed</string>
+    <string name="action_main_rcv_search_error">Search Failed</string>
+
+    <string name="dialog_add_form_title">Add Medication Info</string>
+    <string name="dialog_modify_form_title">Modify Medication Info</string>
+    <string name="dialog_add_form_submit">submit</string>
+    <string name="dialog_add_form_cancel">cancel</string>
+    <string name="dialog_add_form_meds_name">Type Medication Name</string>
+    <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
+    <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
+    <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
+    <string name="dialog_meds_time_title">Medication Cycle</string>
+    <string name="dialog_meds_time_sw_morning_title">Morning</string>
+    <string name="dialog_meds_time_sw_afternoon_title">Afternoon</string>
+    <string name="dialog_meds_time_sw_evening_title">Evening</string>
+    <string name="dialog_meds_time_sw_midnight_title">Midnight</string>
+
+    <string name="dialog_meds_time_tgbtn_sunday">sun</string>
+    <string name="dialog_meds_time_tgbtn_monday">mon</string>
+    <string name="dialog_meds_time_tgbtn_tuesday">tue</string>
+    <string name="dialog_meds_time_tgbtn_wednesday">wed</string>
+    <string name="dialog_meds_time_tgbtn_thursday">thu</string>
+    <string name="dialog_meds_time_tgbtn_friday">fri</string>
+    <string name="dialog_meds_time_tgbtn_saturday">sat</string>
+
+    <string name="dialog_meds_time_picker_title">Select time</string>
+    <string name="dialog_meds_time_picker_min_max_error">Please select time between given interval</string>
+
+    <string name="dialog_meds_time_delete_notification_title">Notification</string>
+    <string name="dialog_meds_time_delete_notification_msg">Do you want to delete?</string>
+    <string name="dialog_meds_time_delete_notification_pos_btn">OK</string>
+    <string name="dialog_meds_time_delete_notification_neg_btn">Cancel</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

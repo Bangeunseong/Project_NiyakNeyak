@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/dialog_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="70dp"
+            android:paddingHorizontal="10dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dialog_meds_name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:errorTextAppearance="@style/ErrorTextAppearance"
+                app:hintTextAppearance="@style/HintTextAppearance"
+                app:layout_constraintBottom_toTopOf="@id/dialog_meds_detail_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_max="360dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dialog_meds_name_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/dialog_add_form_meds_name" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dialog_meds_detail_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@id/dialog_meds_date_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dialog_meds_name_layout"
+                app:layout_constraintWidth_max="360dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dialog_meds_detail_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/dialog_add_form_meds_detail" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dialog_meds_date_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dialog_meds_detail_layout"
+                app:layout_constraintWidth_max="360dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dialog_meds_date_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="@string/dialog_add_form_meds_date"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dialog_meds_time_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+
+                android:background="@drawable/item_dialog_time_configurator"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dialog_meds_date_layout"
+                app:layout_constraintWidth_max="360dp">
+
+                <TextView
+                    android:id="@+id/dialog_meds_time_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_dialog_time_configurator_title"
+                    android:gravity="center"
+                    android:paddingVertical="10dp"
+                    android:text="@string/dialog_meds_time_title"
+                    android:textColor="@color/white_500"
+                    android:textSize="24sp"
+                    android:textStyle="normal"
+                    app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_week_cycle_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/dialog_meds_time_week_cycle_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="6dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="4dp"
+                    app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_daily_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_max="46dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_title"
+                    app:layout_constraintWidth_max="360dp">
+
+                    <ToggleButton
+                        android:id="@+id/dialog_meds_time_tgl_sun"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/red_500"
+                        android:textOff="@string/dialog_meds_time_tgbtn_sunday"
+                        android:textOn="@string/dialog_meds_time_tgbtn_sunday"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_tgl_mon"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_max="46dp" />
+
+                    <ToggleButton
+                        android:id="@+id/dialog_meds_time_tgl_mon"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/black_500"
+                        android:textOff="@string/dialog_meds_time_tgbtn_monday"
+                        android:textOn="@string/dialog_meds_time_tgbtn_monday"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_tgl_tue"
+                        app:layout_constraintStart_toEndOf="@id/dialog_meds_time_tgl_sun"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ToggleButton
+                        android:id="@+id/dialog_meds_time_tgl_tue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/black_500"
+                        android:textOff="@string/dialog_meds_time_tgbtn_tuesday"
+                        android:textOn="@string/dialog_meds_time_tgbtn_tuesday"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_tgl_wed"
+                        app:layout_constraintStart_toEndOf="@id/dialog_meds_time_tgl_mon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ToggleButton
+                        android:id="@+id/dialog_meds_time_tgl_wed"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/black_500"
+                        android:textOff="@string/dialog_meds_time_tgbtn_wednesday"
+                        android:textOn="@string/dialog_meds_time_tgbtn_wednesday"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_tgl_thu"
+                        app:layout_constraintStart_toEndOf="@id/dialog_meds_time_tgl_tue"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ToggleButton
+                        android:id="@+id/dialog_meds_time_tgl_thu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/black_500"
+                        android:textOff="@string/dialog_meds_time_tgbtn_thursday"
+                        android:textOn="@string/dialog_meds_time_tgbtn_thursday"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_tgl_fri"
+                        app:layout_constraintStart_toEndOf="@id/dialog_meds_time_tgl_wed"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ToggleButton
+                        android:id="@+id/dialog_meds_time_tgl_fri"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/black_500"
+                        android:textOff="@string/dialog_meds_time_tgbtn_friday"
+                        android:textOn="@string/dialog_meds_time_tgbtn_friday"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_tgl_sat"
+                        app:layout_constraintStart_toEndOf="@id/dialog_meds_time_tgl_thu"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ToggleButton
+                        android:id="@+id/dialog_meds_time_tgl_sat"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/blue_500"
+                        android:textOff="@string/dialog_meds_time_tgbtn_saturday"
+                        android:textOn="@string/dialog_meds_time_tgbtn_saturday"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/dialog_meds_time_tgl_fri"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/dialog_meds_time_daily_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="4dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_week_cycle_layout">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:gravity="start|center"
+                        android:text="@string/dialog_meds_time_sw_morning_title"
+                        android:textSize="17sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBottom_toTopOf="@id/textView2"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_sw_morning"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/dialog_meds_time_sw_morning"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_sw_afternoon"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/textView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:gravity="start|center"
+                        android:text="@string/dialog_meds_time_sw_afternoon_title"
+                        android:textSize="17sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBottom_toTopOf="@id/textView3"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_sw_afternoon"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/dialog_meds_time_sw_afternoon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_sw_evening"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/textView2"
+                        app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_sw_morning" />
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:gravity="start|center"
+                        android:text="@string/dialog_meds_time_sw_evening_title"
+                        android:textSize="17sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBottom_toTopOf="@id/textView4"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_sw_evening"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView2" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/dialog_meds_time_sw_evening"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toTopOf="@id/dialog_meds_time_sw_midnight"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/textView3"
+                        app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_sw_afternoon" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:gravity="start|center"
+                        android:text="@string/dialog_meds_time_sw_midnight_title"
+                        android:textSize="17sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/dialog_meds_time_sw_midnight"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView3" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/dialog_meds_time_sw_midnight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/textView4"
+                        app:layout_constraintTop_toBottomOf="@id/dialog_meds_time_sw_evening" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/dialog_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white_500"
+        android:layoutDirection="rtl"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="6dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/dialog_submit"
+            style="@style/DialogSubmitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="12dp"
+            android:text="@string/dialog_add_form_submit" />
+
+        <Button
+            android:id="@+id/dialog_cancel"
+            style="@style/DialogSubmitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="12dp"
+            android:text="@string/dialog_add_form_cancel" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
