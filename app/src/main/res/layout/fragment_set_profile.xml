@@ -51,6 +51,7 @@
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
                     android:textSize="20dp"
                     android:text="이름" />
 
@@ -60,6 +61,7 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="text"
+                    android:textAlignment="center"
                     android:text="방은성" />
             </LinearLayout>
             <LinearLayout
@@ -74,6 +76,7 @@
                     android:id="@+id/textView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
                     android:textSize="20dp"
                     android:text="나이" />
 
@@ -83,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="text"
+                    android:textAlignment="center"
                     android:text="24" />
             </LinearLayout>
             <LinearLayout
@@ -97,6 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
+                    android:paddingRight="10dp"
                     android:text="성별" />
                 <RadioGroup
                     android:id="@+id/gender_radio_group"
