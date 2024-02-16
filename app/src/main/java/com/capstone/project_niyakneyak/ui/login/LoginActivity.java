@@ -182,24 +182,23 @@ public class LoginActivity extends AppCompatActivity {
                 String email = binding.mainIdEditText.getText().toString();
                 String password = binding.mainPwEditText.getText().toString();
 
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    // User creation failed
-                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                    updateUI(null);
-                                }
-                                binding.loadingBarPlain.setVisibility(View.GONE); // Hide loading bar
-                            }
-                        });
+                mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Intent intent = new Intent (LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
             }
         });
 
