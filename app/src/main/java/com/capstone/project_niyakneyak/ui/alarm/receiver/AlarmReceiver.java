@@ -25,12 +25,17 @@ public class AlarmReceiver extends BroadcastReceiver {
         else {
             Bundle bundle = intent.getBundleExtra(context.getString(R.string.arg_alarm_bundle_obj));
             if (bundle!=null)
-                alarm = (Alarm)bundle.getSerializable(context.getString(R.string.arg_alarm_obj));
+                alarm = (Alarm)bundle.getParcelable(context.getString(R.string.arg_alarm_obj));
             String toastText = String.format("Alarm Received");
             Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show();
-            if(alarm != null) {
-                if (isAlarmToday(alarm))
+            if(alarm!=null) {
+                if (!alarm.isRecurring()) {
                     startAlarmService(context, alarm);
+                } else {
+                    if (isAlarmToday(alarm)) {
+                        startAlarmService(context, alarm);
+                    }
+                }
             }
         }
     }
@@ -40,44 +45,23 @@ public class AlarmReceiver extends BroadcastReceiver {
         calendar.setTimeInMillis(System.currentTimeMillis());
         int today = calendar.get(Calendar.DAY_OF_WEEK);
 
-        switch(today) {
-            case Calendar.MONDAY:
-                if (alarm1.isMon())
-                    return true;
-                return false;
-            case Calendar.TUESDAY:
-                if (alarm1.isTue())
-                    return true;
-                return false;
-            case Calendar.WEDNESDAY:
-                if (alarm1.isWed())
-                    return true;
-                return false;
-            case Calendar.THURSDAY:
-                if (alarm1.isThu())
-                    return true;
-                return false;
-            case Calendar.FRIDAY:
-                if (alarm1.isFri())
-                    return true;
-                return false;
-            case Calendar.SATURDAY:
-                if (alarm1.isSat())
-                    return true;
-                return false;
-            case Calendar.SUNDAY:
-                if (alarm1.isSun())
-                    return true;
-                return false;
-        }
-        return false;
+        return switch (today) {
+            case Calendar.MONDAY -> alarm1.isMon();
+            case Calendar.TUESDAY -> alarm1.isTue();
+            case Calendar.WEDNESDAY -> alarm1.isWed();
+            case Calendar.THURSDAY -> alarm1.isThu();
+            case Calendar.FRIDAY -> alarm1.isFri();
+            case Calendar.SATURDAY -> alarm1.isSat();
+            case Calendar.SUNDAY -> alarm1.isSun();
+            default -> false;
+        };
     }
 
     private void startAlarmService(Context context, Alarm alarm1) {
         Intent intentService = new Intent(context, AlarmService.class);
         Bundle bundle=new Bundle();
-        bundle.putSerializable("AlarmObject",alarm1);
-        intentService.putExtra("AlarmBundleObject",bundle);
+        bundle.putParcelable(context.getString(R.string.arg_alarm_obj),alarm1);
+        intentService.putExtra(context.getString(R.string.arg_alarm_bundle_obj),bundle);
         context.startForegroundService(intentService);
     }
     private void startRescheduleAlarmsService(Context context) {

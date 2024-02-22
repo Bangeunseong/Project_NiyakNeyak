@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.fragment.MainPageFragment">
+    tools:context=".ui.main.fragment.DataListFragment">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/content_Layout"
@@ -13,8 +14,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp">
+            android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/content_main_meds"
@@ -33,6 +33,17 @@
             </androidx.recyclerview.widget.RecyclerView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/content_main_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        android:contentDescription="@string/action_main_rcv_addItem"
+        android:src="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/content_main_guide"

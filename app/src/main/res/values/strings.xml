@@ -23,8 +23,8 @@
 
 
     <string name="toolbar_login_title">Login</string>
-    <string name="toolbar_main_title">Home</string>
-    <string name="toolbar_main_timer">Set Timer</string>
+    <string name="toolbar_main_title">Meds</string>
+    <string name="toolbar_main_timer">Timer</string>
     <string name="toolbar_main_checklist">CheckList</string>
     <string name="toolbar_main_settings">Settings</string>
 
@@ -45,9 +45,9 @@
     <string name="action_main_rcv_delete_error">Deletion Failed</string>
     <string name="action_main_rcv_search_error">Search Failed</string>
 
-    <string name="dialog_add_form_title">Add Medication Info</string>
-    <string name="dialog_modify_form_title">Modify Medication Info</string>
-    <string name="dialog_add_form_submit">submit</string>
+    <string name="dialog_add_form_title">Insert Information</string>
+    <string name="dialog_modify_form_title">Change Information</string>
+    <string name="dialog_add_form_submit">save</string>
     <string name="dialog_add_form_cancel">cancel</string>
     <string name="dialog_add_form_meds_name">Type Medication Name</string>
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
@@ -76,9 +76,16 @@
     <string name="dialog_meds_time_delete_notification_pos_btn">OK</string>
     <string name="dialog_meds_time_delete_notification_neg_btn">Cancel</string>
 
+    <!-- Alarm Attributes -->
     <string name="alarm_title">Time to eat pills!</string>
     <string name="arg_alarm_obj">AlarmObject</string>
     <string name="arg_alarm_bundle_obj">AlarmBundleObject</string>
-    <string name="dayNightTheme">DayNightTheme</string>
+    <string name="dialog_alarm_name_text">Alarm Name</string>
+    <string name="dialog_alarm_vol_text">RingTone</string>
+    <string name="dialog_alarm_vib_text">Vibrate</string>
+    <string name="alarm_ring_dismiss_text">Dismiss</string>
+    <string name="alarm_ring_snooze_text">Snooze</string>
+    <string name="alarm_clock_png">ic_alarm_purple</string>
 
+    <string name="dayNightTheme">DayNightTheme</string>
 </resources>

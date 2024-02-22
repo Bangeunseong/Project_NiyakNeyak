@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -27,9 +28,10 @@ public class App extends Application {
     }
 
     private void createNotificationChannel_Alarm() {
+        Log.d("Notification Channel", "Channel_Created!");
         NotificationChannel serviceChannel = new NotificationChannel(
                 CHANNEL_ID,
-                getString(R.string.app_name) + "Service Channel",
+                getString(R.string.app_name) + " Service Channel",
                 NotificationManager.IMPORTANCE_HIGH
         );
         NotificationManager manager = getSystemService(NotificationManager.class);

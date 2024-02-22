@@ -44,7 +44,7 @@ public class MainViewModel extends ViewModel implements Serializable {
         if(result instanceof Result.Success){
             Log.d("PatientViewModel", "Addition Success(Meds)");
             MedsData resultData = ((Result.Success<MedsData>)result).getData();
-            actionResult.setValue(new ActionResult(new DataView("Added Meds: " + resultData.getMeds_name())));
+            actionResult.setValue(new ActionResult(new DataView("Added: " + resultData.getMeds_name())));
         }
         else actionResult.setValue(new ActionResult(R.string.action_main_rcv_add_error));
     }
@@ -54,7 +54,7 @@ public class MainViewModel extends ViewModel implements Serializable {
         if(result instanceof Result.Success){
             Log.d("PatientViewModel", "Modification Success(Meds)");
             MedsData resultData = ((Result.Success<MedsData>)result).getData();
-            actionResult.setValue(new ActionResult(new DataView("Modified Meds: " + resultData.getMeds_name())));
+            actionResult.setValue(new ActionResult(new DataView("Modified: " + resultData.getMeds_name())));
         }
         else actionResult.setValue(new ActionResult(R.string.action_main_rcv_modify_error));
     }
@@ -64,7 +64,7 @@ public class MainViewModel extends ViewModel implements Serializable {
         if(result instanceof Result.Success){
             Log.d("PatientViewModel", "Deletion Success(Meds)");
             MedsData resultData = ((Result.Success<MedsData>)result).getData();
-            actionResult.setValue(new ActionResult(new DataView("Deleted Meds: " + resultData.getMeds_name())));
+            actionResult.setValue(new ActionResult(new DataView("Deleted: " + resultData.getMeds_name())));
         }
         else{
             actionResult.setValue(new ActionResult(R.string.action_main_rcv_delete_error));

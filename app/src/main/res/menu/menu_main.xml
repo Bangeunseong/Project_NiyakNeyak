@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_main"
-        android:icon="@android:drawable/ic_menu_search"
-        android:title="Home"/>
+        android:icon="@drawable/baseline_list_alt_24"
+        android:title="@string/toolbar_main_title"/>
     <item
         android:id="@+id/menu_time"
-        android:icon="@android:drawable/ic_menu_month"
-        android:title="Set Timer"/>
+        android:icon="@drawable/baseline_timer_24"
+        android:title="@string/toolbar_main_timer"/>
     <item
         android:id="@+id/menu_time_check"
-        android:icon="@android:drawable/ic_menu_today"
-        android:title="Time Check"/>
+        android:icon="@drawable/baseline_checklist_rtl_24"
+        android:title="@string/toolbar_main_checklist"/>
     <item
         android:id="@+id/menu_setting"
-        android:icon="@android:drawable/ic_menu_manage"
-        android:title="Settings"/>
+        android:icon="@drawable/baseline_settings_24"
+        android:title="@string/toolbar_main_settings"/>
 </menu>

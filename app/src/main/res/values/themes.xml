@@ -3,7 +3,13 @@
     <style name="Base.Theme.Project_NiyakNeyak" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimaryContainer">@color/light_purple_500</item>
+        <item name="colorSecondaryContainer">@color/light_purple_300</item>
     </style>
 
-    <style name="Theme.Project_NiyakNeyak" parent="Base.Theme.Project_NiyakNeyak" />
+    <style name="Theme.Project_NiyakNeyak" parent="Base.Theme.Project_NiyakNeyak">
+        <item name="progressBarStyle">?android:attr/progressBarStyle</item>
+        <item name="toolbarStyle">@style/customToolBarTheme</item>
+        <item name="buttonStyle">@style/customButtonStyle</item>
+    </style>
 </resources>

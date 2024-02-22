@@ -1,6 +1,7 @@
 package com.capstone.project_niyakneyak.data.patient_model;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.List;

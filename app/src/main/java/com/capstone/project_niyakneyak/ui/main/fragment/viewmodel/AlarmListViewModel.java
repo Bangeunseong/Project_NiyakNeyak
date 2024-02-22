@@ -9,10 +9,9 @@ import androidx.lifecycle.LiveData;
 import com.capstone.project_niyakneyak.data.alarm_resource.AlarmRepository;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class AlarmListViewModel extends AndroidViewModel implements Serializable {
+public class AlarmListViewModel extends AndroidViewModel {
     private final AlarmRepository alarmRepository;
     private final LiveData<List<Alarm>> alarmList_LiveData;
 

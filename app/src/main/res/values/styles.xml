@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="EditTextThemeOverlay" parent="ThemeOverlay.AppCompat">
-        <item name="colorAccent">@android:color/holo_purple</item>
+    <style name="toolBarTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white_500</item>
+        <item name="android:textStyle">bold</item>
     </style>
-
     <style name="ErrorTextAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@android:color/holo_red_light</item>
         <item name="android:textSize">11sp</item>
     </style>
-
     <style name="HintTextAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@android:color/holo_purple</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold|italic</item>
     </style>
-    <style name="ThemeOverlay.PChart.Material3TimePicker" parent="ThemeOverlay.Material3.MaterialTimePicker">
-        <item name="colorSurface">@color/light_mint_500</item>
-        <item name="colorOnSurfaceVariant">@color/mint_500</item>
-        <item name="colorOnSurface">@color/light_mint_500</item>
-        <item name="colorPrimary">@color/white_500</item>
-        <item name="colorOnPrimaryContainer">@color/white_500</item>
-        <item name="colorPrimaryContainer">@color/black_500</item>
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/transparent</item>
+        <item name="hintTextAppearance">@style/HintTextAppearance</item>
+        <item name="errorTextAppearance">@style/ErrorTextAppearance</item>
     </style>
-    <style name="DialogSubmitButton" parent="Widget.AppCompat.Button.Colored">
+    <style name="customButtonStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/text_color</item>
-        <item name="android:background">@drawable/dialog_submit_btn</item>
+        <item name="android:background">@drawable/item_dialog_submit_btn</item>
+    </style>
+    <style name="DialogBackground" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/item_dialog_bg</item>
+    </style>
+    <style name="TimePickerTheme" parent="ThemeOverlay.MaterialComponents.TimePicker">
+        <item name="android:textSize">35sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:timePickerMode">spinner</item>
+        <item name="android:background">@color/light_purple_500</item>
+    </style>
+    <style name="customToolBarTheme" parent="Widget.AppCompat.Toolbar">
+        <item name="collapseIcon">@drawable/baseline_list_alt_24</item>
+        <item name="android:textAppearance">@style/toolBarTextAppearance</item>
     </style>
 </resources>

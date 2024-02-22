@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".ui.main.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -20,9 +19,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme" />
+            android:background="?attr/colorPrimary"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -30,31 +27,19 @@
         android:id="@+id/include"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-
+        layout="@layout/fragment_slider"
         app:layout_constraintBottom_toTopOf="@+id/menu_bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_main_Layout" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/content_main_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="98dp"
-        android:clickable="true"
-        android:contentDescription="@string/action_main_rcv_addItem"
-        android:src="@android:drawable/ic_input_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/menu_bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        app:itemIconTint="@drawable/menu_item_color"
-        app:itemTextColor="@drawable/menu_item_color"
+        app:itemIconTint="@drawable/item_menu_color"
+        app:itemTextColor="@drawable/item_menu_color"
         app:labelVisibilityMode="labeled"
 
         app:layout_constraintBottom_toBottomOf="parent"

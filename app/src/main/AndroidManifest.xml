@@ -2,12 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,16 +30,15 @@
             android:exported="false" />
 
         <activity
-            android:name=".ui.main.DataSettingActivity"
-            android:exported="false"
-            android:label="@string/title_activity_data_setting" />
-        <activity
             android:name=".ui.alarm.activity.RingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Design.NoActionBar"/>
+        <activity
+            android:name=".ui.main.fragment.DataSettingDialog"
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main" />
+            android:exported="false" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"

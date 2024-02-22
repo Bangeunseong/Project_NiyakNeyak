@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_controller"
+    app:startDestination="@id/mainPageFragment">
+
+    <fragment
+        android:id="@+id/mainPageFragment"
+        android:name="com.capstone.project_niyakneyak.ui.main.fragment.DataListFragment"
+        android:label="fragment_main_page"
+        tools:layout="@layout/fragment_data_list" >
+        <action
+            android:id="@+id/action_mainPageFragment_to_alarmListFragment"
+            app:destination="@id/alarmListFragment" />
+        <action
+            android:id="@+id/action_mainPageFragment_to_checkListFragment"
+            app:destination="@id/checkListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alarmListFragment"
+        android:name="com.capstone.project_niyakneyak.ui.main.fragment.AlarmListFragment"
+        android:label="fragment_alarm_list"
+        tools:layout="@layout/fragment_alarm_list" >
+        <action
+            android:id="@+id/action_alarmListFragment_to_checkListFragment"
+            app:destination="@id/checkListFragment" />
+        <action
+            android:id="@+id/action_alarmListFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/checkListFragment"
+        android:name="com.capstone.project_niyakneyak.ui.main.fragment.CheckListFragment"
+        android:label="fragment_check_list"
+        tools:layout="@layout/fragment_check_list" >
+        <action
+            android:id="@+id/action_checkListFragment_to_alarmListFragment"
+            app:destination="@id/alarmListFragment" />
+        <action
+            android:id="@+id/action_checkListFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment" />
+    </fragment>
+</navigation>
