@@ -162,9 +162,8 @@ public class Alarm implements Parcelable {
         PendingIntent alarmPendingIntent = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
                 PendingIntent.getBroadcast(context, alarmCode, intent, PendingIntent.FLAG_IMMUTABLE) :
                 PendingIntent.getBroadcast(context,alarmCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        alarmManager.cancel(alarmPendingIntent);
         this.started = false;
+        alarmManager.cancel(alarmPendingIntent);
         Toast.makeText(context, String.format("Alarm cancelled for %02d:%02d", hour, min), Toast.LENGTH_SHORT).show();
     }
 

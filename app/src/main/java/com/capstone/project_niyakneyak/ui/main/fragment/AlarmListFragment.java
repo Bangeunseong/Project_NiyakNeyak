@@ -77,11 +77,7 @@ public class AlarmListFragment extends Fragment implements OnToggleAlarmListener
         binding.contentTimeTable.addItemDecoration(new VerticalItemDecorator(20));
 
         binding.contentAlarmAdd.setOnClickListener(v -> {
-            DialogFragment addAlarm = new AlarmSettingDialog();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(getString(R.string.arg_alarm_obj), null);
-            addAlarm.setArguments(bundle);
-            addAlarm.show(requireActivity().getSupportFragmentManager(), "ALARM_DIALOG_FRAGMENT");
+            showAlarmSettingDialog(null);
         });
     }
 
@@ -125,13 +121,16 @@ public class AlarmListFragment extends Fragment implements OnToggleAlarmListener
     public void onItemClick(Alarm alarm) {
         if(alarm.isStarted())
             alarm.cancelAlarm(getContext());
-        DialogFragment modifyAlarm = new AlarmSettingDialog();
-        Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.arg_alarm_obj), alarm);
-        modifyAlarm.setArguments(args);
-        modifyAlarm.show(requireActivity().getSupportFragmentManager(), "ALARM_DIALOG_FRAGMENT");
+        showAlarmSettingDialog(alarm);
     }
 
+    void showAlarmSettingDialog(@Nullable Alarm alarm){
+        DialogFragment alarmSettingDialog = new AlarmSettingDialog();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(getString(R.string.arg_alarm_obj), alarm);
+        alarmSettingDialog.setArguments(bundle);
+        alarmSettingDialog.show(requireActivity().getSupportFragmentManager(), "ALARM_DIALOG_FRAGMENT");
+    }
 
     //Functions for getting time difference between next time and current time
     private void showTime() {

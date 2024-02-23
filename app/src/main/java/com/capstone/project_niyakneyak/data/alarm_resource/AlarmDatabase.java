@@ -18,6 +18,7 @@ public abstract class AlarmDatabase extends RoomDatabase {
     private static volatile AlarmDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
     static final ExecutorService writeExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    static final ExecutorService readExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     static AlarmDatabase getInstance(final Context context){
         if(INSTANCE == null){

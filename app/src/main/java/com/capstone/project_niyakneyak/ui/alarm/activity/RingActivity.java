@@ -128,9 +128,11 @@ public class RingActivity extends AppCompatActivity {
 
     private void dismissAlarm(){
         if(alarm != null){
-            alarm.setStarted(false);
-            alarm.cancelAlarm(getBaseContext());
-            alarmListViewModel.update(alarm);
+            if(!alarm.isRecurring()){
+                alarm.setStarted(false);
+                alarm.cancelAlarm(getBaseContext());
+                alarmListViewModel.update(alarm);
+            }
         }
         Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
         getApplicationContext().stopService(intentService);

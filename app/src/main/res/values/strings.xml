@@ -32,6 +32,7 @@
     <string name="action_menu_logout">Logout</string>
     <string name="action_menu_login">Login</string>
 
+    <!-- Main Attributes -->
     <string name="action_main_rcv_addItem">Add Medication Info.</string>
     <string name="action_main_rcv_addIntro.">
         Medication Info. is currently empty,
@@ -87,5 +88,15 @@
     <string name="alarm_ring_snooze_text">Snooze</string>
     <string name="alarm_clock_png">ic_alarm_purple</string>
 
+
+
+    <!-- Check Attributes -->
+    <string name="check_rcv_ListIntro">
+        Check List is currently empty.
+        After adding Medication Info. and Alarm,
+        it will be automatically updated.
+    </string>
+
+    <!-- Global Attributes -->
     <string name="dayNightTheme">DayNightTheme</string>
 </resources>

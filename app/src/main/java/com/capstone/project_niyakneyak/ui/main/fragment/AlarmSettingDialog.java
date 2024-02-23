@@ -16,10 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
@@ -29,6 +31,9 @@ import com.capstone.project_niyakneyak.ui.main.etc.AlarmDataView;
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.AlarmSettingViewModel;
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.AlarmSettingViewModelFactory;
 
+import java.util.List;
+import java.util.Random;
+
 public class AlarmSettingDialog extends DialogFragment {
     private final MutableLiveData<ActionResult> actionResult = new MutableLiveData<>();
     private AlarmSettingViewModel alarmSettingViewModel;
@@ -36,7 +41,9 @@ public class AlarmSettingDialog extends DialogFragment {
     private String tone;
     private Alarm alarm;
     private Ringtone ringtone;
-    private boolean isRecurring;
+    private boolean isRecurring = false;
+    private List<Alarm> alarms = null;
+
     private final ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
         if(o.getResultCode() == RESULT_OK){
             Uri uri = o.getData().getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
@@ -63,6 +70,9 @@ public class AlarmSettingDialog extends DialogFragment {
         // Setting ViewModel
         alarmSettingViewModel = new ViewModelProvider(this, new AlarmSettingViewModelFactory(requireActivity().getApplication()))
                 .get(AlarmSettingViewModel.class);
+        alarmSettingViewModel.getAlarmsLiveData().observe(this, alarms -> {
+            this.alarms = alarms;
+        });
     }
 
     @NonNull
@@ -245,6 +255,7 @@ public class AlarmSettingDialog extends DialogFragment {
         int alarmCode = codeGenerator();
         if(!binding.dialogAlarmTitleText.getText().toString().isEmpty())
             alarmTitle = binding.dialogAlarmTitleText.getText().toString();
+
         Alarm alarm = new Alarm(
                 alarmCode,
                 binding.timePicker.getHour(),
@@ -262,6 +273,13 @@ public class AlarmSettingDialog extends DialogFragment {
                 tone,
                 binding.alarmVibSwt.isChecked()
         );
+
+        // Validate alarm's existence
+        if(isAlreadyExistsAlarm(alarm)){
+            Toast.makeText(getContext(), String.format("Alarm already exists at %02d:%02d!", binding.timePicker.getHour(), binding.timePicker.getMinute()), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         alarmSettingViewModel.insert(alarm);
         alarm.scheduleAlarm(getContext());
     }
@@ -299,30 +317,37 @@ public class AlarmSettingDialog extends DialogFragment {
         if(alarm.isMon()){
             binding.toggleMonday.setChecked(true);
             binding.toggleMonday.setAlpha(1);
+            isRecurring = true;
         }
         if(alarm.isTue()){
             binding.toggleTuesday.setChecked(true);
             binding.toggleTuesday.setAlpha(1);
+            isRecurring = true;
         }
         if(alarm.isWed()){
             binding.toggleWednesday.setChecked(true);
             binding.toggleWednesday.setAlpha(1);
+            isRecurring = true;
         }
         if(alarm.isThu()){
             binding.toggleThursday.setChecked(true);
             binding.toggleThursday.setAlpha(1);
+            isRecurring = true;
         }
         if(alarm.isFri()){
             binding.toggleFriday.setChecked(true);
             binding.toggleFriday.setAlpha(1);
+            isRecurring = true;
         }
         if(alarm.isSat()){
             binding.toggleSaturday.setChecked(true);
             binding.toggleSaturday.setAlpha(1);
+            isRecurring = true;
         }
         if(alarm.isSun()){
             binding.toggleSunday.setChecked(true);
             binding.toggleSunday.setAlpha(1);
+            isRecurring = true;
         }
 
         actionResult.setValue(new ActionResult(new AlarmDataView(alarm.isSun(),alarm.isMon(),alarm.isTue(),
@@ -335,12 +360,17 @@ public class AlarmSettingDialog extends DialogFragment {
             binding.alarmVibSwt.setChecked(true);
     }
 
+    private boolean isAlreadyExistsAlarm(Alarm data){
+        for(Alarm alarm : alarms)
+            if(alarm.getHour() == data.getHour() && alarm.getMin() == data.getMin()){
+                if(alarm.getRecurringDaysText() != null)
+                    return alarm.getRecurringDaysText().equals(data.getRecurringDaysText());
+                else return data.getRecurringDaysText() == null;
+            }
+        return false;
+    }
+
     private int codeGenerator(){
-        String builder = String.valueOf(binding.timePicker.getHour()) + binding.timePicker.getMinute() +
-                (binding.toggleSunday.isChecked() ? 1 : 0) + (binding.toggleMonday.isChecked() ? 1 : 0) +
-                (binding.toggleTuesday.isChecked() ? 1 : 0) + (binding.toggleWednesday.isChecked() ? 1 : 0) +
-                (binding.toggleThursday.isChecked() ? 1 : 0) + (binding.toggleFriday.isChecked() ? 1 : 0) +
-                (binding.toggleSaturday.isChecked() ? 1 : 0);
-        return builder.hashCode();
+        return new Random().nextInt(Integer.MAX_VALUE);
     }
 }
