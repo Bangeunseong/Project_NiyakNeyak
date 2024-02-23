@@ -92,9 +92,8 @@
 
     <!-- Check Attributes -->
     <string name="check_rcv_ListIntro">
-        Check List is currently empty.
-        After adding Medication Info. and Alarm,
-        it will be automatically updated.
+        Today, there are no medications to consume!&#10;
+        This list will be updated, automatically!
     </string>
 
     <!-- Global Attributes -->
