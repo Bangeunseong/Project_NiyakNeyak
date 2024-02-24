@@ -7,7 +7,7 @@
     android:id="@+id/content_setting_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.capstone.project_niyakneyak.ui.fragment.SettingFragment">
+    tools:context="com.capstone.project_niyakneyak.ui.main.fragment.SettingFragment">
 
     <!-- NestedScrollView를 사용하여 스크롤 가능한 영역 생성 -->
     <androidx.core.widget.NestedScrollView

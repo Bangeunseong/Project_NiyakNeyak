@@ -5,7 +5,7 @@
     android:id="@+id/content_setting_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.AdvancedSettingsFragment">
+    tools:context=".ui.main.fragment.AdvancedSettingsFragment">
 
     <!-- NestedScrollView를 사용하여 스크롤 가능한 영역 생성 -->
     <androidx.core.widget.NestedScrollView
