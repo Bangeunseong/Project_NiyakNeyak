@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.Project_NiyakNeyak"
+    android:background="@color/white_500"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.alarm.activity.RingActivity">
+
+    <Spinner
+        android:id="@+id/alarm_ring_snooze_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dialog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.75" />
+
+    <ImageView
+        android:id="@+id/alarm_ring_clock"
+        android:theme="@style/Theme.Project_NiyakNeyak"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="40dp"
+        android:contentDescription="@string/alarm_clock_png"
+        android:src="@drawable/ic_alarm_purple"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLayout"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintWidth_max="488dp">
+
+        <Button
+            android:id="@+id/alarm_ring_reschedule"
+            android:theme="@style/Theme.Project_NiyakNeyak"
+            style="@style/customButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="40dp"
+            android:text="@string/alarm_ring_snooze_text"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/alarm_ring_off" />
+
+        <Button
+            android:id="@+id/alarm_ring_off"
+            android:theme="@style/Theme.Project_NiyakNeyak"
+            style="@style/customButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="40dp"
+            android:text="@string/alarm_ring_dismiss_text"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@id/alarm_ring_reschedule"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

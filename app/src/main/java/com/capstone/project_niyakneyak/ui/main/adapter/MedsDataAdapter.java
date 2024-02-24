@@ -1,5 +1,7 @@
 package com.capstone.project_niyakneyak.ui.main.adapter;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +15,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.capstone.project_niyakneyak.R;
-import com.capstone.project_niyakneyak.data.model.MedsData;
-import com.capstone.project_niyakneyak.ui.fragment.ModifyDialogFragment;
-import com.capstone.project_niyakneyak.ui.listener.OnChangedDataListener;
-import com.capstone.project_niyakneyak.ui.listener.OnDeleteDataListener;
+import com.capstone.project_niyakneyak.data.patient_model.MedsData;
+import com.capstone.project_niyakneyak.ui.main.listener.OnChangedDataListener;
+import com.capstone.project_niyakneyak.ui.main.listener.OnDeleteDataListener;
+import com.capstone.project_niyakneyak.ui.main.fragment.DataSettingDialog;
 
 import java.util.List;
 
@@ -24,11 +26,11 @@ import java.util.List;
 public class MedsDataAdapter extends RecyclerView.Adapter<MedsDataAdapter.ViewHolder> {
     private final List<MedsData> medsData;
     private final FragmentManager fragmentManager;
-    private final OnDeleteDataListener onDeleteDataListener;
     private final OnChangedDataListener onChangedDataListener;
+    private final OnDeleteDataListener onDeleteDataListener;
 
     public MedsDataAdapter(FragmentManager fragmentManager, List<MedsData> medsData, OnChangedDataListener onChangedDataListener, OnDeleteDataListener onDeleteDataListener){
-        this.fragmentManager = fragmentManager; this.medsData = medsData; this.onDeleteDataListener = onDeleteDataListener; this.onChangedDataListener = onChangedDataListener;
+        this.fragmentManager = fragmentManager; this.medsData = medsData; this.onChangedDataListener = onChangedDataListener; this.onDeleteDataListener = onDeleteDataListener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -62,42 +64,35 @@ public class MedsDataAdapter extends RecyclerView.Adapter<MedsDataAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.rcv_title.setText(medsData.get(position).getMeds_name());
+
         if(medsData.get(position).getMeds_detail() != null)
             holder.rcv_detail.setText(String.format("Detail: %s",medsData.get(position).getMeds_detail()));
-        else holder.rcv_detail.setText("Detail: ");
+        else holder.rcv_detail.setText(String.format("Detail: %s", "None"));
         if(medsData.get(position).getMeds_start_date() != null && medsData.get(position).getMeds_end_date() != null)
             holder.rcv_duration.setText(String.format("Duration: %s~%s",
                     medsData.get(position).getMeds_start_date(),
                     medsData.get(position).getMeds_end_date()));
-        else holder.rcv_duration.setText("Duration: ");
-        holder.modifyBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle data = new Bundle();
-                data.putSerializable("BeforeModify", medsData.get(holder.getAdapterPosition()));
-                DialogFragment newModifyForm = new ModifyDialogFragment(onChangedDataListener);
-                newModifyForm.setArguments(data);
-                newModifyForm.show(fragmentManager, "dialog");
-            }
+        else holder.rcv_duration.setText(String.format("Duration: %s", "None"));
+
+        holder.modifyBtn.setOnClickListener(v -> {
+            DialogFragment changeDataDialog = new DataSettingDialog(null, onChangedDataListener);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("BeforeModify", medsData.get(position));
+            changeDataDialog.setArguments(bundle);
+            changeDataDialog.show(fragmentManager, "DIALOG_FRAGMENT");
         });
-        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MedsData data = medsData.get(holder.getAdapterPosition());
-                holder.onDeleteDataListener.onDeletedData(data);
-            }
+
+        holder.deleteBtn.setOnClickListener(v -> {
+            MedsData data = medsData.get(holder.getAdapterPosition());
+            holder.onDeleteDataListener.onDeletedData(data);
         });
     }
 
     @Override
     public int getItemCount() {return medsData.size();}
 
-    public void addItem(int position){
-        notifyItemInserted(position);
-    }
-    public void changeItem(int position){
-        notifyItemChanged(position);
-    }
+    public void addItem(int position) { notifyItemInserted(position); }
+    public void modifyItem(int position) { notifyItemChanged(position); }
     public void removeItem(int position){
         notifyItemRemoved(position);
     }

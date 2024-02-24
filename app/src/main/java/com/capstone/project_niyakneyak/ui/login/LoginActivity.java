@@ -4,22 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding;
 import com.capstone.project_niyakneyak.ui.main.MainActivity;
 
@@ -27,24 +21,6 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        menu.add(0,0,0,R.string.action_menu_settings);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
-            case 0:
-                //TODO: Need to modify (Using AlertDialog should be enough to give users language options)
-                Toast toast = Toast.makeText(LoginActivity.this, "Need to replace with function", Toast.LENGTH_LONG);
-                toast.show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +28,6 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        binding.toolbarLogin.setTitle(R.string.toolbar_login_title);
-        setSupportActionBar(binding.toolbarLogin);
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -92,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                     showLoginFailed(loginResult.getError());
                 }
                 if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
+                    updateUiWithUser();
                 }
             }
         });
@@ -115,28 +89,22 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.mainIdEditText.addTextChangedListener(afterTextChanged);
         binding.mainPwEditText.addTextChangedListener(afterTextChanged);
-        binding.mainPwEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE){
-                    loginViewModel.login(binding.mainIdEditText.getText().toString(),
-                            binding.mainPwEditText.getText().toString());
-                }
-                return false;
-            }
-        });
-
-        binding.mainLoginPlain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.loadingBarPlain.setVisibility(View.VISIBLE);
+        binding.mainPwEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if(actionId == EditorInfo.IME_ACTION_DONE){
                 loginViewModel.login(binding.mainIdEditText.getText().toString(),
                         binding.mainPwEditText.getText().toString());
             }
+            return false;
+        });
+
+        binding.mainLoginPlain.setOnClickListener(v -> {
+            binding.loadingBarPlain.setVisibility(View.VISIBLE);
+            loginViewModel.login(binding.mainIdEditText.getText().toString(),
+                    binding.mainPwEditText.getText().toString());
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
+    private void updateUiWithUser() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("USER_ID", binding.mainIdEditText.getText().toString());
         intent.putExtra("USER_PW", binding.mainPwEditText.getText().toString());

@@ -6,38 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.login.LoginActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/toolbar_login_Layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/content_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme" />
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/content_layout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:paddingTop="60dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_login_Layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content_login_Layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
 
             <ImageView
                 android:id="@+id/main_icon_image"
@@ -53,17 +31,11 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/main_id_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:theme="@style/EditTextThemeOverlay"
 
-                app:boxStrokeColor="@android:color/holo_purple"
-                app:boxStrokeWidth="1dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="30"
-                app:errorTextAppearance="@style/ErrorTextAppearance"
-                app:hintTextAppearance="@style/HintTextAppearance"
                 app:layout_constraintBottom_toTopOf="@id/main_password_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -81,17 +53,11 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/main_password_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:theme="@style/EditTextThemeOverlay"
 
-                app:boxStrokeColor="@android:color/holo_purple"
-                app:boxStrokeWidth="1dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="20"
-                app:errorTextAppearance="@style/ErrorTextAppearance"
-                app:hintTextAppearance="@style/HintTextAppearance"
                 app:layout_constraintBottom_toTopOf="@id/main_login_plain"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -145,7 +111,6 @@
 
             <ProgressBar
                 android:id="@+id/loadingBar_Plain"
-                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:clickable="false"
@@ -157,7 +122,6 @@
 
             <ProgressBar
                 android:id="@+id/loadingBar_Google"
-                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:clickable="false"
@@ -169,7 +133,6 @@
 
             <ProgressBar
                 android:id="@+id/loadingBar_Naver"
-                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
