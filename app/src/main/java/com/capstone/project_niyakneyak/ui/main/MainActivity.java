@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         mainPageFragment = MainPageFragment.newInstance(patientViewModel);
         timeSettingFragment = TimeSettingFragment.newInstance(patientViewModel);
 
-        settingFragment = SettingFragment.newInstance("blank","blank");
+        settingFragment = SettingFragment.newInstance();
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.content_fragment_layout, mainPageFragment).commitAllowingStateLoss();
