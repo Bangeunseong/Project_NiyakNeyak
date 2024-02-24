@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_mainPageFragment_to_checkListFragment"
             app:destination="@id/checkListFragment" />
+        <action
+            android:id="@+id/action_mainPageFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/alarmListFragment"
@@ -28,6 +31,9 @@
         <action
             android:id="@+id/action_alarmListFragment_to_mainPageFragment"
             app:destination="@id/mainPageFragment" />
+        <action
+            android:id="@+id/action_alarmListFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/checkListFragment"
@@ -40,5 +46,31 @@
         <action
             android:id="@+id/action_checkListFragment_to_mainPageFragment"
             app:destination="@id/mainPageFragment" />
+        <action
+            android:id="@+id/action_checkListFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.capstone.project_niyakneyak.ui.main.fragment.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_alarmListFragment"
+            app:destination="@id/alarmListFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_checkListFragment"
+            app:destination="@id/checkListFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_advancedSettingsFragment"
+            app:destination="@id/advancedSettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/advancedSettingsFragment"
+        android:name="com.capstone.project_niyakneyak.ui.main.fragment.AdvancedSettingsFragment"
+        android:label="fragment_advanced_settings"
+        tools:layout="@layout/fragment_advanced_settings" />
 </navigation>
