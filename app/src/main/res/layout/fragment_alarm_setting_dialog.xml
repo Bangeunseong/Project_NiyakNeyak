@@ -281,7 +281,7 @@
 
         <Button
             android:id="@+id/alarm_submit"
-            style="@style/customButtonStyle"
+            style="@style/customSubmitBtnStyle"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:paddingHorizontal="20dp"
@@ -294,7 +294,7 @@
 
         <Button
             android:id="@+id/alarm_cancel"
-            style="@style/customButtonStyle"
+            style="@style/customSubmitBtnStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingHorizontal="20dp"

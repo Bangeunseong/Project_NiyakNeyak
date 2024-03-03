@@ -19,12 +19,12 @@ import com.capstone.project_niyakneyak.data.Result;
 import com.capstone.project_niyakneyak.data.patient_model.MedsData;
 import com.capstone.project_niyakneyak.data.patient_model.PatientData;
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding;
-import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.MainViewModelFactory;
+import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataListViewModelFactory;
 import com.capstone.project_niyakneyak.ui.main.listener.OnAddedDataListener;
 import com.capstone.project_niyakneyak.ui.main.listener.OnChangedDataListener;
 import com.capstone.project_niyakneyak.ui.main.listener.OnDeleteDataListener;
-import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.MainViewModel;
-import com.capstone.project_niyakneyak.ui.main.adapter.MedsDataAdapter;
+import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataListViewModel;
+import com.capstone.project_niyakneyak.ui.main.adapter.MainDataAdapter;
 import com.capstone.project_niyakneyak.ui.main.decorator.HorizontalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
 
@@ -37,17 +37,17 @@ import java.util.ArrayList;
  */
 public class DataListFragment extends Fragment {
     private FragmentDataListBinding binding;
-    private MedsDataAdapter adapter;
-    private MainViewModel mainViewModel;
+    private MainDataAdapter adapter;
+    private DataListViewModel dataListViewModel;
 
     private final OnAddedDataListener onAddedDataListener = new OnAddedDataListener() {
         @Override
         public void onAddedData(MedsData target) {
             Log.d("MainActivity","Data Addition called");
 
-            Result<PatientData> result = mainViewModel.getPatientData();
+            Result<PatientData> result = dataListViewModel.getPatientData();
             if(result instanceof Result.Success){
-                mainViewModel.add_MedsData(target);
+                dataListViewModel.add_MedsData(target);
                 int position = ((Result.Success<PatientData>)result).getData().getMedsData().size() - 1;
                 adapter.addItem(position);
                 binding.contentMainGuide.setVisibility(View.GONE);
@@ -60,9 +60,9 @@ public class DataListFragment extends Fragment {
         public void onChangedData(MedsData origin, MedsData changed) {
             Log.d("MainActivity","Data Modification called");
 
-            Result<PatientData> result = mainViewModel.getPatientData();
+            Result<PatientData> result = dataListViewModel.getPatientData();
             if(result instanceof Result.Success){
-                mainViewModel.modify_MedsData(origin, changed);
+                dataListViewModel.modify_MedsData(origin, changed);
                 int position = ((Result.Success<PatientData>)result).getData().getMedsData().indexOf(changed);
                 adapter.modifyItem(position);
                 binding.contentMainGuide.setVisibility(View.GONE);
@@ -75,10 +75,10 @@ public class DataListFragment extends Fragment {
         public void onDeletedData(MedsData target) {
             Log.d("MainActivity","Data Deletion called");
 
-            Result<PatientData> result = mainViewModel.getPatientData();
+            Result<PatientData> result = dataListViewModel.getPatientData();
             if(result instanceof Result.Success){
                 int position = ((Result.Success<PatientData>) result).getData().getMedsData().indexOf(target);
-                mainViewModel.delete_MedsData(target); adapter.removeItem(position);
+                dataListViewModel.delete_MedsData(target); adapter.removeItem(position);
                 if(adapter.getItemCount() < 1) binding.contentMainGuide.setVisibility(View.VISIBLE);
             }
         }
@@ -96,8 +96,8 @@ public class DataListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainViewModel = new ViewModelProvider(this, new MainViewModelFactory()).get(MainViewModel.class);
-        mainViewModel.getActionResult().observe(this, actionResult -> {
+        dataListViewModel = new ViewModelProvider(this, new DataListViewModelFactory()).get(DataListViewModel.class);
+        dataListViewModel.getActionResult().observe(this, actionResult -> {
             if(actionResult == null) return;
             if(actionResult.getSuccess() != null){
                 Toast.makeText(getContext(), actionResult.getSuccess().getDisplayData(), Toast.LENGTH_SHORT).show();
@@ -121,10 +121,10 @@ public class DataListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // RecyclerAdapter for Medication Info.
-        Result<PatientData> result = mainViewModel.getPatientData();
+        Result<PatientData> result = dataListViewModel.getPatientData();
         if(result instanceof Result.Success)
-            adapter = new MedsDataAdapter(requireActivity().getSupportFragmentManager(), ((Result.Success<PatientData>) result).getData().getMedsData(), onChangedDataListener, onDeleteDataListener);
-        else adapter = new MedsDataAdapter(requireActivity().getSupportFragmentManager(), new ArrayList<>(), onChangedDataListener, onDeleteDataListener);
+            adapter = new MainDataAdapter(requireActivity().getSupportFragmentManager(), ((Result.Success<PatientData>) result).getData().getMedsData(), onChangedDataListener, onDeleteDataListener);
+        else adapter = new MainDataAdapter(requireActivity().getSupportFragmentManager(), new ArrayList<>(), onChangedDataListener, onDeleteDataListener);
 
         binding.contentMainMeds.setHasFixedSize(false);
         binding.contentMainMeds.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -149,6 +149,6 @@ public class DataListFragment extends Fragment {
         super.onDestroyView();
         binding = null;
         adapter = null;
-        mainViewModel = null;
+        dataListViewModel = null;
     }
 }

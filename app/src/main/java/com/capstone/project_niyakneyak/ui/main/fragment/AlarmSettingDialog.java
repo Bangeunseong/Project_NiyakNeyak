@@ -53,7 +53,7 @@ public class AlarmSettingDialog extends DialogFragment {
                 tone = uri.toString();
                 if(title!=null && !title.isEmpty())
                     binding.alarmRingtoneText.setText(title);
-            }else binding.alarmRingtoneText.setText("");
+            } else binding.alarmRingtoneText.setText("");
         }
     });
 

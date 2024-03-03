@@ -3,7 +3,6 @@ package com.capstone.project_niyakneyak.ui.main.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,7 +14,6 @@ import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 import com.capstone.project_niyakneyak.ui.main.listener.OnToggleAlarmListener;
 
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -56,17 +54,17 @@ public class AlarmDataAdapter extends RecyclerView.Adapter<AlarmDataAdapter.View
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 if(alarm.getHour() < calendar.get(Calendar.HOUR_OF_DAY)){
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
-                    rcv_weekly_date_display.setText(String.format(Locale.KOREAN,"Next Day, %02d/%02d",calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
+                    rcv_weekly_date_display.setText(String.format(Locale.KOREAN,"Next Day %02d/%02d",calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
                 }
                 else if(alarm.getHour() == calendar.get(Calendar.HOUR_OF_DAY)){
                     if(alarm.getMin() <= calendar.get(Calendar.MINUTE)){
                         calendar.add(Calendar.DAY_OF_MONTH, 1);
-                        rcv_weekly_date_display.setText(String.format(Locale.KOREAN, "Next Day: %02d/%02d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
+                        rcv_weekly_date_display.setText(String.format(Locale.KOREAN, "Next Day %02d/%02d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
                     }
-                    else rcv_weekly_date_display.setText(String.format(Locale.KOREAN,"Today, %02d/%02d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
+                    else rcv_weekly_date_display.setText(String.format(Locale.KOREAN,"Today %02d/%02d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
                 }
                 else{
-                    rcv_weekly_date_display.setText(String.format(Locale.KOREAN,"Today, %02d/%02d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
+                    rcv_weekly_date_display.setText(String.format(Locale.KOREAN,"Today %02d/%02d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
                 }
             }
 
@@ -88,7 +86,7 @@ public class AlarmDataAdapter extends RecyclerView.Adapter<AlarmDataAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_meds_time, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_time, parent, false);
         return new ViewHolder(view);
     }
 

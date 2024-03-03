@@ -3,6 +3,8 @@ package com.capstone.project_niyakneyak.data.patient_model;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
+import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
+
 import java.util.ArrayList;
 import java.util.List;
 

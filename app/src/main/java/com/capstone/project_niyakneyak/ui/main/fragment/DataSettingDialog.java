@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -16,32 +15,47 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.capstone.project_niyakneyak.R;
+import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 import com.capstone.project_niyakneyak.data.patient_model.MedsData;
 import com.capstone.project_niyakneyak.databinding.FragmentDataSettingDialogBinding;
+import com.capstone.project_niyakneyak.ui.main.adapter.AlarmDialogDataAdapter;
+import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.etc.SubmitFormState;
+import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataSettingViewModel;
+import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataSettingViewModelFactory;
 import com.capstone.project_niyakneyak.ui.main.listener.OnAddedDataListener;
 import com.capstone.project_niyakneyak.ui.main.listener.OnChangedDataListener;
+import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class DataSettingDialog extends DialogFragment {
+public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmListener {
     MutableLiveData<SubmitFormState> submitFormState = new MutableLiveData<>();
     private FragmentDataSettingDialogBinding binding;
     private final OnAddedDataListener onAddedDataListener;
     private final OnChangedDataListener onChangedDataListener;
+    private DataSettingViewModel dataSettingViewModel;
+    private AlarmDialogDataAdapter adapter;
     private MedsData data;
+    private List<Alarm> alarms = new ArrayList<>();
+    private ArrayList<Integer> includedAlarms = new ArrayList<>();
 
     public DataSettingDialog(OnAddedDataListener onAddedDataListener, OnChangedDataListener onChangedDataListener){
         this.onAddedDataListener = onAddedDataListener; this.onChangedDataListener = onChangedDataListener;
@@ -54,6 +68,15 @@ public class DataSettingDialog extends DialogFragment {
         Bundle bundle = getArguments();
         assert bundle != null;
         data = bundle.getParcelable("BeforeModify");
+        if(data != null) includedAlarms = data.getAlarms();
+
+        adapter = new AlarmDialogDataAdapter(this);
+        dataSettingViewModel = new ViewModelProvider(this, new DataSettingViewModelFactory(getActivity().getApplication()))
+                .get(DataSettingViewModel.class);
+        dataSettingViewModel.getAlarmsLiveData().observe(this, alarms -> {
+            this.alarms = alarms;
+            adapter.setAlarms(alarms, includedAlarms);
+        });
     }
 
     @NonNull
@@ -75,9 +98,17 @@ public class DataSettingDialog extends DialogFragment {
         final TextInputEditText meds_name = binding.medsNameText;
         final TextInputEditText meds_detail = binding.medsDetailText;
         final TextInputEditText meds_date = binding.medsDateText;
+        final RecyclerView rcv_meds_timer = binding.dialogMedsTimerList;
+        final Button meds_timer = binding.dialogMedsTimerAddBtn;
 
         final Button submit = binding.submit;
         final Button cancel = binding.cancel;
+
+        // Setting RecyclerView about timer list
+        rcv_meds_timer.setHasFixedSize(false);
+        rcv_meds_timer.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rcv_meds_timer.setAdapter(adapter);
+        rcv_meds_timer.addItemDecoration(new VerticalItemDecorator(10));
 
         // If Accessible Data is not null, preset input form
         final Long startDate, endDate;
@@ -166,6 +197,8 @@ public class DataSettingDialog extends DialogFragment {
             datePicker.addOnNegativeButtonClickListener(v1 -> {});
         });
 
+        meds_timer.setOnClickListener(v -> showAlarmSettingDialog(null));
+
         submit.setOnClickListener(v -> {
             String meds_name_text = String.valueOf(meds_name.getText());
             String meds_detail_text = String.valueOf(meds_detail.getText()).equals("null") ? null : String.valueOf(meds_detail.getText());
@@ -182,6 +215,7 @@ public class DataSettingDialog extends DialogFragment {
                 data1 = new MedsData(meds_name_text.hashCode(), meds_name_text,
                         meds_detail_text, null, null);
             }
+            data1.setAlarms(includedAlarms);
             if(data == null)
                 onAddedDataListener.onAddedData(data1);
             else onChangedDataListener.onChangedData(data, data1);
@@ -191,6 +225,20 @@ public class DataSettingDialog extends DialogFragment {
         cancel.setOnClickListener(v -> dismiss());
 
         return builder.create();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null; data = null;
+    }
+
+    void showAlarmSettingDialog(@Nullable Alarm alarm){
+        DialogFragment alarmSettingDialog = new AlarmSettingDialog();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(getString(R.string.arg_alarm_obj), alarm);
+        alarmSettingDialog.setArguments(bundle);
+        alarmSettingDialog.show(requireActivity().getSupportFragmentManager(), "ALARM_DIALOG_FRAGMENT");
     }
 
     private void submitDataChanged(String meds){
@@ -203,4 +251,15 @@ public class DataSettingDialog extends DialogFragment {
         if(meds_name == null || !meds_name.matches("\\w{1,20}")) return false;
         return true;
     }
+
+    @Override
+    public void OnItemClicked(Alarm alarm) {
+        if(includedAlarms.contains(alarm.getAlarmCode()))
+            includedAlarms.remove((Object)alarm.getAlarmCode());
+        else includedAlarms.add(alarm.getAlarmCode());
+    }
+
+    @Override
+    @Deprecated
+    public void OnItemClicked(Alarm alarm, boolean isChecked) {}
 }

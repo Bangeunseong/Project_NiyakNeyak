@@ -111,6 +111,9 @@ public class AlarmListFragment extends Fragment implements OnToggleAlarmListener
         builder.setPositiveButton("OK", (dialog, which) -> {
             if(alarm.isStarted())
                 alarm.cancelAlarm(getContext());
+            alarmListViewModel.getPatientData().getMedsData().forEach(medsData -> {
+                medsData.getAlarms().remove((Object)alarm.getAlarmCode());
+            });
             alarmListViewModel.delete(alarm.getAlarmCode());
         });
         builder.setNegativeButton("CANCEL", (dialog, which) -> {});
