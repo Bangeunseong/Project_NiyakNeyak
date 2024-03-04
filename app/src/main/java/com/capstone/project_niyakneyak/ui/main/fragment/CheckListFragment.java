@@ -97,7 +97,7 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
         binding.contentChecklist.addItemDecoration(new VerticalItemDecorator(20));
     }
 
-    //TODO: Need Modification in filtering MedsData
+    //TODO: Need Modification in filtering by Medication Duration
     private List<MedsData> getCertainMedsData(List<MedsData> medsList, List<Alarm> alarms){
         List<MedsData> certainMeds = new ArrayList<>();
         for (MedsData data : medsList){
@@ -110,20 +110,30 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
     private boolean isConsumeDate(List<Alarm> alarms, List<Integer> includedAlarms){
         Calendar today = Calendar.getInstance();
         today.setTimeInMillis(System.currentTimeMillis());
+        boolean flag = false;
         for(Alarm alarm : alarms){
-            if(includedAlarms.contains(alarm.getAlarmCode())){
-                switch(today.get(Calendar.DAY_OF_WEEK)){
-                    case Calendar.SUNDAY -> {if (alarm.isSun()) return true;}
-                    case Calendar.MONDAY -> {if (alarm.isMon()) return true;}
-                    case Calendar.TUESDAY -> {if (alarm.isTue()) return true;}
-                    case Calendar.WEDNESDAY -> {if (alarm.isWed()) return true;}
-                    case Calendar.THURSDAY -> {if (alarm.isThu()) return true;}
-                    case Calendar.FRIDAY -> {if (alarm.isFri()) return true;}
-                    case Calendar.SATURDAY -> {if (alarm.isSat()) return true;}
+            if(includedAlarms.contains(alarm.getAlarmCode()) && alarm.isStarted()){
+                if(alarm.isRecurring()){
+                    switch(today.get(Calendar.DAY_OF_WEEK)){
+                        case Calendar.SUNDAY -> {if (alarm.isSun()) flag = true;}
+                        case Calendar.MONDAY -> {if (alarm.isMon()) flag = true;}
+                        case Calendar.TUESDAY -> {if (alarm.isTue()) flag = true;}
+                        case Calendar.WEDNESDAY -> {if (alarm.isWed()) flag = true;}
+                        case Calendar.THURSDAY -> {if (alarm.isThu()) flag = true;}
+                        case Calendar.FRIDAY -> {if (alarm.isFri()) flag = true;}
+                        case Calendar.SATURDAY -> {if (alarm.isSat()) flag = true;}
+                    }
+                }
+                else{
+                    Calendar alarmClock = Calendar.getInstance();
+                    alarmClock.setTimeInMillis(System.currentTimeMillis());
+                    alarmClock.set(Calendar.HOUR_OF_DAY, alarm.getHour()); alarmClock.set(Calendar.MINUTE, alarm.getMin());
+                    alarmClock.set(Calendar.SECOND, 0); alarmClock.set(Calendar.MILLISECOND, 0);
+                    if(alarmClock.compareTo(today) > 0) flag = true;
                 }
             }
         }
-        return false;
+        return flag;
     }
 
     @Override

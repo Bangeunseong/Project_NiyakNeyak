@@ -77,15 +77,24 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
             today.setTimeInMillis(System.currentTimeMillis());
             List<Alarm> included = new ArrayList<>();
             for(Alarm alarm : alarms){
-                if(includedAlarms.contains(alarm.getAlarmCode())){
-                    switch(today.get(Calendar.DAY_OF_WEEK)){
-                        case Calendar.SUNDAY -> {if (alarm.isSun()) included.add(alarm);}
-                        case Calendar.MONDAY -> {if (alarm.isMon()) included.add(alarm);}
-                        case Calendar.TUESDAY -> {if (alarm.isTue()) included.add(alarm);}
-                        case Calendar.WEDNESDAY -> {if (alarm.isWed()) included.add(alarm);}
-                        case Calendar.THURSDAY -> {if (alarm.isThu()) included.add(alarm);}
-                        case Calendar.FRIDAY -> {if (alarm.isFri()) included.add(alarm);}
-                        case Calendar.SATURDAY -> {if (alarm.isSat()) included.add(alarm);}
+                if(includedAlarms.contains(alarm.getAlarmCode()) && alarm.isStarted()){
+                    if(alarm.isRecurring()){
+                        switch(today.get(Calendar.DAY_OF_WEEK)){
+                            case Calendar.SUNDAY -> {if (alarm.isSun()) included.add(alarm);}
+                            case Calendar.MONDAY -> {if (alarm.isMon()) included.add(alarm);}
+                            case Calendar.TUESDAY -> {if (alarm.isTue()) included.add(alarm);}
+                            case Calendar.WEDNESDAY -> {if (alarm.isWed()) included.add(alarm);}
+                            case Calendar.THURSDAY -> {if (alarm.isThu()) included.add(alarm);}
+                            case Calendar.FRIDAY -> {if (alarm.isFri()) included.add(alarm);}
+                            case Calendar.SATURDAY -> {if (alarm.isSat()) included.add(alarm);}
+                        }
+                    }
+                    else{
+                        Calendar alarmClock = Calendar.getInstance();
+                        alarmClock.setTimeInMillis(System.currentTimeMillis());
+                        alarmClock.set(Calendar.HOUR_OF_DAY, alarm.getHour()); alarmClock.set(Calendar.MINUTE, alarm.getMin());
+                        alarmClock.set(Calendar.SECOND, 0); alarmClock.set(Calendar.MILLISECOND, 0);
+                        if(alarmClock.compareTo(today) > 0) included.add(alarm);
                     }
                 }
             }
