@@ -28,6 +28,7 @@ import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataListViewMo
 import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -59,18 +60,23 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
                 .get(CheckListViewModel.class);
         adapter = new CheckDataAdapter(this);
 
+        checkListViewModel.getAlarmsLiveData().observe(this, alarms -> {
+            this.alarms = alarms;
+            List<MedsData> temp = getCertainMedsData(medsList, alarms);
+            if(temp.size() < 1) binding.contentChecklistDescriptionText.setVisibility(View.VISIBLE);
+            else binding.contentChecklistDescriptionText.setVisibility(View.GONE);
+            adapter.setDataSet(temp, alarms);
+        });
+
         checkListViewModel.getLiveActionResult().observe(this, actionResult -> {
             if(actionResult == null) return;
             if(actionResult.getSuccess() != null){
                 medsList = checkListViewModel.getMedsDataList();
-                if(medsList.size() < 1) binding.contentChecklistDescriptionText.setVisibility(View.VISIBLE);
+                List<MedsData> temp = getCertainMedsData(medsList, alarms);
+                if(temp.size() < 1) binding.contentChecklistDescriptionText.setVisibility(View.VISIBLE);
                 else binding.contentChecklistDescriptionText.setVisibility(View.GONE);
-                adapter.setDataSet(medsList, alarms);
+                adapter.setDataSet(temp, alarms);
             }
-        });
-        checkListViewModel.getAlarmsLiveData().observe(this, alarms -> {
-            this.alarms = alarms;
-            adapter.setDataSet(medsList, alarms);
         });
     }
 
@@ -89,7 +95,35 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
         binding.contentChecklist.setAdapter(adapter);
         binding.contentChecklist.addItemDecoration(new HorizontalItemDecorator(10));
         binding.contentChecklist.addItemDecoration(new VerticalItemDecorator(20));
-        adapter.setDataSet(medsList, alarms);
+    }
+
+    //TODO: Need Modification in filtering MedsData
+    private List<MedsData> getCertainMedsData(List<MedsData> medsList, List<Alarm> alarms){
+        List<MedsData> certainMeds = new ArrayList<>();
+        for (MedsData data : medsList){
+            if(isConsumeDate(alarms, data.getAlarms()))
+                certainMeds.add(data);
+        }
+        return certainMeds;
+    }
+
+    private boolean isConsumeDate(List<Alarm> alarms, List<Integer> includedAlarms){
+        Calendar today = Calendar.getInstance();
+        today.setTimeInMillis(System.currentTimeMillis());
+        for(Alarm alarm : alarms){
+            if(includedAlarms.contains(alarm.getAlarmCode())){
+                switch(today.get(Calendar.DAY_OF_WEEK)){
+                    case Calendar.SUNDAY -> {if (alarm.isSun()) return true;}
+                    case Calendar.MONDAY -> {if (alarm.isMon()) return true;}
+                    case Calendar.TUESDAY -> {if (alarm.isTue()) return true;}
+                    case Calendar.WEDNESDAY -> {if (alarm.isWed()) return true;}
+                    case Calendar.THURSDAY -> {if (alarm.isThu()) return true;}
+                    case Calendar.FRIDAY -> {if (alarm.isFri()) return true;}
+                    case Calendar.SATURDAY -> {if (alarm.isSat()) return true;}
+                }
+            }
+        }
+        return false;
     }
 
     @Override

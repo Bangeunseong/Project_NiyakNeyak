@@ -20,12 +20,13 @@ import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.ViewHolder> {
     private OnCheckedAlarmListener onCheckedAlarmListener;
-    private List<MedsData> medsList;
-    private List<Alarm> alarms;
+    private List<MedsData> medsList = new ArrayList<>();
+    private List<Alarm> alarms = new ArrayList<>();
 
     public CheckDataAdapter(OnCheckedAlarmListener onCheckedAlarmListener){
         this.onCheckedAlarmListener = onCheckedAlarmListener;
@@ -72,10 +73,21 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
         }
 
         private List<Alarm> getAlarms(List<Integer> includedAlarms, List<Alarm> alarms){
+            Calendar today = Calendar.getInstance();
+            today.setTimeInMillis(System.currentTimeMillis());
             List<Alarm> included = new ArrayList<>();
             for(Alarm alarm : alarms){
-                if(includedAlarms.contains(alarm.getAlarmCode()))
-                    included.add(alarm);
+                if(includedAlarms.contains(alarm.getAlarmCode())){
+                    switch(today.get(Calendar.DAY_OF_WEEK)){
+                        case Calendar.SUNDAY -> {if (alarm.isSun()) included.add(alarm);}
+                        case Calendar.MONDAY -> {if (alarm.isMon()) included.add(alarm);}
+                        case Calendar.TUESDAY -> {if (alarm.isTue()) included.add(alarm);}
+                        case Calendar.WEDNESDAY -> {if (alarm.isWed()) included.add(alarm);}
+                        case Calendar.THURSDAY -> {if (alarm.isThu()) included.add(alarm);}
+                        case Calendar.FRIDAY -> {if (alarm.isFri()) included.add(alarm);}
+                        case Calendar.SATURDAY -> {if (alarm.isSat()) included.add(alarm);}
+                    }
+                }
             }
             return included;
         }
