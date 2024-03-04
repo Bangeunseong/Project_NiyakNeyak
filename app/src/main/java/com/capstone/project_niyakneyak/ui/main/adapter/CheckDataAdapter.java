@@ -24,8 +24,8 @@ import java.util.List;
 
 public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.ViewHolder> {
     private OnCheckedAlarmListener onCheckedAlarmListener;
-    private List<MedsData> medsList;
-    private List<Alarm> alarms;
+    private List<MedsData> medsList = new ArrayList<>();
+    private List<Alarm> alarms = new ArrayList<>();
 
     public CheckDataAdapter(OnCheckedAlarmListener onCheckedAlarmListener){
         this.onCheckedAlarmListener = onCheckedAlarmListener;
