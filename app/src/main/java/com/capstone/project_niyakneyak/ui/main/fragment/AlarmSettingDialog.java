@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.View;
@@ -239,7 +238,11 @@ public class AlarmSettingDialog extends DialogFragment {
             dismiss();
         });
 
-        binding.alarmCancel.setOnClickListener(v -> dismiss());
+        binding.alarmCancel.setOnClickListener(v -> {
+            if(alarm != null)
+                alarm.scheduleAlarm(getContext());
+            dismiss();
+        });
 
         return builder.create();
     }

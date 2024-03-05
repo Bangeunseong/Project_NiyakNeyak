@@ -5,30 +5,30 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 import com.capstone.project_niyakneyak.data.patient_model.MedsData;
-import com.capstone.project_niyakneyak.data.patient_model.PatientData;
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding;
 import com.capstone.project_niyakneyak.ui.main.adapter.CheckDataAdapter;
 import com.capstone.project_niyakneyak.ui.main.decorator.HorizontalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
-import com.capstone.project_niyakneyak.ui.main.etc.ActionResult;
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.CheckListViewModel;
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.CheckListViewModelFactory;
-import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataListViewModel;
 import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -98,9 +98,25 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
     }
 
     //TODO: Need Modification in filtering by Medication Duration
-    private List<MedsData> getCertainMedsData(List<MedsData> medsList, List<Alarm> alarms){
+    private List<MedsData> getCertainMedsData(List<MedsData> medsList, List<Alarm> alarms) {
+        Calendar today = Calendar.getInstance();
+        today.setTimeInMillis(System.currentTimeMillis());
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        Date start, end;
+        Calendar startCal = Calendar.getInstance();
+        Calendar endCal = Calendar.getInstance();
         List<MedsData> certainMeds = new ArrayList<>();
+
         for (MedsData data : medsList){
+            if(data.getMeds_start_date() != null){
+                try {
+                    start = format.parse(data.getMeds_start_date()); end = format.parse(data.getMeds_end_date());
+                    startCal.setTime(start);
+                    endCal.setTime(end);
+                    if(startCal.compareTo(today) > 0 || endCal.compareTo(today) < 0) continue;
+                }
+                catch (ParseException e) {Log.d("CheckListFragment", "Parsing Failed!");}
+            }
             if(isConsumeDate(alarms, data.getAlarms()))
                 certainMeds.add(data);
         }
