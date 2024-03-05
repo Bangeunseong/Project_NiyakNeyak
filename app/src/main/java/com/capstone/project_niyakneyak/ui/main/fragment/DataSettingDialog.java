@@ -262,5 +262,5 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
     }
 
     @Override
-    public void OnItemClicked(Alarm alarm, boolean isChecked) {}
+    public void OnItemClicked(long medsID, Alarm alarm, boolean isChecked) {}
 }

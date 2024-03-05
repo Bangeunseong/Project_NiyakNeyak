@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
+import com.capstone.project_niyakneyak.data.patient_model.MedsData;
 import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener;
 
 import java.util.Calendar;
@@ -23,6 +24,7 @@ import java.util.Locale;
 public class CheckAlarmAdapter extends RecyclerView.Adapter<CheckAlarmAdapter.ViewHolder> {
     private final OnCheckedAlarmListener onCheckedAlarmListener;
     private List<Alarm> alarms;
+    private long medsID;
 
     public CheckAlarmAdapter(OnCheckedAlarmListener onCheckedAlarmListener){
         this.onCheckedAlarmListener = onCheckedAlarmListener;
@@ -40,7 +42,7 @@ public class CheckAlarmAdapter extends RecyclerView.Adapter<CheckAlarmAdapter.Vi
             checkBox = view.findViewById(R.id.check_clock_checkbox);
         }
 
-        public void bind(Alarm alarm, OnCheckedAlarmListener onCheckedAlarmListener){
+        public void bind(long medsID, Alarm alarm, OnCheckedAlarmListener onCheckedAlarmListener){
             checkTitle.setText(String.format("%02d:%02d",alarm.getHour(),alarm.getMin()));
             if (alarm.isRecurring()) {
                 checkRecursion.setText(alarm.getRecurringDaysText());
@@ -62,7 +64,7 @@ public class CheckAlarmAdapter extends RecyclerView.Adapter<CheckAlarmAdapter.Vi
                     checkRecursion.setText(String.format(Locale.KOREAN,"Today %02d/%02d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)));
                 }
             }
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> onCheckedAlarmListener.OnItemClicked(alarm, isChecked));
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> onCheckedAlarmListener.OnItemClicked(medsID, alarm, isChecked));
         }
     }
 
@@ -76,7 +78,7 @@ public class CheckAlarmAdapter extends RecyclerView.Adapter<CheckAlarmAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Alarm alarm = alarms.get(position);
-        holder.bind(alarm, onCheckedAlarmListener);
+        holder.bind(medsID, alarm, onCheckedAlarmListener);
     }
 
     @Override
@@ -84,8 +86,8 @@ public class CheckAlarmAdapter extends RecyclerView.Adapter<CheckAlarmAdapter.Vi
         return alarms.size();
     }
 
-    public void setAlarms(List<Alarm> alarms){
-        this.alarms = alarms;
+    public void setAlarms(long medsID, List<Alarm> alarms){
+        this.alarms = alarms; this.medsID = medsID;
         notifyDataSetChanged();
     }
 }

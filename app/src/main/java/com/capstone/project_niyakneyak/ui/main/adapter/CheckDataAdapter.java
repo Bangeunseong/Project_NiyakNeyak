@@ -72,7 +72,7 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
             alarmList.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             alarmList.setAdapter(adapter);
             alarmList.addItemDecoration(new VerticalItemDecorator(10));
-            adapter.setAlarms(getAlarms(data.getAlarms(), alarms));
+            adapter.setAlarms(data.getID(), getAlarms(data.getAlarms(), alarms));
         }
 
         private List<Alarm> getAlarms(List<Integer> includedAlarms, List<Alarm> alarms){

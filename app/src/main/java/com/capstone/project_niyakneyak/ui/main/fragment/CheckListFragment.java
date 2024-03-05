@@ -150,7 +150,7 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
 
     //TODO: Need to add action when checkbox is checked
     @Override
-    public void OnItemClicked(Alarm alarm, boolean isChecked) {
+    public void OnItemClicked(long medsID, Alarm alarm, boolean isChecked) {
 
     }
 }
