@@ -13,16 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 import com.capstone.project_niyakneyak.data.patient_model.MedsData;
-import com.capstone.project_niyakneyak.ui.main.decorator.HorizontalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * This adapter is used for showing Medication info. which should be consumed in current date.
+ * It needs {@link OnCheckedAlarmListener} to deliver which alarm is checked
+ * When alarm is checked, {@link com.capstone.project_niyakneyak.ui.main.fragment.CheckListFragment}
+ * will handle the process of recording
+ */
 public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.ViewHolder> {
     private OnCheckedAlarmListener onCheckedAlarmListener;
     private List<MedsData> medsList = new ArrayList<>();
@@ -38,7 +41,7 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
         private final TextView duration;
         private final RecyclerView alarmList;
         private final ConstraintLayout checkItemLayout;
-        private final AlarmCheckAdapter adapter;
+        private final CheckAlarmAdapter adapter;
         private boolean visibility = false;
 
         public ViewHolder(@NonNull View view, OnCheckedAlarmListener onCheckedAlarmListener) {
@@ -48,7 +51,7 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
             detail = view.findViewById(R.id.check_detail_text);
             duration = view.findViewById(R.id.check_title_time);
             alarmList = view.findViewById(R.id.alarm_check_list);
-            adapter = new AlarmCheckAdapter(onCheckedAlarmListener);
+            adapter = new CheckAlarmAdapter(onCheckedAlarmListener);
         }
 
         public void bind(MedsData data, List<Alarm> alarms){

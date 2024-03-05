@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,11 +17,14 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class AlarmCheckAdapter extends RecyclerView.Adapter<AlarmCheckAdapter.ViewHolder> {
+/**
+ *
+ */
+public class CheckAlarmAdapter extends RecyclerView.Adapter<CheckAlarmAdapter.ViewHolder> {
     private final OnCheckedAlarmListener onCheckedAlarmListener;
     private List<Alarm> alarms;
 
-    public AlarmCheckAdapter(OnCheckedAlarmListener onCheckedAlarmListener){
+    public CheckAlarmAdapter(OnCheckedAlarmListener onCheckedAlarmListener){
         this.onCheckedAlarmListener = onCheckedAlarmListener;
     }
 

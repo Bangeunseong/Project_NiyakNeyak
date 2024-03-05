@@ -31,9 +31,8 @@ import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
 import java.util.ArrayList;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link DataListFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * This Fragment is used for showing Medication info. by using {@link DataListFragment#adapter}.
+ * {@link DataListFragment#adapter} will be set by using {@link MainDataAdapter}
  */
 public class DataListFragment extends Fragment {
     private FragmentDataListBinding binding;

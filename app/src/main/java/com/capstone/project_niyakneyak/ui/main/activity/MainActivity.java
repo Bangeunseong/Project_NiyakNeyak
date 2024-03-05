@@ -14,6 +14,11 @@ import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
+/**
+ * This activity is used for showing fragments which are linked by {@link MainActivity#navHostFragment}.
+ * Linked fragments will be controlled by {@link MainActivity#navController} with
+ * BottomNavigationBar(NavigationBar listener is created as ItemSelectionListener)
+ */
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NavHostFragment navHostFragment;

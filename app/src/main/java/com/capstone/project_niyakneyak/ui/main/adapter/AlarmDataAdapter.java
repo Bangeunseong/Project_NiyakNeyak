@@ -18,7 +18,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
+/**
+ * This Adapter is used for showing currently registered alarms.
+ * It needs single attribute to create adapter which is abstract interface {@link OnToggleAlarmListener}
+*/
 public class AlarmDataAdapter extends RecyclerView.Adapter<AlarmDataAdapter.ViewHolder> {
     private final OnToggleAlarmListener onToggleAlarmListener;
     private List<Alarm> alarms;

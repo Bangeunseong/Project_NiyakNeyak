@@ -32,9 +32,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link CheckListFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * This Fragment is used for showing daily Medication list by using {@link CheckListFragment#adapter}.
+ * {@link CheckListFragment#adapter} will be set by using {@link CheckDataAdapter}
  */
 public class CheckListFragment extends Fragment implements OnCheckedAlarmListener {
     private FragmentCheckListBinding binding;
@@ -43,12 +42,6 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
     private List<Alarm> alarms = new ArrayList<>();
     private List<MedsData> medsList = new ArrayList<>();
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment CheckListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static CheckListFragment newInstance() {
         return new CheckListFragment();
     }
@@ -97,7 +90,6 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
         binding.contentChecklist.addItemDecoration(new VerticalItemDecorator(20));
     }
 
-    //TODO: Need Modification in filtering by Medication Duration
     private List<MedsData> getCertainMedsData(List<MedsData> medsList, List<Alarm> alarms) {
         Calendar today = Calendar.getInstance();
         today.setTimeInMillis(System.currentTimeMillis());
@@ -156,6 +148,7 @@ public class CheckListFragment extends Fragment implements OnCheckedAlarmListene
     @Deprecated
     public void OnItemClicked(Alarm alarm) {}
 
+    //TODO: Need to add action when checkbox is checked
     @Override
     public void OnItemClicked(Alarm alarm, boolean isChecked) {
 
