@@ -1,7 +1,5 @@
 package com.capstone.project_niyakneyak.ui.main.adapter;
 
-import static com.google.android.material.color.MaterialColors.getColor;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +19,18 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class AlarmDialogDataAdapter extends RecyclerView.Adapter<AlarmDialogDataAdapter.ViewHolder>{
+/**
+ * This Adapter is used for showing currently registered and selectable alarms.
+ * When setting Medication Data, this adapter is used to describe which alarm is available.
+ * Adapter needs {@link OnCheckedAlarmListener} to deliver checked alarm info to
+ * {@link com.capstone.project_niyakneyak.ui.main.fragment.DataSettingDialog}
+ */
+public class MainAlarmDataAdapter extends RecyclerView.Adapter<MainAlarmDataAdapter.ViewHolder>{
     private final OnCheckedAlarmListener onCheckedAlarmListener;
     private List<Alarm> alarms;
     private List<Integer> includedAlarms;
 
-    public AlarmDialogDataAdapter(OnCheckedAlarmListener onCheckedAlarmListener){
+    public MainAlarmDataAdapter(OnCheckedAlarmListener onCheckedAlarmListener){
         this.onCheckedAlarmListener = onCheckedAlarmListener;
         alarms = new ArrayList<>();
         includedAlarms = new ArrayList<>();
@@ -80,13 +84,13 @@ public class AlarmDialogDataAdapter extends RecyclerView.Adapter<AlarmDialogData
 
     @NonNull
     @Override
-    public AlarmDialogDataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MainAlarmDataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_meds_time_selection, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AlarmDialogDataAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MainAlarmDataAdapter.ViewHolder holder, int position) {
         Alarm alarm = alarms.get(position);
         holder.bind(alarm, includedAlarms, onCheckedAlarmListener);
     }

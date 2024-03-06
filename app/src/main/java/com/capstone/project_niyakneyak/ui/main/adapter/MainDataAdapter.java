@@ -20,7 +20,10 @@ import com.capstone.project_niyakneyak.ui.main.fragment.DataSettingDialog;
 
 import java.util.List;
 
-
+/**
+ * This adapter is used for showing registered Medication info. in
+ * {@link com.capstone.project_niyakneyak.ui.main.fragment.DataListFragment}
+ */
 public class MainDataAdapter extends RecyclerView.Adapter<MainDataAdapter.ViewHolder> {
     private final List<MedsData> medsData;
     private final FragmentManager fragmentManager;

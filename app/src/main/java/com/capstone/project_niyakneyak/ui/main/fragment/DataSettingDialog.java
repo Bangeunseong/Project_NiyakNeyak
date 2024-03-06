@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +23,7 @@ import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 import com.capstone.project_niyakneyak.data.patient_model.MedsData;
 import com.capstone.project_niyakneyak.databinding.FragmentDataSettingDialogBinding;
-import com.capstone.project_niyakneyak.ui.main.adapter.AlarmDialogDataAdapter;
+import com.capstone.project_niyakneyak.ui.main.adapter.MainAlarmDataAdapter;
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.etc.SubmitFormState;
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataSettingViewModel;
@@ -46,13 +45,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This DialogFragment is used for setting {@link MedsData}(which is Medication Info.).
+ *
+ */
 public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmListener {
     MutableLiveData<SubmitFormState> submitFormState = new MutableLiveData<>();
     private FragmentDataSettingDialogBinding binding;
     private final OnAddedDataListener onAddedDataListener;
     private final OnChangedDataListener onChangedDataListener;
     private DataSettingViewModel dataSettingViewModel;
-    private AlarmDialogDataAdapter adapter;
+    private MainAlarmDataAdapter adapter;
     private MedsData data;
     private List<Alarm> alarms = new ArrayList<>();
     private ArrayList<Integer> includedAlarms = new ArrayList<>();
@@ -70,7 +73,7 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
         data = bundle.getParcelable("BeforeModify");
         if(data != null) includedAlarms = data.getAlarms();
 
-        adapter = new AlarmDialogDataAdapter(this);
+        adapter = new MainAlarmDataAdapter(this);
         dataSettingViewModel = new ViewModelProvider(this, new DataSettingViewModelFactory(getActivity().getApplication()))
                 .get(DataSettingViewModel.class);
         dataSettingViewModel.getAlarmsLiveData().observe(this, alarms -> {
@@ -205,7 +208,6 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
             String meds_date_text = String.valueOf(meds_date.getText()).equals("null") ? null : String.valueOf(meds_date.getText());
 
             MedsData data1;
-            Log.d("DialogFragment",meds_date_text);
             if(!meds_date_text.isEmpty()){
                 String[] dates = meds_date_text.split("~");
                 data1 = new MedsData(meds_name_text.hashCode(), meds_name_text,
@@ -260,6 +262,5 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
     }
 
     @Override
-    @Deprecated
     public void OnItemClicked(Alarm alarm, boolean isChecked) {}
 }

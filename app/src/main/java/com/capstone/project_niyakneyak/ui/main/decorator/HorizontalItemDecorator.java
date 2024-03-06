@@ -6,6 +6,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * This ItemDecorator is for decorating adapter horizontal padding.
+ * You need to enter Integer value when creating class.
+ * Typed value will be set as padding size.
+ */
 public class HorizontalItemDecorator extends RecyclerView.ItemDecoration {
     private int divWidth;
 

@@ -45,6 +45,7 @@ public class PatientData {
         data.setMeds_detail(changed.getMeds_detail());
         data.setMeds_start_date(changed.getMeds_start_date());
         data.setMeds_end_date(changed.getMeds_end_date());
+        data.setAlarms(changed.getAlarms());
         return true;
     }
     public boolean deleteMedsData(MedsData target){

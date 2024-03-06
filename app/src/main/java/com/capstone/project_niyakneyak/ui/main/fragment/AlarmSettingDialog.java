@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.View;
@@ -34,6 +33,10 @@ import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.AlarmSettingVi
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This DialogFragment is used to set {@link Alarm} getting information
+ * by user interaction.
+ */
 public class AlarmSettingDialog extends DialogFragment {
     private final MutableLiveData<ActionResult> actionResult = new MutableLiveData<>();
     private AlarmSettingViewModel alarmSettingViewModel;
@@ -239,7 +242,11 @@ public class AlarmSettingDialog extends DialogFragment {
             dismiss();
         });
 
-        binding.alarmCancel.setOnClickListener(v -> dismiss());
+        binding.alarmCancel.setOnClickListener(v -> {
+            if(alarm != null)
+                alarm.scheduleAlarm(getContext());
+            dismiss();
+        });
 
         return builder.create();
     }

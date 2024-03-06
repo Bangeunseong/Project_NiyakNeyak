@@ -13,15 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 import com.capstone.project_niyakneyak.data.patient_model.MedsData;
-import com.capstone.project_niyakneyak.ui.main.decorator.HorizontalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator;
 import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+/**
+ * This adapter is used for showing Medication info. which should be consumed in current date.
+ * It needs {@link OnCheckedAlarmListener} to deliver which alarm is checked
+ * When alarm is checked, {@link com.capstone.project_niyakneyak.ui.main.fragment.CheckListFragment}
+ * will handle the process of recording
+ */
 public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.ViewHolder> {
     private OnCheckedAlarmListener onCheckedAlarmListener;
     private List<MedsData> medsList = new ArrayList<>();
@@ -37,7 +41,7 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
         private final TextView duration;
         private final RecyclerView alarmList;
         private final ConstraintLayout checkItemLayout;
-        private final AlarmCheckAdapter adapter;
+        private final CheckAlarmAdapter adapter;
         private boolean visibility = false;
 
         public ViewHolder(@NonNull View view, OnCheckedAlarmListener onCheckedAlarmListener) {
@@ -47,7 +51,7 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
             detail = view.findViewById(R.id.check_detail_text);
             duration = view.findViewById(R.id.check_title_time);
             alarmList = view.findViewById(R.id.alarm_check_list);
-            adapter = new AlarmCheckAdapter(onCheckedAlarmListener);
+            adapter = new CheckAlarmAdapter(onCheckedAlarmListener);
         }
 
         public void bind(MedsData data, List<Alarm> alarms){
@@ -72,10 +76,30 @@ public class CheckDataAdapter extends RecyclerView.Adapter<CheckDataAdapter.View
         }
 
         private List<Alarm> getAlarms(List<Integer> includedAlarms, List<Alarm> alarms){
+            Calendar today = Calendar.getInstance();
+            today.setTimeInMillis(System.currentTimeMillis());
             List<Alarm> included = new ArrayList<>();
             for(Alarm alarm : alarms){
-                if(includedAlarms.contains(alarm.getAlarmCode()))
-                    included.add(alarm);
+                if(includedAlarms.contains(alarm.getAlarmCode()) && alarm.isStarted()){
+                    if(alarm.isRecurring()){
+                        switch(today.get(Calendar.DAY_OF_WEEK)){
+                            case Calendar.SUNDAY -> {if (alarm.isSun()) included.add(alarm);}
+                            case Calendar.MONDAY -> {if (alarm.isMon()) included.add(alarm);}
+                            case Calendar.TUESDAY -> {if (alarm.isTue()) included.add(alarm);}
+                            case Calendar.WEDNESDAY -> {if (alarm.isWed()) included.add(alarm);}
+                            case Calendar.THURSDAY -> {if (alarm.isThu()) included.add(alarm);}
+                            case Calendar.FRIDAY -> {if (alarm.isFri()) included.add(alarm);}
+                            case Calendar.SATURDAY -> {if (alarm.isSat()) included.add(alarm);}
+                        }
+                    }
+                    else{
+                        Calendar alarmClock = Calendar.getInstance();
+                        alarmClock.setTimeInMillis(System.currentTimeMillis());
+                        alarmClock.set(Calendar.HOUR_OF_DAY, alarm.getHour()); alarmClock.set(Calendar.MINUTE, alarm.getMin());
+                        alarmClock.set(Calendar.SECOND, 0); alarmClock.set(Calendar.MILLISECOND, 0);
+                        if(alarmClock.compareTo(today) > 0) included.add(alarm);
+                    }
+                }
             }
             return included;
         }
