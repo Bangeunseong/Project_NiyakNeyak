@@ -24,6 +24,11 @@ public class PatientData {
         medsData = new ArrayList<>();
     }
 
+    public PatientData(@Nullable String patientName, @Nullable String patientAge, @Nullable List<MedsData> medsData){
+        this.patientName = patientName; this.patientAge = patientAge;
+        if(medsData == null) this.medsData = new ArrayList<>();
+        else this.medsData = medsData;
+    }
 
     //Getter and Setter for patient Info.
     public void setPatientName(String patientName) {this.patientName = patientName;}

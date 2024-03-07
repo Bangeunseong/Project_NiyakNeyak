@@ -12,16 +12,15 @@ public interface AlarmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Alarm alarm);
 
-
     @Query("SELECT * FROM alarm_table ORDER BY alarmCode ASC")
     LiveData<List<Alarm>> getAlarms();
 
     @Update
     void update(Alarm alarm);
 
-    @Query("DELETE FROM alarm_table")
-    void deleteAll();
-
     @Query("DELETE FROM alarm_table WHERE alarmCode = :alarmCode")
     void delete(int alarmCode);
+
+    @Query("DELETE FROM alarm_table")
+    void deleteAll();
 }

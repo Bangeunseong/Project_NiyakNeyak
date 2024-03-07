@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * This DialogFragment is used for setting {@link MedsData}(which is Medication Info.).
@@ -203,18 +204,20 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
         meds_timer.setOnClickListener(v -> showAlarmSettingDialog(null));
 
         submit.setOnClickListener(v -> {
+            MedsData data1; long id;
+
+            if(data == null) id = codeGenerator();
+            else id = data.getID();
             String meds_name_text = String.valueOf(meds_name.getText());
             String meds_detail_text = String.valueOf(meds_detail.getText()).equals("null") ? null : String.valueOf(meds_detail.getText());
             String meds_date_text = String.valueOf(meds_date.getText()).equals("null") ? null : String.valueOf(meds_date.getText());
-
-            MedsData data1;
             if(!meds_date_text.isEmpty()){
                 String[] dates = meds_date_text.split("~");
-                data1 = new MedsData(meds_name_text.hashCode(), meds_name_text,
+                data1 = new MedsData(id, meds_name_text,
                         meds_detail_text, dates[0], dates[1]);
             }
             else{
-                data1 = new MedsData(meds_name_text.hashCode(), meds_name_text,
+                data1 = new MedsData(id, meds_name_text,
                         meds_detail_text, null, null);
             }
             data1.setAlarms(includedAlarms);
@@ -252,6 +255,10 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
     private boolean isMedsNameValid(String meds_name){
         if(meds_name == null || !meds_name.matches("\\w{1,20}")) return false;
         return true;
+    }
+
+    private long codeGenerator(){
+        return new Random().nextLong();
     }
 
     @Override

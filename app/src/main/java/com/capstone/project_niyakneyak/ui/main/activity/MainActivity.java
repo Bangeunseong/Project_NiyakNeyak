@@ -2,6 +2,8 @@ package com.capstone.project_niyakneyak.ui.main.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleCoroutineScope;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -13,6 +15,8 @@ import android.view.MenuItem;
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
+
+import kotlin.coroutines.CoroutineContext;
 
 /**
  * This activity is used for showing fragments which are linked by {@link MainActivity#navHostFragment}.

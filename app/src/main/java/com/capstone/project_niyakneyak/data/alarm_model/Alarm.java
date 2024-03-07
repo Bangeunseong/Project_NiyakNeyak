@@ -22,7 +22,6 @@ import java.util.Calendar;
 @Entity(tableName = "alarm_table")
 public class Alarm implements Parcelable {
     // Field
-    @NonNull
     @PrimaryKey
     private int alarmCode;
     private int hour, min;

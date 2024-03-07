@@ -1,20 +1,15 @@
 package com.capstone.project_niyakneyak.data.patient_model;
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MedsData implements Parcelable {
-
     //Field
     private long ID;
     private String meds_name;
@@ -25,11 +20,11 @@ public class MedsData implements Parcelable {
 
 
     //Constructor
-    public MedsData(@NonNull long ID, @NonNull String meds_name, @Nullable String meds_detail){
+    public MedsData(long ID, @NonNull String meds_name, @Nullable String meds_detail){
         this.ID = ID; this.meds_name = meds_name; this.meds_detail = meds_detail;
         alarms = new ArrayList<>();
     }
-    public MedsData(@NonNull long ID, @NonNull String meds_name, @Nullable String meds_detail,
+    public MedsData(long ID, @NonNull String meds_name, @Nullable String meds_detail,
                     @Nullable String meds_start_date, @Nullable String meds_end_date){
         this.ID = ID; this.meds_name = meds_name;
         this.meds_detail = meds_detail; this.meds_start_date = meds_start_date; this.meds_end_date = meds_end_date;

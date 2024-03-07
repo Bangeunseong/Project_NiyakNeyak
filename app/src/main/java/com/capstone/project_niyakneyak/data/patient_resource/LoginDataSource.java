@@ -1,7 +1,7 @@
-package com.capstone.project_niyakneyak.data.user_resource;
+package com.capstone.project_niyakneyak.data.patient_resource;
 
 import com.capstone.project_niyakneyak.data.Result;
-import com.capstone.project_niyakneyak.data.user_model.LoggedInUser;
+import com.capstone.project_niyakneyak.data.patient_model.LoggedInUser;
 
 import java.io.IOException;
 

@@ -4,26 +4,34 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "history_table")
 public class HistoryData implements Parcelable {
-    @NonNull
     @PrimaryKey
     private long ID;
+    @ColumnInfo(name = "name")
     private String meds_name;
+    @ColumnInfo(name = "detail")
     private String meds_detail;
+    @ColumnInfo(name = "start_date")
     private String meds_start_date;
+    @ColumnInfo(name = "end_date")
     private String meds_end_date;
-    private int hour, min;
-    private String title;
+    @ColumnInfo(name = "hour")
+    private int hour;
+    @ColumnInfo(name = "min")
+    private int min;
+    @ColumnInfo(name = "alarm_title")
+    private String alarmTitle;
 
     public HistoryData(long ID, String meds_name, String meds_detail, String meds_start_date, String meds_end_date,
-                       int hour, int min, String title){
+                       int hour, int min, String alarmTitle){
         this.ID = ID; this.meds_name = meds_name; this.meds_detail = meds_detail;
         this.meds_start_date = meds_start_date; this.meds_end_date = meds_end_date;
-        this.hour = hour; this.min = min;  this.title = title;
+        this.hour = hour; this.min = min;  this.alarmTitle = alarmTitle;
     }
 
     protected HistoryData(Parcel in) {
@@ -34,7 +42,7 @@ public class HistoryData implements Parcelable {
         meds_end_date = in.readString();
         hour = in.readInt();
         min = in.readInt();
-        title = in.readString();
+        alarmTitle = in.readString();
     }
 
     public static final Creator<HistoryData> CREATOR = new Creator<HistoryData>() {
@@ -105,12 +113,12 @@ public class HistoryData implements Parcelable {
         this.min = min;
     }
 
-    public String getTitle() {
-        return title;
+    public String getAlarmTitle() {
+        return alarmTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setAlarmTitle(String alarmTitle) {
+        this.alarmTitle = alarmTitle;
     }
 
     @Override
@@ -127,6 +135,6 @@ public class HistoryData implements Parcelable {
         dest.writeString(meds_end_date);
         dest.writeInt(hour);
         dest.writeInt(min);
-        dest.writeString(title);
+        dest.writeString(alarmTitle);
     }
 }

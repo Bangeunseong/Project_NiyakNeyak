@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.capstone.project_niyakneyak.data.user_resource.LoginRepository;
+import com.capstone.project_niyakneyak.data.patient_resource.LoginRepository;
 import com.capstone.project_niyakneyak.data.Result;
-import com.capstone.project_niyakneyak.data.user_model.LoggedInUser;
+import com.capstone.project_niyakneyak.data.patient_model.LoggedInUser;
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.ui.login.etc.LoggedInUserView;
 import com.capstone.project_niyakneyak.ui.login.etc.LoginFormState;
