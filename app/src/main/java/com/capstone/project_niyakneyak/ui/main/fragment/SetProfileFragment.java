@@ -36,6 +36,14 @@ public class SetProfileFragment extends DialogFragment {
         binding=FragmentSetProfileBinding.inflate(getLayoutInflater());
         View view=binding.getRoot();
         builder.setView(view);
+
+        binding.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
         return builder.create();
     }
 }
