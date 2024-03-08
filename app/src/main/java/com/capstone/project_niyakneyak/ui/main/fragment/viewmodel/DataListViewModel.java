@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.capstone.project_niyakneyak.R;
+import com.capstone.project_niyakneyak.data.patient_resource.PatientDataSource;
 import com.capstone.project_niyakneyak.data.patient_resource.PatientRepository;
 import com.capstone.project_niyakneyak.data.Result;
 import com.capstone.project_niyakneyak.data.patient_model.MedsData;
@@ -14,17 +15,15 @@ import com.capstone.project_niyakneyak.data.patient_model.PatientData;
 import com.capstone.project_niyakneyak.ui.main.etc.ActionResult;
 import com.capstone.project_niyakneyak.ui.main.etc.DataView;
 
-import java.io.Serializable;
-
-public class MainViewModel extends ViewModel implements Serializable {
+public class DataListViewModel extends ViewModel {
     // Field
     // Action(Addition, Modification, Deletion) result of Medication Info.
     private final MutableLiveData<ActionResult> actionResult = new MutableLiveData<>();
     private final PatientRepository patientRepository;
 
     // Constructor
-    public MainViewModel(PatientRepository patientRepository){
-        this.patientRepository = patientRepository;
+    public DataListViewModel(){
+        patientRepository = PatientRepository.getInstance(new PatientDataSource());
     }
 
     // Result for actions(Addition, Modification, Deletion, Search)

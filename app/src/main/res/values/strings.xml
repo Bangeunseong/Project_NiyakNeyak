@@ -21,7 +21,6 @@
     <string name="invalid_password_more">Password must be less than 20 characters</string>
     <string name="login_failed">"Login failed"</string>
 
-
     <string name="toolbar_login_title">Login</string>
     <string name="toolbar_main_title">Meds</string>
     <string name="toolbar_main_timer">Timer</string>
@@ -54,6 +53,7 @@
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
     <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
+    <string name="dialog_add_form_meds_timer">Click here to Add Timer</string>
     <string name="dialog_meds_time_title">Medication Cycle</string>
     <string name="dialog_meds_time_sw_morning_title">Morning</string>
     <string name="dialog_meds_time_sw_afternoon_title">Afternoon</string>
@@ -76,6 +76,8 @@
     <string name="dialog_meds_time_delete_notification_msg">Do you want to delete?</string>
     <string name="dialog_meds_time_delete_notification_pos_btn">OK</string>
     <string name="dialog_meds_time_delete_notification_neg_btn">Cancel</string>
+
+    <string name="action_open_check_list">Click to open check list!</string>
 
     <!-- Alarm Attributes -->
     <string name="alarm_title">Time to eat pills!</string>

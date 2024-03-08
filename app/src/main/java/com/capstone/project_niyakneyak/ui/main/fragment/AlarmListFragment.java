@@ -28,6 +28,12 @@ import com.capstone.project_niyakneyak.ui.main.listener.OnToggleAlarmListener;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * This Fragment is used for showing currently registered alarmList.
+ * This Fragment implements {@link OnToggleAlarmListener} to update alarm data
+ * by using {@link OnToggleAlarmListener#onToggle(Alarm)}, {@link OnToggleAlarmListener#onItemClick(Alarm)},
+ * {@link OnToggleAlarmListener#onDelete(Alarm)}
+ */
 public class AlarmListFragment extends Fragment implements OnToggleAlarmListener {
     private FragmentAlarmListBinding binding;
     private AlarmDataAdapter adapter;
@@ -111,6 +117,9 @@ public class AlarmListFragment extends Fragment implements OnToggleAlarmListener
         builder.setPositiveButton("OK", (dialog, which) -> {
             if(alarm.isStarted())
                 alarm.cancelAlarm(getContext());
+            alarmListViewModel.getPatientData().getMedsData().forEach(medsData -> {
+                medsData.getAlarms().remove((Object)alarm.getAlarmCode());
+            });
             alarmListViewModel.delete(alarm.getAlarmCode());
         });
         builder.setNegativeButton("CANCEL", (dialog, which) -> {});

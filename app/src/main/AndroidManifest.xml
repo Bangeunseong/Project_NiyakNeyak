@@ -37,10 +37,10 @@
             android:name=".ui.main.fragment.DataSettingDialog"
             android:exported="false" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.main.activity.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.login.activity.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login">
             <intent-filter>

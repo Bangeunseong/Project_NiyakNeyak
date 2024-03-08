@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.login;
+package com.capstone.project_niyakneyak.ui.login.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding;
-import com.capstone.project_niyakneyak.ui.main.MainActivity;
+import com.capstone.project_niyakneyak.ui.login.etc.LoginFormState;
+import com.capstone.project_niyakneyak.ui.login.etc.LoginResult;
+import com.capstone.project_niyakneyak.ui.login.viewmodel.LoginViewModel;
+import com.capstone.project_niyakneyak.ui.login.viewmodel.LoginViewModelFactory;
+import com.capstone.project_niyakneyak.ui.main.activity.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;

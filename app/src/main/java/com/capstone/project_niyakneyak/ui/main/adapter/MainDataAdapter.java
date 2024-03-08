@@ -1,7 +1,5 @@
 package com.capstone.project_niyakneyak.ui.main.adapter;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,14 +20,17 @@ import com.capstone.project_niyakneyak.ui.main.fragment.DataSettingDialog;
 
 import java.util.List;
 
-
-public class MedsDataAdapter extends RecyclerView.Adapter<MedsDataAdapter.ViewHolder> {
+/**
+ * This adapter is used for showing registered Medication info. in
+ * {@link com.capstone.project_niyakneyak.ui.main.fragment.DataListFragment}
+ */
+public class MainDataAdapter extends RecyclerView.Adapter<MainDataAdapter.ViewHolder> {
     private final List<MedsData> medsData;
     private final FragmentManager fragmentManager;
     private final OnChangedDataListener onChangedDataListener;
     private final OnDeleteDataListener onDeleteDataListener;
 
-    public MedsDataAdapter(FragmentManager fragmentManager, List<MedsData> medsData, OnChangedDataListener onChangedDataListener, OnDeleteDataListener onDeleteDataListener){
+    public MainDataAdapter(FragmentManager fragmentManager, List<MedsData> medsData, OnChangedDataListener onChangedDataListener, OnDeleteDataListener onDeleteDataListener){
         this.fragmentManager = fragmentManager; this.medsData = medsData; this.onChangedDataListener = onChangedDataListener; this.onDeleteDataListener = onDeleteDataListener;
     }
 

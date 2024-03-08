@@ -10,5 +10,6 @@
     <color name="light_purple_300">#E8D8FF</color>
     <color name="light_purple_500">#E3CFFF</color>
     <color name="transparent">#00000000</color>
+    <color name="light_gray_500">#BDBDBD</color>
     <color name="dark_gray_500">#6B6B6B</color>
 </resources>

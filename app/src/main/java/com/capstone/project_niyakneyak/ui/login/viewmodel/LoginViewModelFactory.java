@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.login;
+package com.capstone.project_niyakneyak.ui.login.viewmodel;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;

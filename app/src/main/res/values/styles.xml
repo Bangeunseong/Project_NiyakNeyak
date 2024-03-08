@@ -18,7 +18,7 @@
         <item name="hintTextAppearance">@style/HintTextAppearance</item>
         <item name="errorTextAppearance">@style/ErrorTextAppearance</item>
     </style>
-    <style name="customButtonStyle" parent="Widget.AppCompat.Button.Colored">
+    <style name="customSubmitBtnStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/text_color</item>
         <item name="android:background">@drawable/item_dialog_submit_btn</item>
@@ -35,5 +35,10 @@
     <style name="customToolBarTheme" parent="Widget.AppCompat.Toolbar">
         <item name="collapseIcon">@drawable/baseline_list_alt_24</item>
         <item name="android:textAppearance">@style/toolBarTextAppearance</item>
+    </style>
+    <style name="customAddBtnStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="android:background">@drawable/item_dialog_timer_add_btn_bg</item>
     </style>
 </resources>
