@@ -74,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setResult(RESULT_OK, intent);
+        binding = null;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0,0,0,R.string.action_menu_logout);
         return super.onCreateOptionsMenu(menu);

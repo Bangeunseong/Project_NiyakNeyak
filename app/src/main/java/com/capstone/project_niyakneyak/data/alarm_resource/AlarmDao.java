@@ -12,7 +12,7 @@ public interface AlarmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Alarm alarm);
 
-    @Query("SELECT * FROM alarm_table ORDER BY alarmCode ASC")
+    @Query("SELECT * FROM alarm_table")
     LiveData<List<Alarm>> getAlarms();
 
     @Update

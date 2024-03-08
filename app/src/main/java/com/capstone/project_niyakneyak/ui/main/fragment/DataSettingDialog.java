@@ -72,7 +72,7 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
         Bundle bundle = getArguments();
         assert bundle != null;
         data = bundle.getParcelable("BeforeModify");
-        if(data != null) includedAlarms = data.getAlarms();
+        if(data != null){includedAlarms.addAll(data.getAlarms());}
 
         adapter = new MainAlarmDataAdapter(this);
         dataSettingViewModel = new ViewModelProvider(this, new DataSettingViewModelFactory(getActivity().getApplication()))
@@ -201,7 +201,7 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
             datePicker.addOnNegativeButtonClickListener(v1 -> {});
         });
 
-        meds_timer.setOnClickListener(v -> showAlarmSettingDialog(null));
+        meds_timer.setOnClickListener(v -> showAlarmSettingDialog());
 
         submit.setOnClickListener(v -> {
             MedsData data1; long id;
@@ -238,10 +238,10 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
         binding = null; data = null;
     }
 
-    void showAlarmSettingDialog(@Nullable Alarm alarm){
+    void showAlarmSettingDialog(){
         DialogFragment alarmSettingDialog = new AlarmSettingDialog();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(getString(R.string.arg_alarm_obj), alarm);
+        bundle.putParcelable(getString(R.string.arg_alarm_obj), null);
         alarmSettingDialog.setArguments(bundle);
         alarmSettingDialog.show(requireActivity().getSupportFragmentManager(), "ALARM_DIALOG_FRAGMENT");
     }
@@ -253,8 +253,7 @@ public class DataSettingDialog extends DialogFragment implements OnCheckedAlarmL
         else submitFormState.setValue(new SubmitFormState(true));
     }
     private boolean isMedsNameValid(String meds_name){
-        if(meds_name == null || !meds_name.matches("\\w{1,20}")) return false;
-        return true;
+        return meds_name != null && meds_name.matches("\\w{1,20}");
     }
 
     private long codeGenerator(){

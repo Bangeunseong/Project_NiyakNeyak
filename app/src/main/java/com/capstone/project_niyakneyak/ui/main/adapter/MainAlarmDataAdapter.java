@@ -75,7 +75,7 @@ public class MainAlarmDataAdapter extends RecyclerView.Adapter<MainAlarmDataAdap
 
             clockCheckBox.setEnabled(alarm.isStarted());
             clockCheckBox.setChecked(includedAlarms.contains(alarm.getAlarmCode()));
-            clockCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onCheckedAlarmListener.OnItemClicked(alarm));
+            clockCheckBox.setOnClickListener(v -> onCheckedAlarmListener.OnItemClicked(alarm));
             if(!alarm.isStarted())
                 clockSelectionLayout.setBackgroundResource(R.drawable.item_recycler_bg_disabled);
             else clockSelectionLayout.setBackgroundResource(R.drawable.item_recycler_bg_secondary);
