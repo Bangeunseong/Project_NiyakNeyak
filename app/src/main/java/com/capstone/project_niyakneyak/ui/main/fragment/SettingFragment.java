@@ -63,8 +63,8 @@ public class SettingFragment extends Fragment {
         binding.advancedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment setProfile= new SetProfileFragment();
-                setProfile.show(requireActivity().getSupportFragmentManager(),"ADVANCED_SETTING");
+                DialogFragment advancedSetting= new AdvancedSettingFragment();
+                advancedSetting.show(requireActivity().getSupportFragmentManager(),"ADVANCED_SETTING");
             }
         });
 

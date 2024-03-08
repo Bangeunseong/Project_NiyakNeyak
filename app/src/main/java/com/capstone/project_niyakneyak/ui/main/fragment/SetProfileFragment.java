@@ -37,7 +37,7 @@ public class SetProfileFragment extends DialogFragment {
         View view=binding.getRoot();
         builder.setView(view);
 
-        binding.button.setOnClickListener(new View.OnClickListener() {
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
