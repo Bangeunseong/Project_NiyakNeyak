@@ -60,6 +60,13 @@ public class SettingFragment extends Fragment {
                 setProfile.show(requireActivity().getSupportFragmentManager(),"PROFILE_SETTING");
             }
         });
+        binding.advancedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment setProfile= new SetProfileFragment();
+                setProfile.show(requireActivity().getSupportFragmentManager(),"ADVANCED_SETTING");
+            }
+        });
 
 
     }
