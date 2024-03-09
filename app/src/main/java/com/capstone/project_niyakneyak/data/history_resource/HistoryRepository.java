@@ -27,7 +27,7 @@ public class HistoryRepository {
     }
 
     public LiveData<List<HistoryData>> getHistoryLiveData(){
-        return historyDao.getHistories();
+        return historyLiveData;
     }
 
     public void delete(long ID){
