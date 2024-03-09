@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "264335307721",
+    "project_id": "smartpill-8dd1d",
+    "storage_bucket": "smartpill-8dd1d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264335307721:android:92acdd81185d5fce2e6e18",
+        "android_client_info": {
+          "package_name": "com.capstone.project_niyakneyak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "264335307721-l1ts0dd90g7s9mp6b9l2mgn60adrn2a9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.capstone.project_niyakneyak",
+            "certificate_hash": "f20b85ff3e9d07cd93979a4345766c84c2077dfc"
+          }
+        },
+        {
+          "client_id": "264335307721-6gi684ianko5vqjira4o4uqttlppl6ab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFmfGe1sm-eMZH2eqkFfTUpBPZgrIV6T0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "264335307721-6gi684ianko5vqjira4o4uqttlppl6ab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
