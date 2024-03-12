@@ -17,7 +17,7 @@ private constructor(private val dataSource: LoginDataSource) {
 
     fun logout() {
         user = null
-        dataSource.logout()
+        dataSource.signOut()
     }
 
     private fun setLoggedInUser(user: LoggedInUser?) {
@@ -28,7 +28,7 @@ private constructor(private val dataSource: LoginDataSource) {
 
     fun login(username: String?, password: String?): Result<Any?> {
         // handle login
-        val result = dataSource.login(username, password)
+        val result = dataSource.signIn(username, password)
         if (result is Result.Success<*>) {
             setLoggedInUser((result as Result.Success<LoggedInUser?>).data)
         }
@@ -37,13 +37,13 @@ private constructor(private val dataSource: LoginDataSource) {
 
     companion object {
         @Volatile
-        private var instance: LoginRepository? = null
+        private var INSTANCE: LoginRepository? = null
         @JvmStatic
         fun getInstance(dataSource: LoginDataSource): LoginRepository? {
-            if (instance == null) {
-                instance = LoginRepository(dataSource)
+            if (INSTANCE == null) {
+                INSTANCE = LoginRepository(dataSource)
             }
-            return instance
+            return INSTANCE
         }
     }
 }

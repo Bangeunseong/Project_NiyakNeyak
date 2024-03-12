@@ -2,7 +2,6 @@ package com.capstone.project_niyakneyak.data.history_model
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,50 +9,36 @@ import androidx.room.PrimaryKey
 class HistoryData : Parcelable {
     @PrimaryKey
     var id: Long
-
     @JvmField
-    @ColumnInfo(name = "name")
-    var medsName: String?
-
+    var medsName: String
     @JvmField
-    @ColumnInfo(name = "detail")
     var medsDetail: String?
-
     @JvmField
-    @ColumnInfo(name = "start_date")
     var medsStartDate: String?
-
     @JvmField
-    @ColumnInfo(name = "end_date")
     var medsEndDate: String?
-
     @JvmField
-    @ColumnInfo(name = "hour")
     var hour: Int
-
     @JvmField
-    @ColumnInfo(name = "min")
     var min: Int
-
     @JvmField
-    @ColumnInfo(name = "alarm_title")
     var alarmTitle: String?
 
     constructor(
         id: Long,
-        meds_name: String?,
-        meds_detail: String?,
-        meds_start_date: String?,
-        meds_end_date: String?,
+        medsName: String,
+        medsDetail: String?,
+        medsStartDate: String?,
+        medsEndDate: String?,
         hour: Int,
         min: Int,
         alarmTitle: String?
     ) {
         this.id = id
-        this.medsName = meds_name
-        this.medsDetail = meds_detail
-        this.medsStartDate = meds_start_date
-        this.medsEndDate = meds_end_date
+        this.medsName = medsName
+        this.medsDetail = medsDetail
+        this.medsStartDate = medsStartDate
+        this.medsEndDate = medsEndDate
         this.hour = hour
         this.min = min
         this.alarmTitle = alarmTitle
@@ -61,7 +46,7 @@ class HistoryData : Parcelable {
 
     protected constructor(`in`: Parcel) {
         id = `in`.readLong()
-        medsName = `in`.readString()
+        medsName = `in`.readString().toString()
         medsDetail = `in`.readString()
         medsStartDate = `in`.readString()
         medsEndDate = `in`.readString()

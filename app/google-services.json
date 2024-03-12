@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "225706424576",
+    "project_id": "medication-manager-a2109",
+    "storage_bucket": "medication-manager-a2109.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225706424576:android:6ed434f35fa33f0667dbe5",
+        "android_client_info": {
+          "package_name": "com.capstone.project_niyakneyak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "225706424576-n5nmjustp1qltkfif8hq0l446ga729p7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXr7NGCdsLkAzjbyIUVwpg9Au83Kb0-VU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "225706424576-n5nmjustp1qltkfif8hq0l446ga729p7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

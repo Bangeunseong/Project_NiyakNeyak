@@ -1,60 +1,30 @@
 package com.capstone.project_niyakneyak.data.patient_model
 
+import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.firestore.IgnoreExtraProperties
 import kotlin.properties.Delegates
 
-class MedsData() : Parcelable {
-    //Field
-    var id by Delegates.notNull<Long>()
-    @JvmField
-    var medsName: String? = null
-    @JvmField
-    var medsDetail: String? = null
-    @JvmField
-    var medsStartDate: String? = null
-    @JvmField
-    var medsEndDate: String? = null
-
-    //Useful Functions for AlarmData Configuration
-    @JvmField
-    var alarms = mutableListOf<Int>()
+@IgnoreExtraProperties
+data class MedsData(
+    var medsName: String? = null,
+    var medsDetail: String? = null,
+    var medsStartDate: String? = null,
+    var medsEndDate: String? = null,
+    var alarms: MutableList<Int> = mutableListOf()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
-        id = parcel.readLong()
         medsName = parcel.readString()
         medsDetail = parcel.readString()
         medsStartDate = parcel.readString()
         medsEndDate = parcel.readString()
-        alarms = parcel.readArrayList(ClassLoader.getSystemClassLoader()) as MutableList<Int>
-    }
-
-    //Constructor
-    constructor(id: Long, medsName: String, medsDetail: String?) : this() {
-        this.id = id
-        this.medsName = medsName
-        this.medsDetail = medsDetail
-        alarms = ArrayList()
-    }
-
-    constructor(id: Long, medsName: String, medsDetail: String?,
-                medsStartDate: String?, medsEndDate: String?) : this() {
-        this.id = id
-        this.medsName = medsName
-        this.medsDetail = medsDetail
-        this.medsStartDate = medsStartDate
-        this.medsEndDate = medsEndDate
-        alarms = ArrayList()
-    }
-
-    override fun equals(obj: Any?): Boolean {
-        return if (obj is MedsData) {
-            id == obj.id
-        } else false
+        alarms = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            parcel.readArrayList(ClassLoader.getSystemClassLoader(), Int::class.java)!!
+        } else parcel.readArrayList(ClassLoader.getSystemClassLoader()) as MutableList<Int>
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(id)
         parcel.writeString(medsName)
         parcel.writeString(medsDetail)
         parcel.writeString(medsStartDate)
@@ -66,15 +36,13 @@ class MedsData() : Parcelable {
         return 0
     }
 
-    override fun hashCode(): Int {
-        var result = medsName.hashCode()
-        result = 31 * result + (medsDetail?.hashCode() ?: 0)
-        result = 31 * result + (medsStartDate?.hashCode() ?: 0)
-        result = 31 * result + (medsEndDate?.hashCode() ?: 0)
-        return result
-    }
-
     companion object CREATOR : Parcelable.Creator<MedsData> {
+        const val FIELD_NAME = "name"
+        const val FIELD_DETAIL = "detail"
+        const val FIELD_START_DATE = "start_date"
+        const val FIELD_END_DATE = "end_date"
+        const val FIELD_ALARMS = "alarms"
+
         override fun createFromParcel(parcel: Parcel): MedsData {
             return MedsData(parcel)
         }

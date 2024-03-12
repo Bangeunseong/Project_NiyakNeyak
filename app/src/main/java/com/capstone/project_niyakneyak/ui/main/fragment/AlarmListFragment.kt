@@ -21,6 +21,8 @@ import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.AlarmListViewModel
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.AlarmListViewModelFactory
 import com.capstone.project_niyakneyak.ui.main.listener.OnToggleAlarmListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import java.util.Calendar
 import java.util.function.Consumer
 
@@ -34,6 +36,8 @@ class AlarmListFragment : Fragment(), OnToggleAlarmListener {
     private var binding: FragmentAlarmListBinding? = null
     private var adapter: AlarmDataAdapter? = null
     private var alarmListViewModel: AlarmListViewModel? = null
+    private lateinit var firestore: FirebaseFirestore
+    private var query: Query? = null
     private var alarms: List<Alarm>? = null
     private var handler: Handler? = null
     private var runnable: Runnable? = null
@@ -54,7 +58,7 @@ class AlarmListFragment : Fragment(), OnToggleAlarmListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAlarmListBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -69,7 +73,7 @@ class AlarmListFragment : Fragment(), OnToggleAlarmListener {
         binding!!.contentTimeTable.adapter = adapter
         binding!!.contentTimeTable.addItemDecoration(HorizontalItemDecorator(10))
         binding!!.contentTimeTable.addItemDecoration(VerticalItemDecorator(20))
-        binding!!.contentAlarmAdd.setOnClickListener { v: View? -> showAlarmSettingDialog(null) }
+        binding!!.contentAlarmAdd.setOnClickListener { showAlarmSettingDialog(null) }
     }
 
     override fun onDestroyView() {
@@ -97,7 +101,7 @@ class AlarmListFragment : Fragment(), OnToggleAlarmListener {
         builder.setMessage("Do you want to delete this timer?")
         builder.setPositiveButton("OK") { dialog: DialogInterface?, which: Int ->
             if (alarm.isStarted) alarm.cancelAlarm(requireContext())
-            alarmListViewModel?.getPatientData()?.medsData?.forEach(Consumer { medsData: MedsData ->
+            alarmListViewModel?.getPatientData()?.getMedsData()?.forEach(Consumer { medsData: MedsData ->
                 medsData.alarms.remove(
                     alarm.alarmCode as Any
                 )
@@ -139,19 +143,19 @@ class AlarmListFragment : Fragment(), OnToggleAlarmListener {
     }
 
     private val timeDifference: Long?
-        private get() {
+        get() {
             val today = Calendar.getInstance()
             today.timeInMillis = System.currentTimeMillis()
             var timeDifference: Long? = null
             if (alarms == null) return null
             for (alarm in alarms!!) {
-                if (!alarm!!.isStarted) continue
+                if (!alarm.isStarted) continue
                 timeDifference = getMinTimeDifference(alarm, today, timeDifference)
             }
             return timeDifference
         }
 
-    private fun getMinTimeDifference(alarm: Alarm?, today: Calendar, timeDifference: Long?): Long? {
+    private fun getMinTimeDifference(alarm: Alarm?, today: Calendar, timeDifference: Long?): Long {
         var timeDifference = timeDifference
         val alarmTime: Calendar = if (!alarm!!.isRecurring) {
             getAlarmTime(alarm, today)

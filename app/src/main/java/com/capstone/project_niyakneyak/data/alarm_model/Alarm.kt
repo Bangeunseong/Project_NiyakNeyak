@@ -17,7 +17,7 @@ import java.util.Calendar
 import java.util.Locale
 
 @Entity(tableName = "alarm_table")
-class Alarm : Parcelable {
+data class Alarm : Parcelable {
     // Methods -> Getter and Setter
     // Setter
     // Getter
@@ -39,29 +39,15 @@ class Alarm : Parcelable {
     var isSat: Boolean
     var isSun: Boolean
     @JvmField
-    var title: String?
+    var title: String
     @JvmField
-    var tone: String?
+    var tone: String
     var isVibrate: Boolean
 
     // Constructor
-    constructor(
-        alarmCode: Int,
-        hour: Int,
-        min: Int,
-        title: String?,
-        started: Boolean,
-        recurring: Boolean,
-        mon: Boolean,
-        tue: Boolean,
-        wed: Boolean,
-        thu: Boolean,
-        fri: Boolean,
-        sat: Boolean,
-        sun: Boolean,
-        tone: String?,
-        vibrate: Boolean
-    ) {
+    constructor(alarmCode: Int, hour: Int, min: Int, title: String, started: Boolean, recurring: Boolean,
+        mon: Boolean, tue: Boolean, wed: Boolean, thu: Boolean, fri: Boolean, sat: Boolean, sun: Boolean,
+        tone: String, vibrate: Boolean) {
         this.alarmCode = alarmCode
         this.hour = hour
         this.min = min
@@ -92,8 +78,8 @@ class Alarm : Parcelable {
         isFri = `in`.readByte().toInt() != 0
         isSat = `in`.readByte().toInt() != 0
         isSun = `in`.readByte().toInt() != 0
-        title = `in`.readString()
-        tone = `in`.readString()
+        title = `in`.readString().toString()
+        tone = `in`.readString().toString()
         isVibrate = `in`.readByte().toInt() != 0
     }
 
@@ -243,6 +229,4 @@ class Alarm : Parcelable {
             return arrayOfNulls(size)
         }
     }
-
-
 }

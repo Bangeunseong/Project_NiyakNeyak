@@ -10,7 +10,7 @@ import java.util.concurrent.Executors
 
 @Database(entities = [Alarm::class], version = 1, exportSchema = false)
 abstract class AlarmDatabase : RoomDatabase() {
-    abstract fun alarmDao(): AlarmDao?
+    abstract fun alarmDao(): AlarmDao
 
     companion object {
         @Volatile
@@ -21,11 +21,7 @@ abstract class AlarmDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(AlarmDatabase::class.java) {
                     if (INSTANCE == null) {
-                        INSTANCE = databaseBuilder(
-                            context.applicationContext,
-                            AlarmDatabase::class.java,
-                            "alarm_database"
-                        ).build()
+                        INSTANCE = databaseBuilder(context.applicationContext, AlarmDatabase::class.java, "alarm_database").build()
                     }
                 }
             }

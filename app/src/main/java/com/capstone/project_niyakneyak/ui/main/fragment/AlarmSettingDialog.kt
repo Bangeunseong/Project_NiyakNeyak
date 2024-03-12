@@ -7,6 +7,7 @@ import android.content.Intent
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -34,13 +35,13 @@ class AlarmSettingDialog : DialogFragment() {
     private val actionResult = MutableLiveData<ActionResult?>()
     private var alarmSettingViewModel: AlarmSettingViewModel? = null
     private var binding: FragmentAlarmSettingDialogBinding? = null
-    private var tone: String? = null
+    private lateinit var tone: String
     private var alarm: Alarm? = null
     private var ringtone: Ringtone? = null
     private var isRecurring = false
     private var alarms: List<Alarm?>? = null
     private val mStartForResult =
-        registerForActivityResult<Intent, ActivityResult>(ActivityResultContracts.StartActivityForResult()) { o: ActivityResult ->
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { o: ActivityResult ->
             if (o.resultCode == Activity.RESULT_OK) {
                 val uri =
                     o.data!!.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
@@ -58,12 +59,13 @@ class AlarmSettingDialog : DialogFragment() {
 
         // Accessible data
         val data = arguments
-        alarm = data?.getParcelable(getString(R.string.arg_alarm_obj))
+        alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            data?.getParcelable(getString(R.string.arg_alarm_obj), Alarm::class.java)
+        } else data?.getParcelable(getString(R.string.arg_alarm_obj))
 
         // Setting ViewModel
         alarmSettingViewModel =
-            ViewModelProvider(this, AlarmSettingViewModelFactory(requireActivity().application))
-                .get(AlarmSettingViewModel::class.java)
+            ViewModelProvider(this, AlarmSettingViewModelFactory(requireActivity().application))[AlarmSettingViewModel::class.java]
         alarmSettingViewModel!!.getAlarmsLiveData()
             ?.observe(this) { alarms: List<Alarm?>? -> this.alarms = alarms }
     }
@@ -71,9 +73,7 @@ class AlarmSettingDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Main Dialog Builder
         val builder = AlertDialog.Builder(context, R.style.DialogBackground)
-        binding = FragmentAlarmSettingDialogBinding.inflate(
-            layoutInflater
-        )
+        binding = FragmentAlarmSettingDialogBinding.inflate(layoutInflater)
         val view: View = binding!!.root
         tone = RingtoneManager.getActualDefaultRingtoneUri(
             requireContext(),

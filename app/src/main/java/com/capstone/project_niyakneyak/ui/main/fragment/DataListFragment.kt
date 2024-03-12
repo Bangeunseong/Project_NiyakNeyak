@@ -5,143 +5,165 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.capstone.project_niyakneyak.data.Result
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.patient_model.MedsData
-import com.capstone.project_niyakneyak.data.patient_model.PatientData
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
-import com.capstone.project_niyakneyak.ui.main.adapter.MainDataAdapter
+import com.capstone.project_niyakneyak.ui.main.activity.MainActivity
+import com.capstone.project_niyakneyak.ui.main.adapter.MedicationAdapter
 import com.capstone.project_niyakneyak.ui.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator
-import com.capstone.project_niyakneyak.ui.main.etc.ActionResult
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataListViewModel
-import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataListViewModelFactory
-import com.capstone.project_niyakneyak.ui.main.listener.OnAddedDataListener
-import com.capstone.project_niyakneyak.ui.main.listener.OnChangedDataListener
-import com.capstone.project_niyakneyak.ui.main.listener.OnDeleteDataListener
+import com.capstone.project_niyakneyak.ui.main.listener.OnDialogActionListener
+import com.capstone.project_niyakneyak.ui.main.listener.OnMedicationChangedListener
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
+import com.google.firebase.ktx.Firebase
 
 /**
  * This Fragment is used for showing Medication info. by using [DataListFragment.adapter].
- * [DataListFragment.adapter] will be set by using [MainDataAdapter]
+ * [DataListFragment.adapter] will be set by using [MedicationAdapter]
  */
-class DataListFragment : Fragment() {
-    private var binding: FragmentDataListBinding? = null
-    private var adapter: MainDataAdapter? = null
-    private var dataListViewModel: DataListViewModel? = null
-    private val onAddedDataListener = object : OnAddedDataListener {
-        override fun onAddedData(target: MedsData) {
-            Log.d("MainActivity", "Data Addition called")
-            val result = dataListViewModel?.patientData
-            if (result is Result.Success<*>) {
-                dataListViewModel!!.addMedsdata(target)
-                val position = (result as Result.Success<PatientData?>).data!!.medsData!!.size - 1
-                adapter!!.addItem(position)
-                binding!!.contentMainGuide.visibility = View.GONE
-            }
-        }
-    }
-    private val onChangedDataListener = object : OnChangedDataListener {
-        override fun onChangedData(origin: MedsData, changed: MedsData) {
-            Log.d("MainActivity", "Data Modification called")
-            val result = dataListViewModel?.patientData
-            if (result is Result.Success<*>) {
-                dataListViewModel!!.modifyMedsData(origin, changed)
-                val position =
-                    (result as Result.Success<PatientData?>).data!!.medsData!!.indexOf(changed)
-                adapter!!.modifyItem(position)
-                binding!!.contentMainGuide.visibility = View.GONE
-            }
-        }
-    }
-    private val onDeleteDataListener = object : OnDeleteDataListener {
-        override fun onDeletedData(target: MedsData) {
-            Log.d("MainActivity", "Data Deletion called")
-            val result = dataListViewModel?.patientData
-            if (result is Result.Success<*>) {
-                val position =
-                    (result as Result.Success<PatientData?>).data!!.medsData!!.indexOf(target)
-                dataListViewModel!!.deleteMedsData(target)
-                adapter!!.removeItem(position)
-                if (adapter!!.itemCount < 1) binding!!.contentMainGuide.visibility = View.VISIBLE
-            }
-        }
-    }
+class DataListFragment : Fragment(), OnMedicationChangedListener, OnDialogActionListener {
+    private lateinit var firestore: FirebaseFirestore
+    private var query: Query? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        dataListViewModel = ViewModelProvider(this, DataListViewModelFactory()).get(
-            DataListViewModel::class.java
-        )
-        dataListViewModel!!.getActionResult().observe(this) { actionResult: ActionResult? ->
-            if (actionResult == null) return@observe
-            if (actionResult.success != null) {
-                Toast.makeText(context, actionResult.success!!.displayData, Toast.LENGTH_SHORT)
-                    .show()
-            }
-            if (actionResult.error != null) {
-                Toast.makeText(context, actionResult.error!!, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    private lateinit var binding: FragmentDataListBinding
+    private lateinit var viewModel: DataListViewModel
+    private var adapter: MedicationAdapter? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         binding = FragmentDataListBinding.inflate(inflater, container, false)
-        return binding!!.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // ViewModel
+        viewModel = ViewModelProvider(this)[DataListViewModel::class.java]
+
+        // Firebase Stuffs
+        FirebaseFirestore.setLoggingEnabled(true)
+        firestore = Firebase.firestore
+        query = firestore.collection("medications")
+            .orderBy("name", Query.Direction.ASCENDING)
+
         // RecyclerAdapter for Medication Info.
-        val result = dataListViewModel?.patientData
-        adapter =
-            if (result is Result.Success<*>) MainDataAdapter(
-                requireActivity().supportFragmentManager,
-                onChangedDataListener,
-                onDeleteDataListener)
-            else MainDataAdapter(
-            requireActivity().supportFragmentManager,
-            onChangedDataListener,
-            onDeleteDataListener
-        )
-        binding!!.contentMainMeds.setHasFixedSize(false)
-        binding!!.contentMainMeds.layoutManager = LinearLayoutManager(context)
-        binding!!.contentMainMeds.adapter = adapter
-        binding!!.contentMainMeds.addItemDecoration(VerticalItemDecorator(20))
-        binding!!.contentMainMeds.addItemDecoration(HorizontalItemDecorator(10))
-        binding!!.contentMainAdd.setOnClickListener { v: View? ->
-            val addDataDialog: DialogFragment = DataSettingDialog(onAddedDataListener, null)
-            val bundle = Bundle()
-            bundle.putParcelable("BeforeModify", null)
-            addDataDialog.arguments = bundle
-            addDataDialog.show(requireActivity().supportFragmentManager, "DATA_DIALOG_FRAGMENT")
+        query?.let {
+            adapter = object: MedicationAdapter(it, this@DataListFragment){
+                override fun onDataChanged() {
+                    if(itemCount == 0) {
+                        binding.contentMainGuide.visibility = View.VISIBLE
+                        binding.contentMainMeds.visibility = View.GONE
+                    }
+                    else {
+                        binding.contentMainGuide.visibility = View.GONE
+                        binding.contentMainMeds.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onError(e: FirebaseFirestoreException) {
+                    Snackbar.make(binding.root, "Error: check logs for info.", Snackbar.LENGTH_LONG).show()
+                }
+            }
+            binding.contentMainMeds.adapter = adapter
         }
-        if (adapter!!.itemCount > 0) binding!!.contentMainGuide.visibility = View.GONE
+        binding.contentMainMeds.setHasFixedSize(false)
+        binding.contentMainMeds.layoutManager = LinearLayoutManager(context)
+        binding.contentMainMeds.addItemDecoration(VerticalItemDecorator(20))
+        binding.contentMainMeds.addItemDecoration(HorizontalItemDecorator(10))
+
+        // Add button about Medication Info.
+        binding.contentMainAdd.setOnClickListener {
+            val dataSettingDialog = DataSettingDialog(this)
+            val bundle = Bundle()
+            bundle.putParcelable(getString(R.string.arg_origin_data), null)
+            dataSettingDialog.arguments = bundle
+            dataSettingDialog.show(requireActivity().supportFragmentManager, DIALOG_TAG)
+        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
-        adapter = null
-        dataListViewModel = null
+    override fun onStart() {
+        super.onStart()
+        //if(shouldStartSignIn()){ return }
+
+        // Start Listening Data changes from firebase when activity starts
+        adapter?.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // Stop Listening Data changes from firebase when activity stops
+        adapter?.stopListening()
+    }
+
+    private fun shouldStartSignIn(): Boolean {
+        return !viewModel.isSigningIn && Firebase.auth.currentUser == null
+    }
+
+    // Do actions, when dialog called and data has changed
+    override fun onAddedMedicationData(data: MedsData) {
+        val medicationsRef = firestore.collection("medications")
+        medicationsRef.add(data)
+            .addOnSuccessListener {
+                Log.w(TAG, "Medication Data added!")
+            }.addOnFailureListener {
+                Log.w(TAG, "Add Medication Data failed")
+            }
+    }
+    override fun onModifiedMedicationData(id: String, changed: MedsData) {
+        val medicationsRef = firestore.collection("medications").document(id)
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(medicationsRef)
+            val alarms = snapshot.data?.get(MedsData.FIELD_ALARMS) as ArrayList<*>
+
+            transaction.update(medicationsRef,
+                mapOf(MedsData.FIELD_NAME to changed.medsName,
+                    MedsData.FIELD_DETAIL to changed.medsDetail,
+                    MedsData.FIELD_START_DATE to changed.medsStartDate,
+                    MedsData.FIELD_END_DATE to changed.medsEndDate))
+            alarms.stream().forEach {
+                if(!changed.alarms.contains(it))
+                    transaction.update(medicationsRef, MedsData.FIELD_ALARMS, FieldValue.arrayRemove(it))
+            }
+            changed.alarms.forEach {
+                if(alarms.contains(it))
+                    transaction.update(medicationsRef, MedsData.FIELD_ALARMS, FieldValue.arrayUnion(it))
+            }
+            null
+        }.addOnSuccessListener {
+            Log.w(TAG, "Data Modification Success")
+        }.addOnFailureListener {
+            Log.w(TAG, "Data Modification Failed")
+        }
+    }
+
+    //<-- Do actions, when adapter component interacted with user -->
+    override fun onModifyBtnClicked(target: DocumentSnapshot) {
+        val dataSettingDialog = DataSettingDialog(this)
+        dataSettingDialog.arguments?.putString("snapshot_id", target.id)
+        dataSettingDialog.arguments?.putParcelable(getString(R.string.arg_origin_data), target.toObject(MedsData::class.java))
+        dataSettingDialog.show(requireActivity().supportFragmentManager, DIALOG_TAG)
+    }
+    override fun onDeleteBtnClicked(target: DocumentSnapshot) {
+        val medicationsRef = firestore.collection("medications")
+        medicationsRef.document(target.id).delete()
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         * @return A new instance of fragment MainPage.
-         */
-        fun newInstance(): DataListFragment {
-            return DataListFragment()
-        }
+        private const val TAG = "MAIN_FRAGMENT"
+        private const val DIALOG_TAG = "DIALOG_FRAGMENT"
     }
 }

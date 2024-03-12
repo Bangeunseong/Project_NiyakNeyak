@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class DataSettingViewModelFactory(private val application: Application) :
-    ViewModelProvider.AndroidViewModelFactory() {
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(DataSettingViewModel::class.java)) {
             DataSettingViewModel(application) as T

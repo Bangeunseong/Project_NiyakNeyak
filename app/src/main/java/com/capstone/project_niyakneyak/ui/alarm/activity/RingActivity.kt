@@ -121,7 +121,7 @@ class RingActivity : AppCompatActivity() {
             if (!alarm!!.isRecurring) {
                 alarm!!.isStarted = false
                 alarm!!.cancelAlarm(baseContext)
-                alarmListViewModel!!.update(alarm)
+                alarmListViewModel!!.update(alarm!!)
             }
         }
         val intentService = Intent(applicationContext, AlarmService::class.java)

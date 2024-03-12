@@ -13,11 +13,11 @@ class AlarmSettingViewModel(application: Application) : AndroidViewModel(applica
         alarmRepository = AlarmRepository(application)
     }
 
-    fun insert(alarm: Alarm?) {
+    fun insert(alarm: Alarm) {
         alarmRepository.insert(alarm)
     }
 
-    fun update(alarm: Alarm?) {
+    fun update(alarm: Alarm) {
         alarmRepository.update(alarm)
     }
 

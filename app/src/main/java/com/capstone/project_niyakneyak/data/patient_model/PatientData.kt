@@ -3,21 +3,22 @@ package com.capstone.project_niyakneyak.data.patient_model
 class PatientData {
     //Getter and Setter for patient Info.
     //Field
-    var patientName: String?
-    var patientAge: String?
-    var medsData: MutableList<MedsData>? = null
+    private var patientName: String?
+    private var patientAge: String?
+    private var medsData: MutableList<MedsData>
 
     //Constructor
+    init {
+        medsData = ArrayList()
+    }
     constructor() {
         patientName = "Guest"
         patientAge = null
-        medsData = ArrayList()
     }
 
     constructor(patientName: String?, patientAge: String?) {
         this.patientName = patientName
         this.patientAge = patientAge
-        medsData = ArrayList()
     }
 
     constructor(patientName: String?, patientAge: String?, medsData: MutableList<MedsData>?) {
@@ -27,26 +28,25 @@ class PatientData {
     }
 
     //Useful Functions for MedsData Configuration
-    fun setMedsData(medsData: MutableList<MedsData>?) {
+    fun setMedsData(medsData: MutableList<MedsData>) {
         this.medsData = medsData
     }
 
-    fun getMedsData(): List<MedsData>? {
+    fun getMedsData(): List<MedsData> {
         return medsData
     }
 
     fun searchMedsData(target: MedsData): Boolean {
-        return medsData!!.contains(target)
+        return medsData.contains(target)
     }
 
     fun addMedsData(data: MedsData) {
-        medsData!!.add(data)
+        medsData.add(data)
     }
 
     fun modifyMedsData(target: MedsData, changed: MedsData): Boolean {
-        if (!medsData!!.contains(target)) return false
-        val data = medsData!![medsData!!.indexOf(target)]
-        data.id = changed.id
+        if (!medsData.contains(target)) return false
+        val data = medsData[medsData.indexOf(target)]
         data.medsName = changed.medsName
         data.medsDetail = changed.medsDetail
         data.medsStartDate = changed.medsStartDate
@@ -56,8 +56,8 @@ class PatientData {
     }
 
     fun deleteMedsData(target: MedsData): Boolean {
-        if (!medsData!!.contains(target)) return false
-        medsData!!.remove(target)
+        if (!medsData.contains(target)) return false
+        medsData.remove(target)
         return true
     }
 }

@@ -15,11 +15,11 @@ class AlarmRepository(application: Application) {
         alarmsLiveData = alarmDao?.alarms
     }
 
-    fun insert(alarm: Alarm?) {
+    fun insert(alarm: Alarm) {
         AlarmDatabase.writeExecutor.execute { alarmDao!!.insert(alarm) }
     }
 
-    fun update(alarm: Alarm?) {
+    fun update(alarm: Alarm) {
         AlarmDatabase.writeExecutor.execute { alarmDao!!.update(alarm) }
     }
 

@@ -26,9 +26,8 @@ import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.ui.main.etc.SubmitFormState
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataSettingViewModel
 import com.capstone.project_niyakneyak.ui.main.fragment.viewmodel.DataSettingViewModelFactory
-import com.capstone.project_niyakneyak.ui.main.listener.OnAddedDataListener
-import com.capstone.project_niyakneyak.ui.main.listener.OnChangedDataListener
 import com.capstone.project_niyakneyak.ui.main.listener.OnCheckedAlarmListener
+import com.capstone.project_niyakneyak.ui.main.listener.OnDialogActionListener
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -37,17 +36,17 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Random
 
 /**
  * This DialogFragment is used for setting [MedsData](which is Medication Info.).
  *
  */
-class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, private val onChangedDataListener: OnChangedDataListener?) : DialogFragment(), OnCheckedAlarmListener {
+class DataSettingDialog(private val onDialogActionListener: OnDialogActionListener) : DialogFragment(), OnCheckedAlarmListener {
     private var submitFormState = MutableLiveData<SubmitFormState>()
     private var binding: FragmentDataSettingDialogBinding? = null
     private var dataSettingViewModel: DataSettingViewModel? = null
     private var adapter: MainAlarmDataAdapter? = null
+    private var snapshot_id: String? = null
     private var data: MedsData? = null
     private var alarms: List<Alarm>? = ArrayList()
     private val includedAlarms = ArrayList<Int>()
@@ -55,6 +54,7 @@ class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, p
         super.onCreate(savedInstanceState)
         // Accessible Data
         val bundle = requireArguments()
+        snapshot_id = bundle.getString("snapshot_id")
         data = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             bundle.getParcelable("BeforeModify", MedsData::class.java)
         } else bundle.getParcelable("BeforeModify")
@@ -96,19 +96,13 @@ class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, p
         rcvMedsTimer.addItemDecoration(VerticalItemDecorator(10))
 
         // If Accessible Data is not null, preset input form
-        val startDate: Long?
-        val endDate: Long?
+        var startDate: Long? = null
+        var endDate: Long? = null
         if (data != null) {
             medsName.setText(data!!.medsName)
             if (data!!.medsDetail != null) medsDetail.setText(data!!.medsDetail)
             if (data!!.medsStartDate != null && data!!.medsEndDate != null) {
-                medsDate.setText(
-                    String.format(
-                        "%s~%s",
-                        data!!.medsStartDate,
-                        data!!.medsEndDate
-                    )
-                )
+                medsDate.setText(String.format("%s~%s", data!!.medsStartDate, data!!.medsEndDate))
             }
             val parser: DateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN)
             try {
@@ -124,9 +118,6 @@ class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, p
                 throw RuntimeException()
             }
             submit.isEnabled = true
-        } else {
-            endDate = null
-            startDate = endDate
         }
         val filter =
             InputFilter { source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int ->
@@ -145,6 +136,7 @@ class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, p
                 submitDataChanged(medsName.text.toString())
             }
         }
+
         submitFormState.observe(this) { submitFormState: SubmitFormState? ->
             if (submitFormState == null) return@observe
             submit.isEnabled = submitFormState.isDataValid
@@ -157,66 +149,47 @@ class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, p
         // Main Body(Setting Functions for each Components)
         medsName.addTextChangedListener(afterTextChanged)
         medsName.filters = arrayOf(filter)
-        medsDate.setOnClickListener { v: View? ->
+        medsDate.setOnClickListener {
             val calBuilder = CalendarConstraints.Builder()
                 .setStart(MaterialDatePicker.thisMonthInUtcMilliseconds())
-            if (startDate != null) calBuilder.setValidator(DateValidatorPointForward.from(startDate)) else calBuilder.setValidator(
-                DateValidatorPointForward.now()
-            )
+                .setValidator(DateValidatorPointForward.now())
             val constraints = calBuilder.build()
             val datePickerBuilder = MaterialDatePicker.Builder
                 .dateRangePicker()
                 .setTitleText("Select Medication End Date")
                 .setCalendarConstraints(constraints)
-            if (startDate != null) datePickerBuilder.setSelection(
-                Pair(
-                    startDate + 1000 * 60 * 60 * 24,
-                    endDate
-                )
-            )
+            if (startDate != null) datePickerBuilder.setSelection(Pair(startDate + 1000 * 60 * 60 * 24, endDate))
+
             val datePicker = datePickerBuilder.build()
             datePicker.show(requireActivity().supportFragmentManager, "DATE_PICKER_RANGE")
             datePicker.addOnPositiveButtonClickListener { selection: Pair<Long, Long?> ->
-                val startDate = Date()
-                val endDate = Date()
-                startDate.time = selection.first
-                endDate.time = selection.second!!
+                val start = Date()
+                val end = Date()
+                start.time = selection.first
+                end.time = selection.second!!
                 val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd")
-                medsDate.setText(
-                    String.format(
-                        "%s~%s",
-                        dateFormat.format(startDate),
-                        dateFormat.format(endDate)
-                    )
-                )
+                medsDate.setText(String.format("%s~%s", dateFormat.format(start), dateFormat.format(end)))
             }
-            datePicker.addOnNegativeButtonClickListener { v1: View? -> }
+            datePicker.addOnNegativeButtonClickListener { }
         }
         medsTimer.setOnClickListener { showAlarmSettingDialog() }
         submit.setOnClickListener {
             val data1: MedsData
-            val id: Long = if (data == null) codeGenerator() else data!!.id
             val medsNameText = medsName.text.toString()
             val medsDetailText =
                 if (medsDetail.text.toString() == "null") null else medsDetail.text.toString()
             val medsDateText =
                 if (medsDate.text.toString() == "null") null else medsDate.text.toString()
-            data1 = if (!medsDateText!!.isEmpty()) {
-                val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }
-                    .toTypedArray()
-                MedsData(
-                    id, medsNameText,
-                    medsDetailText, dates[0], dates[1]
-                )
-            } else {
-                MedsData(
-                    id, medsNameText,
-                    medsDetailText, null, null
-                )
-            }
+            data1 = if (medsDateText!!.isNotEmpty()) {
+                    val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }
+                        .toTypedArray()
+                    MedsData(medsNameText, medsDetailText, dates[0], dates[1])
+                } else {
+                    MedsData(medsNameText, medsDetailText, null, null)
+                }
             data1.alarms = includedAlarms
-            if (data == null) onAddedDataListener?.onAddedData(data1)
-            else onChangedDataListener?.onChangedData(data!!, data1)
+            if (data == null) onDialogActionListener.onAddedMedicationData(data1)
+            else onDialogActionListener.onModifiedMedicationData(snapshot_id!!, data1)
             dismiss()
         }
         cancel.setOnClickListener { dismiss() }
@@ -229,7 +202,7 @@ class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, p
         data = null
     }
 
-    fun showAlarmSettingDialog() {
+    private fun showAlarmSettingDialog() {
         val alarmSettingDialog: DialogFragment = AlarmSettingDialog()
         val bundle = Bundle()
         bundle.putParcelable(getString(R.string.arg_alarm_obj), null)
@@ -245,10 +218,6 @@ class DataSettingDialog(private val onAddedDataListener: OnAddedDataListener?, p
 
     private fun isMedsNameValid(medsName: String?): Boolean {
         return medsName != null && medsName.matches("\\w{1,20}".toRegex())
-    }
-
-    private fun codeGenerator(): Long {
-        return Random().nextLong()
     }
 
     override fun onItemClicked(alarm: Alarm) {

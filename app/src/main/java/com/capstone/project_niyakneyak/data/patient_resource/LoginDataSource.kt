@@ -2,6 +2,9 @@ package com.capstone.project_niyakneyak.data.patient_resource
 
 import com.capstone.project_niyakneyak.data.Result
 import com.capstone.project_niyakneyak.data.patient_model.LoggedInUser
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.io.IOException
 import java.util.UUID
 
@@ -9,7 +12,9 @@ import java.util.UUID
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
 class LoginDataSource {
-    fun login(username: String?, password: String?): Result<Any?> {
+    private var auth: FirebaseAuth = Firebase.auth
+
+    fun signIn(username: String?, password: String?): Result<Any?> {
         return try {
             // TODO: handle loggedInUser authentication
             val fakeUser = LoggedInUser(UUID.randomUUID().toString(),"Jane Doe")
@@ -19,7 +24,7 @@ class LoginDataSource {
         }
     }
 
-    fun logout() {
+    fun signOut() {
         // TODO: revoke authentication
     }
 }

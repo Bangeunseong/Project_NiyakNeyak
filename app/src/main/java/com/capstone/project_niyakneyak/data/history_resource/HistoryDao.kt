@@ -11,10 +11,9 @@ import com.capstone.project_niyakneyak.data.history_model.HistoryData
 @Dao
 interface HistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(historyData: HistoryData?)
-
+    fun insert(historyData: HistoryData)
     @Update
-    fun update(historyData: HistoryData?)
+    fun update(historyData: HistoryData)
 
     @get:Query("SELECT * FROM history_table")
     val histories: LiveData<List<HistoryData>>?

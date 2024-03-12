@@ -14,7 +14,7 @@ class HistoryRepository(application: Application) {
         historyLiveData = historyDao?.histories
     }
 
-    fun insert(data: HistoryData?) {
+    fun insert(data: HistoryData) {
         HistoryDatabase.writeExecutor.execute { historyDao!!.insert(data) }
     }
 

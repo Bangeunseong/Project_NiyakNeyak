@@ -68,7 +68,7 @@ class CheckDataAdapter(private val onCheckedAlarmListener: OnCheckedAlarmListene
             alarmList.layoutManager = LinearLayoutManager(itemView.context)
             alarmList.adapter = adapter
             alarmList.addItemDecoration(VerticalItemDecorator(10))
-            adapter.setAlarms(data.id, getAlarms(data.alarms, alarms))
+            adapter.setAlarms(0, getAlarms(data.alarms, alarms))
         }
 
         private fun getAlarms(includedAlarms: List<Int>, alarms: List<Alarm>): List<Alarm> {

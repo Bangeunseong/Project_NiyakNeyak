@@ -9,7 +9,7 @@ import com.capstone.project_niyakneyak.data.patient_resource.LoginRepository.Com
  * ViewModel provider factory to instantiate LoginViewModel.
  * Required given LoginViewModel has a non-empty constructor
  */
-class LoginViewModelFactory : ViewModelProvider.AndroidViewModelFactory() {
+class LoginViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             LoginViewModel(getInstance(LoginDataSource())) as T

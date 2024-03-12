@@ -11,13 +11,13 @@ import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 @Dao
 interface AlarmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(alarm: Alarm?)
+    fun insert(alarm: Alarm)
 
     @get:Query("SELECT * FROM alarm_table")
     val alarms: LiveData<List<Alarm>>
 
     @Update
-    fun update(alarm: Alarm?)
+    fun update(alarm: Alarm)
 
     @Query("DELETE FROM alarm_table WHERE alarmCode = :alarmCode")
     fun delete(alarmCode: Int)
