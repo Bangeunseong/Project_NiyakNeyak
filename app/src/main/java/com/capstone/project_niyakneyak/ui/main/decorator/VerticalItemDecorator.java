@@ -6,6 +6,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * This ItemDecorator is for decorating adapter vertical padding.
+ * You need to enter Integer value when creating class.
+ * Typed value will be set as padding size.
+ */
 public class VerticalItemDecorator extends RecyclerView.ItemDecoration {
     private int divHeight;
     public VerticalItemDecorator(int divHeight){this.divHeight = divHeight;}

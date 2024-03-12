@@ -5,34 +5,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white_500"
     tools:context=".ui.main.fragment.DataListFragment">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/content_Layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/content_main_meds"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/content_main_meds"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:scrollbarStyle="insideOverlay"
-                android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed">
 
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed">
-
-            </androidx.recyclerview.widget.RecyclerView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.recyclerview.widget.RecyclerView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/content_main_add"
@@ -51,11 +46,11 @@
         android:layout_height="110dp"
         android:gravity="center"
         android:text="@string/action_main_rcv_addIntro."
-        android:textSize="20sp"
         android:textColor="@color/gray_500"
-        app:layout_constraintBottom_toBottomOf="@id/content_Layout"
-        app:layout_constraintEnd_toEndOf="@id/content_Layout"
-        app:layout_constraintStart_toStartOf="@id/content_Layout"
-        app:layout_constraintTop_toTopOf="@id/content_Layout" />
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

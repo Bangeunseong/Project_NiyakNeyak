@@ -3,6 +3,8 @@ package com.capstone.project_niyakneyak.data.patient_model;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
+import com.capstone.project_niyakneyak.data.alarm_model.Alarm;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ public class PatientData {
         data.setMeds_detail(changed.getMeds_detail());
         data.setMeds_start_date(changed.getMeds_start_date());
         data.setMeds_end_date(changed.getMeds_end_date());
+        data.setAlarms(changed.getAlarms());
         return true;
     }
     public boolean deleteMedsData(MedsData target){

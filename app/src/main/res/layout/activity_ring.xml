@@ -41,7 +41,7 @@
         <Button
             android:id="@+id/alarm_ring_reschedule"
             android:theme="@style/Theme.Project_NiyakNeyak"
-            style="@style/customButtonStyle"
+            style="@style/customSubmitBtnStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:paddingHorizontal="20dp"
@@ -54,7 +54,7 @@
         <Button
             android:id="@+id/alarm_ring_off"
             android:theme="@style/Theme.Project_NiyakNeyak"
-            style="@style/customButtonStyle"
+            style="@style/customSubmitBtnStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:paddingHorizontal="20dp"

@@ -39,6 +39,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.7.6")
 
     val workVersion = "2.9.0"
+
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     androidTestImplementation("androidx.room:room-testing:2.6.1")

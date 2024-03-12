@@ -4,10 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white_500"
     tools:context=".ui.main.fragment.CheckListFragment" >
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/content_checklist_description_text"
         android:layout_width="245dp"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -20,10 +21,9 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/content_checklist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:scrollbars="vertical" />
 </androidx.constraintlayout.widget.ConstraintLayout>

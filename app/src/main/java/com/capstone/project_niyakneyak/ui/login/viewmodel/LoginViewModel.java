@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.login;
+package com.capstone.project_niyakneyak.ui.login.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -10,6 +10,9 @@ import com.capstone.project_niyakneyak.data.user_resource.LoginRepository;
 import com.capstone.project_niyakneyak.data.Result;
 import com.capstone.project_niyakneyak.data.user_model.LoggedInUser;
 import com.capstone.project_niyakneyak.R;
+import com.capstone.project_niyakneyak.ui.login.etc.LoggedInUserView;
+import com.capstone.project_niyakneyak.ui.login.etc.LoginFormState;
+import com.capstone.project_niyakneyak.ui.login.etc.LoginResult;
 
 public class LoginViewModel extends ViewModel {
 
@@ -21,11 +24,11 @@ public class LoginViewModel extends ViewModel {
         this.loginRepository = loginRepository;
     }
 
-    LiveData<LoginFormState> getLoginFormState() {
+    public LiveData<LoginFormState> getLoginFormState() {
         return loginFormState;
     }
 
-    LiveData<LoginResult> getLoginResult() {
+    public LiveData<LoginResult> getLoginResult() {
         return loginResult;
     }
 
