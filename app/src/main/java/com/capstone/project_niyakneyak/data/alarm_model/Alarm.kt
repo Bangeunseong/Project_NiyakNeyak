@@ -13,74 +13,35 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.ui.alarm.receiver.AlarmReceiver
+import com.google.firebase.firestore.IgnoreExtraProperties
 import java.util.Calendar
 import java.util.Locale
 
 @Entity(tableName = "alarm_table")
-data class Alarm : Parcelable {
-    // Methods -> Getter and Setter
-    // Setter
-    // Getter
-    // Field
-    @JvmField
-    @PrimaryKey
-    var alarmCode: Int
-    @JvmField
-    var hour: Int
-    @JvmField
-    var min: Int
-    var isStarted: Boolean
-    var isRecurring: Boolean
-    var isMon: Boolean
-    var isTue: Boolean
-    var isWed: Boolean
-    var isThu: Boolean
-    var isFri: Boolean
-    var isSat: Boolean
-    var isSun: Boolean
-    @JvmField
-    var title: String
-    @JvmField
-    var tone: String
-    var isVibrate: Boolean
+data class Alarm(
+    @PrimaryKey var alarmCode: Int = 0, var hour: Int = 6, var min: Int = 0,
+    var isStarted: Boolean = false, var isRecurring: Boolean = false, var isMon: Boolean = false,
+    var isTue: Boolean = false, var isWed: Boolean = false, var isThu: Boolean = false,
+    var isFri: Boolean = false, var isSat: Boolean = false, var isSun: Boolean = false,
+    var title: String? = null, var tone: String? = null, var isVibrate: Boolean = false
+) : Parcelable {
 
-    // Constructor
-    constructor(alarmCode: Int, hour: Int, min: Int, title: String, started: Boolean, recurring: Boolean,
-        mon: Boolean, tue: Boolean, wed: Boolean, thu: Boolean, fri: Boolean, sat: Boolean, sun: Boolean,
-        tone: String, vibrate: Boolean) {
-        this.alarmCode = alarmCode
-        this.hour = hour
-        this.min = min
-        isStarted = started
-        isRecurring = recurring
-        this.title = title
-        isMon = mon
-        isTue = tue
-        isWed = wed
-        isThu = thu
-        isFri = fri
-        isSat = sat
-        isSun = sun
-        this.tone = tone
-        isVibrate = vibrate
-    }
-
-    protected constructor(`in`: Parcel) {
-        alarmCode = `in`.readInt()
-        hour = `in`.readInt()
-        min = `in`.readInt()
-        isStarted = `in`.readByte().toInt() != 0
-        isRecurring = `in`.readByte().toInt() != 0
-        isMon = `in`.readByte().toInt() != 0
-        isTue = `in`.readByte().toInt() != 0
-        isWed = `in`.readByte().toInt() != 0
-        isThu = `in`.readByte().toInt() != 0
-        isFri = `in`.readByte().toInt() != 0
-        isSat = `in`.readByte().toInt() != 0
-        isSun = `in`.readByte().toInt() != 0
-        title = `in`.readString().toString()
-        tone = `in`.readString().toString()
-        isVibrate = `in`.readByte().toInt() != 0
+    constructor(parcel: Parcel) : this() {
+        alarmCode = parcel.readInt()
+        hour = parcel.readInt()
+        min = parcel.readInt()
+        isStarted = parcel.readByte().toInt() != 0
+        isRecurring = parcel.readByte().toInt() != 0
+        isMon = parcel.readByte().toInt() != 0
+        isTue = parcel.readByte().toInt() != 0
+        isWed = parcel.readByte().toInt() != 0
+        isThu = parcel.readByte().toInt() != 0
+        isFri = parcel.readByte().toInt() != 0
+        isSat = parcel.readByte().toInt() != 0
+        isSun = parcel.readByte().toInt() != 0
+        title = parcel.readString().toString()
+        tone = parcel.readString().toString()
+        isVibrate = parcel.readByte().toInt() != 0
     }
 
     // Scheduling and Canceling Alarm
@@ -171,7 +132,8 @@ data class Alarm : Parcelable {
         ).show()
     }
 
-    val daysText: String? get() {
+    val daysText: String
+        get() {
         if (!isRecurring) {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = System.currentTimeMillis()
@@ -221,6 +183,22 @@ data class Alarm : Parcelable {
     }
 
     companion object CREATOR : Parcelable.Creator<Alarm> {
+        const val FIELD_ALARM_CODE = "alarmCode"
+        const val FIELD_HOUR = "hour"
+        const val FIELD_MINUTE = "min"
+        const val FIELD_IS_STARTED = "isStarted"
+        const val FIELD_IS_RECURRING = "isRecurring"
+        const val FIELD_IS_MONDAY = "isMon"
+        const val FIELD_IS_TUESDAY = "isTue"
+        const val FIELD_IS_WEDNESDAY = "isWed"
+        const val FIELD_IS_THURSDAY = "isThu"
+        const val FIELD_IS_FRIDAY = "isFri"
+        const val FIELD_IS_SATURDAY = "isSat"
+        const val FIELD_IS_SUNDAY = "isSun"
+        const val FIELD_TITLE = "title"
+        const val FIELD_TONE = "tone"
+        const val FIELD_IS_VIBRATE = "isVibrate"
+
         override fun createFromParcel(parcel: Parcel): Alarm {
             return Alarm(parcel)
         }

@@ -46,17 +46,6 @@ class CheckListFragment : Fragment(), OnCheckedAlarmListener {
                 View.VISIBLE else binding!!.contentChecklistDescriptionText.visibility = View.GONE
             adapter!!.setDataSet(temp, alarms)
         }
-        checkListViewModel!!.getLiveActionResult().observe(this) { actionResult: ActionResult? ->
-            if (actionResult == null) return@observe
-            if (actionResult.success != null) {
-                medsList = checkListViewModel!!.getMedsDataList()!!
-                val temp = getCertainMedsData(medsList, alarms)
-                if (temp.isEmpty()) binding!!.contentChecklistDescriptionText.visibility =
-                    View.VISIBLE else binding!!.contentChecklistDescriptionText.visibility =
-                    View.GONE
-                adapter!!.setDataSet(temp, alarms)
-            }
-        }
     }
 
     override fun onCreateView(

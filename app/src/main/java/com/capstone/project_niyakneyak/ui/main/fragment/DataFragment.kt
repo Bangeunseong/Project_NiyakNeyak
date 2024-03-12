@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.patient_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
-import com.capstone.project_niyakneyak.ui.main.activity.MainActivity
 import com.capstone.project_niyakneyak.ui.main.adapter.MedicationAdapter
 import com.capstone.project_niyakneyak.ui.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator
@@ -26,14 +25,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 
 /**
- * This Fragment is used for showing Medication info. by using [DataListFragment.adapter].
- * [DataListFragment.adapter] will be set by using [MedicationAdapter]
+ * This Fragment is used for showing Medication info. by using [DataFragment.adapter].
+ * [DataFragment.adapter] will be set by using [MedicationAdapter]
  */
-class DataListFragment : Fragment(), OnMedicationChangedListener, OnDialogActionListener {
+class DataFragment : Fragment(), OnMedicationChangedListener, OnDialogActionListener {
     private lateinit var firestore: FirebaseFirestore
     private var query: Query? = null
 
@@ -57,11 +55,11 @@ class DataListFragment : Fragment(), OnMedicationChangedListener, OnDialogAction
         FirebaseFirestore.setLoggingEnabled(true)
         firestore = Firebase.firestore
         query = firestore.collection("medications")
-            .orderBy("name", Query.Direction.ASCENDING)
+            .orderBy(MedsData.FIELD_NAME, Query.Direction.ASCENDING)
 
         // RecyclerAdapter for Medication Info.
         query?.let {
-            adapter = object: MedicationAdapter(it, this@DataListFragment){
+            adapter = object: MedicationAdapter(it, this@DataFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentMainGuide.visibility = View.VISIBLE
@@ -96,6 +94,7 @@ class DataListFragment : Fragment(), OnMedicationChangedListener, OnDialogAction
 
     override fun onStart() {
         super.onStart()
+        //TODO: Add Authentication Step
         //if(shouldStartSignIn()){ return }
 
         // Start Listening Data changes from firebase when activity starts
@@ -123,8 +122,8 @@ class DataListFragment : Fragment(), OnMedicationChangedListener, OnDialogAction
                 Log.w(TAG, "Add Medication Data failed")
             }
     }
-    override fun onModifiedMedicationData(id: String, changed: MedsData) {
-        val medicationsRef = firestore.collection("medications").document(id)
+    override fun onModifiedMedicationData(snapshotID: String, changed: MedsData) {
+        val medicationsRef = firestore.collection("medications").document(snapshotID)
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(medicationsRef)
             val alarms = snapshot.data?.get(MedsData.FIELD_ALARMS) as ArrayList<*>
@@ -153,8 +152,10 @@ class DataListFragment : Fragment(), OnMedicationChangedListener, OnDialogAction
     //<-- Do actions, when adapter component interacted with user -->
     override fun onModifyBtnClicked(target: DocumentSnapshot) {
         val dataSettingDialog = DataSettingDialog(this)
-        dataSettingDialog.arguments?.putString("snapshot_id", target.id)
-        dataSettingDialog.arguments?.putParcelable(getString(R.string.arg_origin_data), target.toObject(MedsData::class.java))
+        val bundle = Bundle()
+        bundle.putString("snapshot_id", target.id)
+        bundle.putParcelable(getString(R.string.arg_origin_data), target.toObject(MedsData::class.java))
+        dataSettingDialog.arguments = bundle
         dataSettingDialog.show(requireActivity().supportFragmentManager, DIALOG_TAG)
     }
     override fun onDeleteBtnClicked(target: DocumentSnapshot) {
@@ -163,7 +164,7 @@ class DataListFragment : Fragment(), OnMedicationChangedListener, OnDialogAction
     }
 
     companion object {
-        private const val TAG = "MAIN_FRAGMENT"
-        private const val DIALOG_TAG = "DIALOG_FRAGMENT"
+        private const val TAG = "DATA_FRAGMENT"
+        private const val DIALOG_TAG = "DATA_DIALOG"
     }
 }

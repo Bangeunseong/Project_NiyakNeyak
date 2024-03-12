@@ -1,7 +1,7 @@
 package com.capstone.project_niyakneyak.data.patient_resource
 
 import com.capstone.project_niyakneyak.data.Result
-import com.capstone.project_niyakneyak.data.patient_model.LoggedInUser
+import com.capstone.project_niyakneyak.data.patient_model.SignInUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -17,7 +17,7 @@ class LoginDataSource {
     fun signIn(username: String?, password: String?): Result<Any?> {
         return try {
             // TODO: handle loggedInUser authentication
-            val fakeUser = LoggedInUser(UUID.randomUUID().toString(),"Jane Doe")
+            val fakeUser = SignInUser(UUID.randomUUID().toString(),"Jane Doe")
             return (Result.Success(fakeUser))
         } catch (e: Exception) {
             Result.Error(IOException("Error logging in", e))

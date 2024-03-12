@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_500"
-    tools:context=".ui.main.fragment.AlarmListFragment">
+    tools:context=".ui.main.fragment.AlarmFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/content_alarm_add"

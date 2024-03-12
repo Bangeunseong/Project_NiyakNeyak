@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainPageFragment"
-        android:name="com.capstone.project_niyakneyak.ui.main.fragment.DataListFragment"
+        android:name="com.capstone.project_niyakneyak.ui.main.fragment.DataFragment"
         android:label="fragment_main_page"
         tools:layout="@layout/fragment_data_list" >
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/alarmListFragment"
-        android:name="com.capstone.project_niyakneyak.ui.main.fragment.AlarmListFragment"
+        android:name="com.capstone.project_niyakneyak.ui.main.fragment.AlarmFragment"
         android:label="fragment_alarm_list"
         tools:layout="@layout/fragment_alarm_list" >
         <action

@@ -95,7 +95,6 @@ class RingActivity : AppCompatActivity() {
                 Random().nextInt(Int.MAX_VALUE),
                 calendar[Calendar.HOUR_OF_DAY],
                 calendar[Calendar.MINUTE],
-                "Snooze",
                 true,
                 false,
                 false,
@@ -105,6 +104,7 @@ class RingActivity : AppCompatActivity() {
                 false,
                 false,
                 false,
+                "Snooze",
                 RingtoneManager.getActualDefaultRingtoneUri(baseContext, RingtoneManager.TYPE_ALARM)
                     .toString(),
                 false

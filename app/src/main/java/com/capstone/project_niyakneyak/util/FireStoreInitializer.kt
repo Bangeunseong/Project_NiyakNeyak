@@ -8,7 +8,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class FireStoreInitializer: Initializer<FirebaseFirestore> {
-    private val FIRESTORE_EMULATOR_HOST = "127.0.0.1"
+    private val FIRESTORE_EMULATOR_HOST = "10.0.2.2"
     private val FIRESTORE_EMULATOR_PORT = 8080
 
     override fun create(context: Context): FirebaseFirestore {

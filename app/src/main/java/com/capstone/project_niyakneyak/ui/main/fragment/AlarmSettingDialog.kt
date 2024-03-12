@@ -44,12 +44,15 @@ class AlarmSettingDialog : DialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { o: ActivityResult ->
             if (o.resultCode == Activity.RESULT_OK) {
                 val uri =
-                    o.data!!.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                        o.data!!.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java)
+                    else o.data!!.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+
                 ringtone = RingtoneManager.getRingtone(context, uri)
                 val title = ringtone!!.getTitle(context)
                 if (uri != null) {
                     tone = uri.toString()
-                    if (title != null && !title.isEmpty()) binding!!.alarmRingtoneText.text = title
+                    if (title != null && title.isNotEmpty()) binding!!.alarmRingtoneText.text = title
                 } else binding!!.alarmRingtoneText.text = ""
             }
         }
@@ -282,7 +285,6 @@ class AlarmSettingDialog : DialogFragment() {
             alarmCode,
             binding!!.timePicker.hour,
             binding!!.timePicker.minute,
-            alarmTitle,
             true,
             isRecurring,
             binding!!.toggleMonday.isChecked,
@@ -292,6 +294,7 @@ class AlarmSettingDialog : DialogFragment() {
             binding!!.toggleFriday.isChecked,
             binding!!.toggleSaturday.isChecked,
             binding!!.toggleSunday.isChecked,
+            alarmTitle,
             tone,
             binding!!.alarmVibSwt.isChecked
         )
@@ -322,7 +325,6 @@ class AlarmSettingDialog : DialogFragment() {
             alarm!!.alarmCode,
             binding!!.timePicker.hour,
             binding!!.timePicker.minute,
-            alarmTitle,
             true,
             isRecurring,
             binding!!.toggleMonday.isChecked,
@@ -332,6 +334,7 @@ class AlarmSettingDialog : DialogFragment() {
             binding!!.toggleFriday.isChecked,
             binding!!.toggleSaturday.isChecked,
             binding!!.toggleSunday.isChecked,
+            alarmTitle,
             tone,
             binding!!.alarmVibSwt.isChecked
         )
@@ -378,15 +381,13 @@ class AlarmSettingDialog : DialogFragment() {
             binding!!.toggleSunday.alpha = 1f
             isRecurring = true
         }
-        actionResult.setValue(
-            ActionResult(
-                AlarmDataView(
-                    alarm.isSun, alarm.isMon, alarm.isTue,
-                    alarm.isWed, alarm.isThu, alarm.isFri, alarm.isSat
-                )
+        actionResult.value = ActionResult(
+            AlarmDataView(
+                alarm.isSun, alarm.isMon, alarm.isTue,
+                alarm.isWed, alarm.isThu, alarm.isFri, alarm.isSat
             )
         )
-        tone = alarm.tone
+        tone = alarm.tone.toString()
         ringtone = RingtoneManager.getRingtone(requireContext(), Uri.parse(tone))
         binding!!.alarmRingtoneText.text = ringtone!!.getTitle(context)
         if (alarm.isVibrate) binding!!.alarmVibSwt.isChecked = true
@@ -394,7 +395,7 @@ class AlarmSettingDialog : DialogFragment() {
 
     private fun isAlreadyExistsAlarm(data: Alarm): Boolean {
         for (alarm in alarms!!) if (alarm!!.hour == data.hour && alarm.min == data.min) {
-            return if (alarm.daysText != null) alarm.daysText == data.daysText else data.daysText == null
+            return alarm.daysText == data.daysText
         }
         return false
     }

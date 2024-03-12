@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.Result
-import com.capstone.project_niyakneyak.data.patient_model.LoggedInUser
+import com.capstone.project_niyakneyak.data.patient_model.SignInUser
 import com.capstone.project_niyakneyak.data.patient_resource.LoginRepository
 import com.capstone.project_niyakneyak.ui.login.etc.LoggedInUserView
 import com.capstone.project_niyakneyak.ui.login.etc.LoginFormState
@@ -28,7 +28,7 @@ class LoginViewModel internal constructor(private val loginRepository: LoginRepo
         // can be launched in a separate asynchronous job
         val result = loginRepository!!.login(username, password)
         if (result is Result.Success<*>) {
-            val data = (result as Result.Success<LoggedInUser?>).data
+            val data = (result as Result.Success<SignInUser?>).data
             loginResult.setValue(LoginResult(LoggedInUserView(data!!.displayName)))
         } else {
             loginResult.setValue(LoginResult(R.string.login_failed))

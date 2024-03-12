@@ -1,7 +1,7 @@
 package com.capstone.project_niyakneyak.data.patient_resource
 
 import com.capstone.project_niyakneyak.data.Result
-import com.capstone.project_niyakneyak.data.patient_model.LoggedInUser
+import com.capstone.project_niyakneyak.data.patient_model.SignInUser
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -11,7 +11,7 @@ class LoginRepository // private constructor : singleton access
 private constructor(private val dataSource: LoginDataSource) {
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
-    private var user: LoggedInUser? = null
+    private var user: SignInUser? = null
     val isLoggedIn: Boolean
         get() = user != null
 
@@ -20,7 +20,7 @@ private constructor(private val dataSource: LoginDataSource) {
         dataSource.signOut()
     }
 
-    private fun setLoggedInUser(user: LoggedInUser?) {
+    private fun setLoggedInUser(user: SignInUser?) {
         this.user = user
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
@@ -30,7 +30,7 @@ private constructor(private val dataSource: LoginDataSource) {
         // handle login
         val result = dataSource.signIn(username, password)
         if (result is Result.Success<*>) {
-            setLoggedInUser((result as Result.Success<LoggedInUser?>).data)
+            setLoggedInUser((result as Result.Success<SignInUser?>).data)
         }
         return result
     }

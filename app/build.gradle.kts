@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
 }
@@ -16,6 +16,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -56,11 +57,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
     // firebase dependencies
-    implementation("com.google.firebase:firebase-auth:22.3.1")
-    implementation("com.google.firebase:firebase-database:20.3.1")
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
-    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     // navigation dependencies
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")

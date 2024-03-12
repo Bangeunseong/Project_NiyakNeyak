@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.firebase.firestore.IgnoreExtraProperties
-import kotlin.properties.Delegates
 
 @IgnoreExtraProperties
 data class MedsData(
@@ -37,10 +36,10 @@ data class MedsData(
     }
 
     companion object CREATOR : Parcelable.Creator<MedsData> {
-        const val FIELD_NAME = "name"
-        const val FIELD_DETAIL = "detail"
-        const val FIELD_START_DATE = "start_date"
-        const val FIELD_END_DATE = "end_date"
+        const val FIELD_NAME = "medsName"
+        const val FIELD_DETAIL = "medsDetail"
+        const val FIELD_START_DATE = "medsStartDate"
+        const val FIELD_END_DATE = "medsEndDate"
         const val FIELD_ALARMS = "alarms"
 
         override fun createFromParcel(parcel: Parcel): MedsData {
