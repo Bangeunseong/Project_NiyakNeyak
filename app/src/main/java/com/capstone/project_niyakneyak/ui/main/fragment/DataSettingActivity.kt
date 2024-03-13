@@ -34,6 +34,10 @@ import com.capstone.project_niyakneyak.ui.main.listener.OnDialogActionListener
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.firestore
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -50,35 +54,38 @@ class DataSettingActivity(private val onDialogActionListener: OnDialogActionList
     private var submitFormState = MutableLiveData<SubmitFormState>()
 
     private var snapshotId: String? = null
+    private var data: MedsData? = null
+    private var query: Query? = null
+
+    private lateinit var firestore: FirebaseFirestore
+
+    companion object{
+        private const val TAG = "DATA_SETTING_ACTIVITY"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Accessible Data
+        firestore = Firebase.firestore
         snapshotId = intent.getStringExtra("snapshot_id")
+        if(snapshotId != null){
+            val medicationRef = firestore.collection("medications").document(snapshotId!!)
+            medicationRef.get().addOnSuccessListener {
+                data = it.toObject(MedsData::class.java)
+            }.addOnFailureListener { Log.w(TAG, "Data not exists!") }
+        }
 
-
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // Main Dialog Builder
-        val builder = AlertDialog.Builder(context, R.style.DialogBackground)
-        binding = ActivityDataSettingBinding.inflate(layoutInflater)
-        if (data == null) builder.setCustomTitle(layoutInflater.inflate(R.layout.item_add_dialog_title, null))
-        else builder.setCustomTitle(layoutInflater.inflate(R.layout.item_modify_dialog_title, null))
-        builder.setView(binding.root)
+        // Setting RecyclerView Data Query
+        query = firestore.collection("alarms")
 
         // Setting RecyclerView about timer list
         binding.dialogMedsTimerList.setHasFixedSize(false)
-        binding.dialogMedsTimerList.layoutManager = LinearLayoutManager(activity)
-        binding.dialogMedsTimerList.adapter = adapter
+        binding.dialogMedsTimerList.layoutManager = LinearLayoutManager(this)
         binding.dialogMedsTimerList.addItemDecoration(VerticalItemDecorator(10))
-
-        // Set Dialog Components
-        setDialog(data, binding)
-        return builder.create()
     }
 
-    private fun setDialog(data: MedsData?, binding: FragmentDataSettingDialogBinding){
+    private fun setActivity(data: MedsData?, binding: ActivityDataSettingBinding){
         var startDate: Long? = null; var endDate: Long? = null
 
         if(data != null){
@@ -144,7 +151,7 @@ class DataSettingActivity(private val onDialogActionListener: OnDialogActionList
             if (startDate != null) datePickerBuilder.setSelection(Pair(startDate + 1000 * 60 * 60 * 24, endDate))
 
             val datePicker = datePickerBuilder.build()
-            datePicker.show(requireActivity().supportFragmentManager, "DATE_PICKER_RANGE")
+            datePicker.show(supportFragmentManager, "DATE_PICKER_RANGE")
             datePicker.addOnPositiveButtonClickListener { selection: Pair<Long, Long?> ->
                 val start = Date()
                 val end = Date()
@@ -173,9 +180,13 @@ class DataSettingActivity(private val onDialogActionListener: OnDialogActionList
             data1.alarms = includedAlarms
             if (data == null) onDialogActionListener.onAddedMedicationData(data1)
             else onDialogActionListener.onModifiedMedicationData(snapshotId!!, data1)
-            dismiss()
+            setResult(RESULT_OK, intent)
+            finish()
         }
-        binding.cancel.setOnClickListener { dismiss() }
+        binding.cancel.setOnClickListener {
+            setResult(RESULT_CANCELED)
+            finish()
+        }
     }
 
     private fun showAlarmSettingDialog() {

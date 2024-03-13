@@ -34,7 +34,7 @@ import java.util.Random
 class AlarmSettingActivity : DialogFragment() {
     private val actionResult = MutableLiveData<ActionResult?>()
     private var alarmSettingViewModel: AlarmSettingViewModel? = null
-    private var binding: FragmentAlarmSettingDialogBinding? = null
+    private lateinit var binding: FragmentAlarmSettingDialogBinding
     private lateinit var tone: String
     private var alarm: Alarm? = null
     private var ringtone: Ringtone? = null
@@ -52,8 +52,8 @@ class AlarmSettingActivity : DialogFragment() {
                 val title = ringtone!!.getTitle(context)
                 if (uri != null) {
                     tone = uri.toString()
-                    if (title != null && title.isNotEmpty()) binding!!.alarmRingtoneText.text = title
-                } else binding!!.alarmRingtoneText.text = ""
+                    if (title != null && title.isNotEmpty()) binding.alarmRingtoneText.text = title
+                } else binding.alarmRingtoneText.text = ""
             }
         }
 
@@ -77,24 +77,24 @@ class AlarmSettingActivity : DialogFragment() {
         // Main Dialog Builder
         val builder = AlertDialog.Builder(context, R.style.DialogBackground)
         binding = FragmentAlarmSettingDialogBinding.inflate(layoutInflater)
-        val view: View = binding!!.root
+        val view: View = binding.root
         tone = RingtoneManager.getActualDefaultRingtoneUri(requireContext(), RingtoneManager.TYPE_ALARM).toString()
         ringtone = RingtoneManager.getRingtone(context, Uri.parse(tone))
         builder.setView(view)
         if (alarm != null) updateAlarmInfo(alarm!!) else {
-            binding!!.timePicker.hour = 6
-            binding!!.timePicker.minute = 0
-            binding!!.alarmRingtoneText.text = ringtone!!.getTitle(context)
+            binding.timePicker.hour = 6
+            binding.timePicker.minute = 0
+            binding.alarmRingtoneText.text = ringtone!!.getTitle(context)
         }
 
         // Setting TimePickerView in 24hourView
-        binding!!.timePicker.setIs24HourView(true)
+        binding.timePicker.setIs24HourView(true)
 
         // Toggle Button Animation
-        binding!!.toggleSunday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+        binding.toggleSunday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             isRecurring =
-                (isChecked || binding!!.toggleMonday.isChecked || binding!!.toggleTuesday.isChecked || binding!!.toggleWednesday.isChecked
-                        || binding!!.toggleThursday.isChecked || binding!!.toggleFriday.isChecked || binding!!.toggleSaturday.isChecked)
+                (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
+                        || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
                 buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
                 buttonView.alpha = 1f
@@ -112,10 +112,10 @@ class AlarmSettingActivity : DialogFragment() {
                 actionResult.setValue(ActionResult(date))
             }
         }
-        binding!!.toggleMonday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+        binding.toggleMonday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             isRecurring =
-                (isChecked || binding!!.toggleSunday.isChecked || binding!!.toggleTuesday.isChecked || binding!!.toggleWednesday.isChecked
-                        || binding!!.toggleThursday.isChecked || binding!!.toggleFriday.isChecked || binding!!.toggleSaturday.isChecked)
+                (isChecked || binding.toggleSunday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
+                        || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
                 buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
                 buttonView.alpha = 1f
@@ -133,10 +133,10 @@ class AlarmSettingActivity : DialogFragment() {
                 actionResult.setValue(ActionResult(date))
             }
         }
-        binding!!.toggleTuesday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+        binding.toggleTuesday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             isRecurring =
-                (isChecked || binding!!.toggleMonday.isChecked || binding!!.toggleSunday.isChecked || binding!!.toggleWednesday.isChecked
-                        || binding!!.toggleThursday.isChecked || binding!!.toggleFriday.isChecked || binding!!.toggleSaturday.isChecked)
+                (isChecked || binding.toggleMonday.isChecked || binding.toggleSunday.isChecked || binding.toggleWednesday.isChecked
+                        || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
                 buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
                 buttonView.alpha = 1f
@@ -154,10 +154,10 @@ class AlarmSettingActivity : DialogFragment() {
                 actionResult.setValue(ActionResult(date))
             }
         }
-        binding!!.toggleWednesday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+        binding.toggleWednesday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             isRecurring =
-                (isChecked || binding!!.toggleMonday.isChecked || binding!!.toggleTuesday.isChecked || binding!!.toggleSunday.isChecked
-                        || binding!!.toggleThursday.isChecked || binding!!.toggleFriday.isChecked || binding!!.toggleSaturday.isChecked)
+                (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleSunday.isChecked
+                        || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
                 buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
                 buttonView.alpha = 1f
@@ -175,10 +175,10 @@ class AlarmSettingActivity : DialogFragment() {
                 actionResult.setValue(ActionResult(date))
             }
         }
-        binding!!.toggleThursday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+        binding.toggleThursday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             isRecurring =
-                (isChecked || binding!!.toggleMonday.isChecked || binding!!.toggleTuesday.isChecked || binding!!.toggleWednesday.isChecked
-                        || binding!!.toggleSunday.isChecked || binding!!.toggleFriday.isChecked || binding!!.toggleSaturday.isChecked)
+                (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
+                        || binding.toggleSunday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
                 buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
                 buttonView.alpha = 1f
@@ -196,10 +196,10 @@ class AlarmSettingActivity : DialogFragment() {
                 actionResult.setValue(ActionResult(date))
             }
         }
-        binding!!.toggleFriday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+        binding.toggleFriday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             isRecurring =
-                (isChecked || binding!!.toggleMonday.isChecked || binding!!.toggleTuesday.isChecked || binding!!.toggleWednesday.isChecked
-                        || binding!!.toggleThursday.isChecked || binding!!.toggleSunday.isChecked || binding!!.toggleSaturday.isChecked)
+                (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
+                        || binding.toggleThursday.isChecked || binding.toggleSunday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
                 buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
                 buttonView.alpha = 1f
@@ -217,10 +217,10 @@ class AlarmSettingActivity : DialogFragment() {
                 actionResult.setValue(ActionResult(date))
             }
         }
-        binding!!.toggleSaturday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+        binding.toggleSaturday.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             isRecurring =
-                (isChecked || binding!!.toggleMonday.isChecked || binding!!.toggleTuesday.isChecked || binding!!.toggleWednesday.isChecked
-                        || binding!!.toggleThursday.isChecked || binding!!.toggleFriday.isChecked || binding!!.toggleSunday.isChecked)
+                (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
+                        || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSunday.isChecked)
             if (isChecked) {
                 buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
                 buttonView.alpha = 1f
@@ -240,7 +240,7 @@ class AlarmSettingActivity : DialogFragment() {
         }
 
         // Ringtone Setting
-        binding!!.alarmRingtoneLayout.setOnClickListener { v: View? ->
+        binding.alarmRingtoneLayout.setOnClickListener { v: View? ->
             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Sound")
@@ -251,16 +251,14 @@ class AlarmSettingActivity : DialogFragment() {
         // Observe LiveData of date toggle button
         actionResult.observe(this) { actionResult: ActionResult? ->
             if (actionResult == null) return@observe
-            if (actionResult.alarmDateView != null) binding!!.weeklyDate.text = String.format(
-                "Weekly: %s", actionResult.alarmDateView!!
-                    .displayData
-            )
+            if (actionResult.alarmDateView != null)
+                binding.weeklyDate.text = String.format("Weekly: %s", actionResult.alarmDateView!!.displayData)
         }
-        binding!!.alarmSubmit.setOnClickListener { v: View? ->
+        binding.alarmSubmit.setOnClickListener { v: View? ->
             if (alarm != null) updateAlarm() else scheduleAlarm()
             dismiss()
         }
-        binding!!.alarmCancel.setOnClickListener { v: View? ->
+        binding.alarmCancel.setOnClickListener { v: View? ->
             if (alarm != null) alarm!!.scheduleAlarm(requireContext())
             dismiss()
         }
@@ -269,31 +267,30 @@ class AlarmSettingActivity : DialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding = null
         alarmSettingViewModel = null
     }
 
     private fun scheduleAlarm() {
         var alarmTitle = getString(R.string.alarm_title)
         val alarmCode = codeGenerator()
-        if (!binding!!.dialogAlarmTitleText.text.toString().isEmpty()) alarmTitle =
-            binding!!.dialogAlarmTitleText.text.toString()
+        if (!binding.dialogAlarmTitleText.text.toString().isEmpty()) alarmTitle =
+            binding.dialogAlarmTitleText.text.toString()
         val alarm = Alarm(
             alarmCode,
-            binding!!.timePicker.hour,
-            binding!!.timePicker.minute,
+            binding.timePicker.hour,
+            binding.timePicker.minute,
             true,
             isRecurring,
-            binding!!.toggleMonday.isChecked,
-            binding!!.toggleTuesday.isChecked,
-            binding!!.toggleWednesday.isChecked,
-            binding!!.toggleThursday.isChecked,
-            binding!!.toggleFriday.isChecked,
-            binding!!.toggleSaturday.isChecked,
-            binding!!.toggleSunday.isChecked,
+            binding.toggleMonday.isChecked,
+            binding.toggleTuesday.isChecked,
+            binding.toggleWednesday.isChecked,
+            binding.toggleThursday.isChecked,
+            binding.toggleFriday.isChecked,
+            binding.toggleSaturday.isChecked,
+            binding.toggleSunday.isChecked,
             alarmTitle,
             tone,
-            binding!!.alarmVibSwt.isChecked
+            binding.alarmVibSwt.isChecked
         )
 
         // Validate alarm's existence
@@ -302,8 +299,8 @@ class AlarmSettingActivity : DialogFragment() {
                 context,
                 String.format(
                     "Alarm already exists at %02d:%02d!",
-                    binding!!.timePicker.hour,
-                    binding!!.timePicker.minute
+                    binding.timePicker.hour,
+                    binding.timePicker.minute
                 ),
                 Toast.LENGTH_SHORT
             ).show()
@@ -316,66 +313,66 @@ class AlarmSettingActivity : DialogFragment() {
     private fun updateAlarm() {
         var alarmTitle = getString(R.string.alarm_title)
         //int alarmCode = codeGenerator();
-        if (!binding!!.dialogAlarmTitleText.text.toString().isEmpty()) alarmTitle =
-            binding!!.dialogAlarmTitleText.text.toString()
+        if (!binding.dialogAlarmTitleText.text.toString().isEmpty()) alarmTitle =
+            binding.dialogAlarmTitleText.text.toString()
         val updatedAlarm = Alarm(
             alarm!!.alarmCode,
-            binding!!.timePicker.hour,
-            binding!!.timePicker.minute,
+            binding.timePicker.hour,
+            binding.timePicker.minute,
             true,
             isRecurring,
-            binding!!.toggleMonday.isChecked,
-            binding!!.toggleTuesday.isChecked,
-            binding!!.toggleWednesday.isChecked,
-            binding!!.toggleThursday.isChecked,
-            binding!!.toggleFriday.isChecked,
-            binding!!.toggleSaturday.isChecked,
-            binding!!.toggleSunday.isChecked,
+            binding.toggleMonday.isChecked,
+            binding.toggleTuesday.isChecked,
+            binding.toggleWednesday.isChecked,
+            binding.toggleThursday.isChecked,
+            binding.toggleFriday.isChecked,
+            binding.toggleSaturday.isChecked,
+            binding.toggleSunday.isChecked,
             alarmTitle,
             tone,
-            binding!!.alarmVibSwt.isChecked
+            binding.alarmVibSwt.isChecked
         )
         alarmSettingViewModel!!.update(updatedAlarm)
         updatedAlarm.scheduleAlarm(requireContext())
     }
 
     private fun updateAlarmInfo(alarm: Alarm) {
-        binding!!.dialogAlarmTitleText.setText(alarm.title)
-        binding!!.timePicker.hour = alarm.hour
-        binding!!.timePicker.minute = alarm.min
+        binding.dialogAlarmTitleText.setText(alarm.title)
+        binding.timePicker.hour = alarm.hour
+        binding.timePicker.minute = alarm.min
         if (alarm.isMon) {
-            binding!!.toggleMonday.isChecked = true
-            binding!!.toggleMonday.alpha = 1f
+            binding.toggleMonday.isChecked = true
+            binding.toggleMonday.alpha = 1f
             isRecurring = true
         }
         if (alarm.isTue) {
-            binding!!.toggleTuesday.isChecked = true
-            binding!!.toggleTuesday.alpha = 1f
+            binding.toggleTuesday.isChecked = true
+            binding.toggleTuesday.alpha = 1f
             isRecurring = true
         }
         if (alarm.isWed) {
-            binding!!.toggleWednesday.isChecked = true
-            binding!!.toggleWednesday.alpha = 1f
+            binding.toggleWednesday.isChecked = true
+            binding.toggleWednesday.alpha = 1f
             isRecurring = true
         }
         if (alarm.isThu) {
-            binding!!.toggleThursday.isChecked = true
-            binding!!.toggleThursday.alpha = 1f
+            binding.toggleThursday.isChecked = true
+            binding.toggleThursday.alpha = 1f
             isRecurring = true
         }
         if (alarm.isFri) {
-            binding!!.toggleFriday.isChecked = true
-            binding!!.toggleFriday.alpha = 1f
+            binding.toggleFriday.isChecked = true
+            binding.toggleFriday.alpha = 1f
             isRecurring = true
         }
         if (alarm.isSat) {
-            binding!!.toggleSaturday.isChecked = true
-            binding!!.toggleSaturday.alpha = 1f
+            binding.toggleSaturday.isChecked = true
+            binding.toggleSaturday.alpha = 1f
             isRecurring = true
         }
         if (alarm.isSun) {
-            binding!!.toggleSunday.isChecked = true
-            binding!!.toggleSunday.alpha = 1f
+            binding.toggleSunday.isChecked = true
+            binding.toggleSunday.alpha = 1f
             isRecurring = true
         }
         actionResult.value = ActionResult(
@@ -386,8 +383,8 @@ class AlarmSettingActivity : DialogFragment() {
         )
         tone = alarm.tone.toString()
         ringtone = RingtoneManager.getRingtone(requireContext(), Uri.parse(tone))
-        binding!!.alarmRingtoneText.text = ringtone!!.getTitle(context)
-        if (alarm.isVibrate) binding!!.alarmVibSwt.isChecked = true
+        binding.alarmRingtoneText.text = ringtone!!.getTitle(context)
+        if (alarm.isVibrate) binding.alarmVibSwt.isChecked = true
     }
 
     private fun isAlreadyExistsAlarm(data: Alarm): Boolean {

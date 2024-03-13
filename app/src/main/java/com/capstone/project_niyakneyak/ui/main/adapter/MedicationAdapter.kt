@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.project_niyakneyak.data.patient_model.MedsData
-import com.capstone.project_niyakneyak.databinding.ItemRecyclerMedsBinding
 import com.capstone.project_niyakneyak.ui.main.listener.OnMedicationChangedListener
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
