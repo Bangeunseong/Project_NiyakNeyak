@@ -12,11 +12,11 @@ import android.widget.Toast
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.capstone.project_niyakneyak.R
-import com.capstone.project_niyakneyak.ui.alarm.receiver.AlarmReceiver
+import com.capstone.project_niyakneyak.alarm.receiver.AlarmReceiver
 import com.google.firebase.firestore.IgnoreExtraProperties
 import java.util.Calendar
 import java.util.Locale
-
+@IgnoreExtraProperties
 @Entity(tableName = "alarm_table")
 data class Alarm(
     @PrimaryKey var alarmCode: Int = 0, var hour: Int = 6, var min: Int = 0,

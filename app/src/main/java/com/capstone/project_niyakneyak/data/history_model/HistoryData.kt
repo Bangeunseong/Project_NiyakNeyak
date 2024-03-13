@@ -2,57 +2,27 @@ package com.capstone.project_niyakneyak.data.history_model
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.google.firebase.firestore.IgnoreExtraProperties
 
-@Entity(tableName = "history_table")
-class HistoryData : Parcelable {
-    @PrimaryKey
-    var id: Long
-    @JvmField
-    var medsName: String
-    @JvmField
-    var medsDetail: String?
-    @JvmField
-    var medsStartDate: String?
-    @JvmField
-    var medsEndDate: String?
-    @JvmField
-    var hour: Int
-    @JvmField
-    var min: Int
-    @JvmField
-    var alarmTitle: String?
+@IgnoreExtraProperties
+data class HistoryData(
+    var id: Long, var medsName: String? = null,
+    var medsDetail: String? = null, var medsStartDate: String? = null,
+    var medsEndDate: String? = null, var hour: Int,
+    var min: Int, var alarmTitle: String? = null) : Parcelable {
 
-    constructor(
-        id: Long,
-        medsName: String,
-        medsDetail: String?,
-        medsStartDate: String?,
-        medsEndDate: String?,
-        hour: Int,
-        min: Int,
-        alarmTitle: String?
-    ) {
-        this.id = id
-        this.medsName = medsName
-        this.medsDetail = medsDetail
-        this.medsStartDate = medsStartDate
-        this.medsEndDate = medsEndDate
-        this.hour = hour
-        this.min = min
-        this.alarmTitle = alarmTitle
-    }
-
-    protected constructor(`in`: Parcel) {
-        id = `in`.readLong()
-        medsName = `in`.readString().toString()
-        medsDetail = `in`.readString()
-        medsStartDate = `in`.readString()
-        medsEndDate = `in`.readString()
-        hour = `in`.readInt()
-        min = `in`.readInt()
-        alarmTitle = `in`.readString()
+    constructor(parcel: Parcel) :
+            this(-1,null,null,
+                null,null,
+                0,0,null) {
+        id = parcel.readLong()
+        medsName = parcel.readString()
+        medsDetail = parcel.readString()
+        medsStartDate = parcel.readString()
+        medsEndDate = parcel.readString()
+        hour = parcel.readInt()
+        min = parcel.readInt()
+        alarmTitle = parcel.readString()
     }
 
     override fun describeContents(): Int {

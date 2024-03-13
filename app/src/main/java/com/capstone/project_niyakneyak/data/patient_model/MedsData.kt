@@ -11,7 +11,7 @@ data class MedsData(
     var medsDetail: String? = null,
     var medsStartDate: String? = null,
     var medsEndDate: String? = null,
-    var alarms: MutableList<Int> = mutableListOf()) : Parcelable {
+    var alarms: ArrayList<Int> = ArrayList()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         medsName = parcel.readString()
@@ -20,7 +20,7 @@ data class MedsData(
         medsEndDate = parcel.readString()
         alarms = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             parcel.readArrayList(ClassLoader.getSystemClassLoader(), Int::class.java)!!
-        } else parcel.readArrayList(ClassLoader.getSystemClassLoader()) as MutableList<Int>
+        } else parcel.readArrayList(ClassLoader.getSystemClassLoader()) as ArrayList<Int>
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

@@ -23,21 +23,23 @@
         android:theme="@style/Theme.Project_NiyakNeyak"
         tools:targetApi="31">
 
-        <service android:name="com.capstone.project_niyakneyak.ui.alarm.service.AlarmService"/>
-        <service android:name="com.capstone.project_niyakneyak.ui.alarm.service.RescheduleAlarmService" />
+        <service android:name=".alarm.service.AlarmService"/>
+        <service android:name=".alarm.service.RescheduleAlarmService" />
         <receiver
-            android:name="com.capstone.project_niyakneyak.ui.alarm.receiver.AlarmReceiver"
+            android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="false" />
         <activity
-            android:name="com.capstone.project_niyakneyak.ui.alarm.activity.RingActivity"
+            android:name=".alarm.activity.RingActivity"
             android:exported="false"
             android:theme="@style/Theme.Design.NoActionBar"/>
-        <activity
-            android:name="com.capstone.project_niyakneyak.ui.main.activity.MainActivity"
+        <activity android:name=".main.activity.DataSettingActivity"
             android:exported="false" />
         <activity
-            android:name="com.capstone.project_niyakneyak.ui.login.activity.LoginActivity"
+            android:name=".main.activity.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".login.activity.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login">
             <intent-filter>
