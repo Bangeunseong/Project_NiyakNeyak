@@ -2,6 +2,8 @@ package com.capstone.project_niyakneyak.ui.main.fragment
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Bundle
@@ -9,7 +11,10 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
+import android.util.AttributeSet
 import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
@@ -18,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.patient_model.MedsData
-import com.capstone.project_niyakneyak.databinding.FragmentDataSettingDialogBinding
+import com.capstone.project_niyakneyak.databinding.ActivityDataSettingBinding
 import com.capstone.project_niyakneyak.ui.main.adapter.MainAlarmDataAdapter
 import com.capstone.project_niyakneyak.ui.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.ui.main.etc.SubmitFormState
@@ -39,37 +44,25 @@ import java.util.Locale
  * This DialogFragment is used for setting [MedsData](which is Medication Info.).
  *
  */
-class DataSettingDialog(private val onDialogActionListener: OnDialogActionListener) : DialogFragment(), OnCheckedAlarmListener {
-    private var submitFormState = MutableLiveData<SubmitFormState>()
-    private lateinit var binding: FragmentDataSettingDialogBinding
-    private lateinit var dataSettingViewModel: DataSettingViewModel
+class DataSettingActivity(private val onDialogActionListener: OnDialogActionListener) : AppCompatActivity(), OnCheckedAlarmListener {
+    private lateinit var binding: ActivityDataSettingBinding
     private var adapter: MainAlarmDataAdapter? = null
+    private var submitFormState = MutableLiveData<SubmitFormState>()
+
     private var snapshotId: String? = null
-    private var data: MedsData? = null
-    private var alarms: List<Alarm>? = ArrayList()
-    private val includedAlarms = ArrayList<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Accessible Data
-        val bundle = requireArguments()
-        snapshotId = bundle.getString("snapshot_id")
-        data = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bundle.getParcelable(getString(R.string.arg_origin_data), MedsData::class.java)
-        } else bundle.getParcelable(getString(R.string.arg_origin_data))
-        if (data != null) { includedAlarms.addAll(data!!.alarms) }
-        adapter = MainAlarmDataAdapter(this)
-        dataSettingViewModel = ViewModelProvider(this, DataSettingViewModelFactory(requireActivity().application))[DataSettingViewModel::class.java]
-        dataSettingViewModel.getAlarmsLiveData().observe(this) { alarms: List<Alarm> ->
-            this.alarms = alarms
-            adapter!!.setAlarms(alarms, includedAlarms)
-        }
+        snapshotId = intent.getStringExtra("snapshot_id")
+
+
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Main Dialog Builder
         val builder = AlertDialog.Builder(context, R.style.DialogBackground)
-        binding = FragmentDataSettingDialogBinding.inflate(layoutInflater)
+        binding = ActivityDataSettingBinding.inflate(layoutInflater)
         if (data == null) builder.setCustomTitle(layoutInflater.inflate(R.layout.item_add_dialog_title, null))
         else builder.setCustomTitle(layoutInflater.inflate(R.layout.item_modify_dialog_title, null))
         builder.setView(binding.root)
@@ -186,11 +179,11 @@ class DataSettingDialog(private val onDialogActionListener: OnDialogActionListen
     }
 
     private fun showAlarmSettingDialog() {
-        val alarmSettingDialog: DialogFragment = AlarmSettingDialog()
+        val alarmSettingActivity: DialogFragment = AlarmSettingActivity()
         val bundle = Bundle()
         bundle.putParcelable(getString(R.string.arg_alarm_obj), null)
-        alarmSettingDialog.arguments = bundle
-        alarmSettingDialog.show(requireActivity().supportFragmentManager, "ALARM_DIALOG_FRAGMENT")
+        alarmSettingActivity.arguments = bundle
+        alarmSettingActivity.show(requireActivity().supportFragmentManager, "ALARM_DIALOG_FRAGMENT")
     }
 
     private fun submitDataChanged(meds: String) {

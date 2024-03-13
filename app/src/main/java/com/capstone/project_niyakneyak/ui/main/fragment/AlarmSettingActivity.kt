@@ -31,7 +31,7 @@ import java.util.Random
  * This DialogFragment is used to set [Alarm] getting information
  * by user interaction.
  */
-class AlarmSettingDialog : DialogFragment() {
+class AlarmSettingActivity : DialogFragment() {
     private val actionResult = MutableLiveData<ActionResult?>()
     private var alarmSettingViewModel: AlarmSettingViewModel? = null
     private var binding: FragmentAlarmSettingDialogBinding? = null
@@ -78,10 +78,7 @@ class AlarmSettingDialog : DialogFragment() {
         val builder = AlertDialog.Builder(context, R.style.DialogBackground)
         binding = FragmentAlarmSettingDialogBinding.inflate(layoutInflater)
         val view: View = binding!!.root
-        tone = RingtoneManager.getActualDefaultRingtoneUri(
-            requireContext(),
-            RingtoneManager.TYPE_ALARM
-        ).toString()
+        tone = RingtoneManager.getActualDefaultRingtoneUri(requireContext(), RingtoneManager.TYPE_ALARM).toString()
         ringtone = RingtoneManager.getRingtone(context, Uri.parse(tone))
         builder.setView(view)
         if (alarm != null) updateAlarmInfo(alarm!!) else {

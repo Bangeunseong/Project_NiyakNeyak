@@ -16,7 +16,7 @@ import java.util.Locale
  * This Adapter is used for showing currently registered and selectable alarms.
  * When setting Medication Data, this adapter is used to describe which alarm is available.
  * Adapter needs [OnCheckedAlarmListener] to deliver checked alarm info to
- * [com.capstone.project_niyakneyak.ui.main.fragment.DataSettingDialog]
+ * [com.capstone.project_niyakneyak.ui.main.fragment.DataSettingActivity]
  */
 class MainAlarmDataAdapter(private val onCheckedAlarmListener: OnCheckedAlarmListener) :
     RecyclerView.Adapter<MainAlarmDataAdapter.ViewHolder>() {

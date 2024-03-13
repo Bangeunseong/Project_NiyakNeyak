@@ -3,7 +3,6 @@ package com.capstone.project_niyakneyak.ui.main.fragment
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -119,12 +118,12 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     }
 
     private fun showAlarmSettingDialog(snapshot: DocumentSnapshot?, alarm: Alarm?) {
-        val alarmSettingDialog: DialogFragment = AlarmSettingDialog()
+        val alarmSettingActivity: DialogFragment = AlarmSettingActivity()
         val bundle = Bundle()
         if (snapshot != null) bundle.putString("snapshot_id", snapshot.id)
         bundle.putParcelable(getString(R.string.arg_alarm_obj), alarm)
-        alarmSettingDialog.arguments = bundle
-        alarmSettingDialog.show(requireActivity().supportFragmentManager, "ALARM_DIALOG_FRAGMENT")
+        alarmSettingActivity.arguments = bundle
+        alarmSettingActivity.show(requireActivity().supportFragmentManager, "ALARM_DIALOG_FRAGMENT")
     }
 
     //Functions for getting time difference between next time and current time

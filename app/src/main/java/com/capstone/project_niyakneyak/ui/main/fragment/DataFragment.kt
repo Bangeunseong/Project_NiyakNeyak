@@ -84,11 +84,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, OnDialogActionList
 
         // Add button about Medication Info.
         binding.contentMainAdd.setOnClickListener {
-            val dataSettingDialog = DataSettingDialog(this)
-            val bundle = Bundle()
-            bundle.putParcelable(getString(R.string.arg_origin_data), null)
-            dataSettingDialog.arguments = bundle
-            dataSettingDialog.show(requireActivity().supportFragmentManager, DIALOG_TAG)
+            TODO("Not yet Implemented")
         }
     }
 
@@ -151,12 +147,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, OnDialogActionList
 
     //<-- Do actions, when adapter component interacted with user -->
     override fun onModifyBtnClicked(target: DocumentSnapshot) {
-        val dataSettingDialog = DataSettingDialog(this)
-        val bundle = Bundle()
-        bundle.putString("snapshot_id", target.id)
-        bundle.putParcelable(getString(R.string.arg_origin_data), target.toObject(MedsData::class.java))
-        dataSettingDialog.arguments = bundle
-        dataSettingDialog.show(requireActivity().supportFragmentManager, DIALOG_TAG)
+
     }
     override fun onDeleteBtnClicked(target: DocumentSnapshot) {
         val medicationsRef = firestore.collection("medications")
