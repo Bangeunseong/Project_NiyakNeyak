@@ -3,6 +3,7 @@ package com.capstone.project_niyakneyak.main.fragment
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,12 +24,15 @@ import com.capstone.project_niyakneyak.main.listener.OnAlarmChangedListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.snapshots
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
+import java.util.ArrayList
 import java.util.Calendar
 
 /**
@@ -121,11 +125,17 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         builder.setMessage("Do you want to delete this timer?")
         builder.setPositiveButton("OK") { dialog: DialogInterface?, which: Int ->
             val medicationRef = firestore.collection("medications")
-                .whereArrayContains(MedsData.FIELD_ALARMS, alarm.alarmCode)
-
-            //TODO: Evaluate that Alarm needs to be canceled
             if (alarm.isStarted) alarm.cancelAlarm(requireContext())
-            alarmRef.delete()
+
+            medicationRef.whereArrayContains(MedsData.FIELD_ALARMS, alarm.alarmCode).get()
+                .addOnSuccessListener { documents ->
+                    firestore.runBatch { batch ->
+                        for(document in documents){
+                            batch.update(medicationRef.document(document.id), MedsData.FIELD_ALARMS, FieldValue.arrayRemove(alarm.alarmCode))
+                        }
+                        batch.delete(alarmRef)
+                    }
+                }.addOnFailureListener { Log.w(TAG, "Terrible Error Occurred: Alarm Deletion Failed!") }
         }
         builder.setNegativeButton("CANCEL") { dialog: DialogInterface?, which: Int -> }
         builder.create().show()

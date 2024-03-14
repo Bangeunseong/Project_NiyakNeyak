@@ -30,11 +30,12 @@ import java.util.Random
  * This DialogFragment is used to set [Alarm] getting information
  * by user interaction.
  */
+//TODO: Modify Activity
 class AlarmSettingActivity : DialogFragment() {
-    private val actionResult = MutableLiveData<ActionResult?>()
     private var alarmSettingViewModel: AlarmSettingViewModel? = null
     private lateinit var binding: FragmentAlarmSettingDialogBinding
     private lateinit var tone: String
+    private val actionResult = MutableLiveData<ActionResult?>()
     private var alarm: Alarm? = null
     private var ringtone: Ringtone? = null
     private var isRecurring = false
