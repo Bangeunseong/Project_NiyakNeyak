@@ -14,7 +14,7 @@ import com.capstone.project_niyakneyak.main.activity.DataSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.MedicationAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
-import com.capstone.project_niyakneyak.main.viewmodel.DataListViewModel
+import com.capstone.project_niyakneyak.main.viewmodel.DataViewModel
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
@@ -34,7 +34,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
     private var query: Query? = null
 
     private lateinit var binding: FragmentDataListBinding
-    private lateinit var viewModel: DataListViewModel
+    private lateinit var viewModel: DataViewModel
     private var adapter: MedicationAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -47,7 +47,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
         super.onViewCreated(view, savedInstanceState)
 
         // ViewModel
-        viewModel = ViewModelProvider(this)[DataListViewModel::class.java]
+        viewModel = ViewModelProvider(this)[DataViewModel::class.java]
 
         // Firebase Stuffs
         FirebaseFirestore.setLoggingEnabled(true)

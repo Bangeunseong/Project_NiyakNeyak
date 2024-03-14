@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.patient_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentAlarmListBinding
 import com.capstone.project_niyakneyak.main.activity.AlarmSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.AlarmAdapter
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.ktx.Firebase
 import java.util.Calendar
 
@@ -83,7 +85,6 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         binding.contentTimeTable.layoutManager = LinearLayoutManager(activity)
         binding.contentTimeTable.addItemDecoration(HorizontalItemDecorator(10))
         binding.contentTimeTable.addItemDecoration(VerticalItemDecorator(20))
-        binding.contentAlarmAdd.setOnClickListener { showAlarmSettingDialog(null,null) }
     }
 
     override fun onStart() {
@@ -119,6 +120,9 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         builder.setTitle("Warning!")
         builder.setMessage("Do you want to delete this timer?")
         builder.setPositiveButton("OK") { dialog: DialogInterface?, which: Int ->
+            val medicationRef = firestore.collection("medications")
+                .whereArrayContains(MedsData.FIELD_ALARMS, alarm.alarmCode)
+
             //TODO: Evaluate that Alarm needs to be canceled
             if (alarm.isStarted) alarm.cancelAlarm(requireContext())
             alarmRef.delete()
