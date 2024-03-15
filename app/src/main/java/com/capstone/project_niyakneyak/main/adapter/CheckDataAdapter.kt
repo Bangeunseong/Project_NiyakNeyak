@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.patient_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
 import java.util.Calendar
@@ -17,7 +17,7 @@ import java.util.Calendar
 /**
  * This adapter is used for showing Medication info. which should be consumed in current date.
  * It needs [OnCheckedAlarmListener] to deliver which alarm is checked
- * When alarm is checked, [com.capstone.project_niyakneyak.main.fragment.CheckListFragment]
+ * When alarm is checked, [com.capstone.project_niyakneyak.main.fragment.CheckFragment]
  * will handle the process of recording
  */
 class CheckDataAdapter(private val onCheckedAlarmListener: OnCheckedAlarmListener) :
@@ -68,7 +68,6 @@ class CheckDataAdapter(private val onCheckedAlarmListener: OnCheckedAlarmListene
             alarmList.layoutManager = LinearLayoutManager(itemView.context)
             alarmList.adapter = adapter
             alarmList.addItemDecoration(VerticalItemDecorator(10))
-            adapter.setAlarms(0, getAlarms(data.alarms, alarms))
         }
 
         private fun getAlarms(includedAlarms: List<Int>, alarms: List<Alarm>): List<Alarm> {

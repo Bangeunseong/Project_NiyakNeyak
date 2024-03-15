@@ -3,8 +3,8 @@ package com.capstone.project_niyakneyak.login.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-import com.capstone.project_niyakneyak.data.patient_resource.LoginDataSource
-import com.capstone.project_niyakneyak.data.patient_resource.LoginRepository.Companion.getInstance
+import com.capstone.project_niyakneyak.data.user_resource.LoginDataSource
+import com.capstone.project_niyakneyak.data.user_resource.LoginRepository.Companion.getInstance
 
 class LoginViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

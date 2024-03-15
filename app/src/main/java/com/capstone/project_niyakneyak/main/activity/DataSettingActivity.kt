@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -9,12 +10,11 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.patient_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.ActivityDataSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.AlarmSelectionAdapter
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
@@ -30,11 +30,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Random
 
 /**
  * This DialogFragment is used for setting [MedsData](which is Medication Info.).
@@ -46,9 +48,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     private var snapshotId: String? = null
     private var originData: MedsData? = null
-    private var data: MedsData = MedsData()
     private var query: Query? = null
-    private var includedAlarms: ArrayList<Int> = ArrayList()
+    private var originAlarmID = mutableListOf<String>()
+    private var includedAlarmID = mutableListOf<String>()
 
     private lateinit var firestore: FirebaseFirestore
 
@@ -90,7 +92,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         query = firestore.collection("alarms")
 
         query?.let {
-            adapter = object: AlarmSelectionAdapter(it, originData?.alarms?.toTypedArray() , this@DataSettingActivity){
+            adapter = object: AlarmSelectionAdapter(it, snapshotId, this@DataSettingActivity){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.dialogMedsTimerList.visibility = View.GONE
@@ -104,6 +106,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     Snackbar.make(binding.root, "Error: check logs for info.", Snackbar.LENGTH_LONG).show()
                 }
             }
+            binding.dialogMedsTimerList.adapter = adapter
         }
 
         // Setting RecyclerView about timer list
@@ -130,6 +133,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         var startDate: Long? = null; var endDate: Long? = null
         val data = MedsData()
         if(originData != null){
+            data.medsID = originData.medsID
             binding.medsNameText.setText(originData.medsName)
             if (originData.medsDetail != null) binding.medsDetailText.setText(originData.medsDetail)
             if (originData.medsStartDate != null && originData.medsEndDate != null) {
@@ -148,8 +152,19 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 Log.d("DataSettingDialog", "Meds_date parsing error")
                 throw RuntimeException()
             }
+            firestore.collection("alarms").whereArrayContains(Alarm.FIELD_MEDICATION_LIST, originData.medsID).get()
+                .addOnSuccessListener {
+                    for(document in it.documents){
+                        originAlarmID.add(document.id)
+                        includedAlarmID.add(document.id)
+                    }
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Terrible Error Occurred: $it")
+                }
+
             binding.submit.isEnabled = true
-        }
+        } else data.medsID = codeGenerator()
 
         val filter =
             InputFilter { source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int ->
@@ -203,7 +218,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             }
             datePicker.addOnNegativeButtonClickListener { }
         }
-        binding.dialogMedsTimerAddBtn.setOnClickListener { showAlarmSettingDialog() }
+        binding.dialogMedsTimerAddBtn.setOnClickListener { showAlarmSettingActivity() }
         binding.submit.setOnClickListener {
             data.medsName = binding.medsNameText.text.toString()
             data.medsDetail =
@@ -215,7 +230,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 data.medsStartDate = dates[0]
                 data.medsEndDate = dates[1]
             }
-            data.alarms = includedAlarms
             if(snapshotId == null) submitData(null, data)
             else submitData(snapshotId, data)
 
@@ -230,44 +244,54 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     private fun submitData(snapshotID: String?, data: MedsData){
         val medicationRef = firestore.collection("medications")
-        if(snapshotID == null)
-            medicationRef.add(data)
-                .addOnSuccessListener { Log.w(TAG, "Added Medication Data Successfully!") }
-                .addOnFailureListener { Log.w(TAG, "Medication Data Addition Failed!") }
+        val alarmRef = firestore.collection("alarms")
+        if(snapshotID == null){
+            firestore.runTransaction {transaction ->
+                for(snapshotId in includedAlarmID){
+                    val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                    if(!alarm.isStarted) {
+                        transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_IS_STARTED, true)
+                        alarm.scheduleAlarm(applicationContext)
+                    }
+                    transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                }
+                transaction.set(medicationRef.document(data.medsID.toString()), data)
+            }.addOnSuccessListener {
+                Log.w(TAG, "Added Medication Data Successfully!")
+            }.addOnFailureListener { Log.w(TAG, "Medication Data Addition Failed!") }
+        }
         else{
-            val dataRef = medicationRef.document(snapshotID)
-            firestore.runTransaction { transaction ->
-                val snapshot = transaction.get(dataRef)
-                val alarms = snapshot.data!![MedsData.FIELD_ALARMS] as ArrayList<*>
-
-                transaction.update(dataRef,
-                    mapOf(MedsData.FIELD_NAME to data.medsName,
-                        MedsData.FIELD_DETAIL to data.medsDetail,
-                        MedsData.FIELD_START_DATE to data.medsStartDate,
-                        MedsData.FIELD_END_DATE to data.medsEndDate))
-                alarms.stream().forEach {
-                    if(!data.alarms.contains(it))
-                        transaction.update(dataRef, MedsData.FIELD_ALARMS, FieldValue.arrayRemove(it))
+            firestore.runTransaction {transaction ->
+                for(snapshotId in includedAlarmID){
+                    if(!originAlarmID.contains(snapshotId)){
+                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                        if(!alarm.isStarted) {
+                            transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_IS_STARTED, true)
+                            alarm.scheduleAlarm(applicationContext)
+                        }
+                        transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                    }
                 }
-                data.alarms.forEach {
-                    if(alarms.contains(it))
-                        transaction.update(dataRef, MedsData.FIELD_ALARMS, FieldValue.arrayUnion(it))
+                for(snapshotId in originAlarmID){
+                    if(!includedAlarmID.contains(snapshotId)){
+                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                        if(alarm.isStarted && alarm.medsList.size <= 1) {
+                            alarm.cancelAlarm(applicationContext)
+                            transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_IS_STARTED, false)
+                        }
+                        transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(data.medsID))
+                    }
                 }
-                null
+                transaction.set(medicationRef.document(data.medsID.toString()), data)
             }.addOnSuccessListener {
                 Log.w(TAG, "Data Modification Success")
-            }.addOnFailureListener {
-                Log.w(TAG, "Data Modification Failed")
-            }
+            }.addOnFailureListener { Log.w(TAG, "Data Modification Failed") }
         }
     }
 
-    private fun showAlarmSettingDialog() {
-        val alarmSettingActivity: DialogFragment = AlarmSettingActivity()
-        val bundle = Bundle()
-        bundle.putParcelable(getString(R.string.arg_alarm_obj), null)
-        alarmSettingActivity.arguments = bundle
-        alarmSettingActivity.show(supportFragmentManager, "ALARM_DIALOG_FRAGMENT")
+    private fun showAlarmSettingActivity() {
+        val intent = Intent(this, AlarmSettingActivity::class.java)
+        startActivity(intent)
     }
 
     private fun submitDataChanged(meds: String) {
@@ -281,15 +305,14 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     }
 
     override fun onItemClicked(alarm: Alarm) {
-        if(originData == null){
-            if (includedAlarms.contains(alarm.alarmCode)) includedAlarms.remove(alarm.alarmCode)
-            else includedAlarms.add(alarm.alarmCode)
-        }
-        else{
-            if (data.alarms.contains(alarm.alarmCode)) data.alarms.remove(alarm.alarmCode)
-            else data.alarms.add(alarm.alarmCode)
-        }
+        if(includedAlarmID.contains(alarm.alarmCode.toString()))
+            includedAlarmID.remove(alarm.alarmCode.toString())
+        else includedAlarmID.add(alarm.alarmCode.toString())
     }
 
     override fun onItemClicked(medsID: Long, alarm: Alarm, isChecked: Boolean) {}
+
+    private fun codeGenerator(): Long {
+        return Random(System.currentTimeMillis()).nextLong()
+    }
 }

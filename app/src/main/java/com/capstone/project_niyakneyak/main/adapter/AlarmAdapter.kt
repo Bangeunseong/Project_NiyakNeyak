@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.recyclerview.widget.RecyclerView
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerTimeBinding
 import com.capstone.project_niyakneyak.main.listener.OnAlarmChangedListener
@@ -20,14 +21,12 @@ open class AlarmAdapter(query: Query, private val onAlarmChangedListener: OnAlar
             val alarm = snapshot.toObject<Alarm>() ?: return
 
             binding.itemClock.text = String.format(Locale.KOREAN, "%02d:%02d", alarm.hour, alarm.min)
-            binding.alarmSwitch.isChecked = alarm.isStarted
+            if(alarm.isStarted)
+                binding.itemAlarmLayout.setBackgroundResource(R.drawable.item_recycler_bg_primary)
+            else binding.itemAlarmLayout.setBackgroundResource(R.drawable.item_recycler_bg_disabled)
             binding.weeklyDateDisplay.text = alarm.daysText
             if(alarm.title!!.isNotEmpty()) binding.alarmTitle.text = alarm.title
             else binding.alarmTitle.text = "My Alarm"
-            //TODO: Erase Toggle Option
-            binding.alarmSwitch.setOnCheckedChangeListener{ buttonView: CompoundButton, isChecked: Boolean ->
-                if (buttonView.isShown || buttonView.isPressed) listener.onToggle(snapshot, alarm)
-            }
             binding.textviewLayout.setOnClickListener{ listener.onItemClick(snapshot, alarm) }
             binding.textviewLayout.setOnLongClickListener {
                 listener.onDelete(snapshot, alarm)

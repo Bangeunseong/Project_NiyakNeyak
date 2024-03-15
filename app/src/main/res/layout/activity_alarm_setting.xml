@@ -21,8 +21,8 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/dialog_alarm_setting_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/dialog_button_layout"
         app:layout_constraintTop_toBottomOf="@id/time_picker"
         app:layout_constraintWidth_max="488dp">
 
@@ -274,7 +274,6 @@
         android:id="@+id/dialog_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:background="@color/white_500"
         app:layout_constraintTop_toBottomOf="@id/dialog_alarm_setting_layout"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -285,7 +284,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="12dp"
+            android:paddingVertical="18dp"
             android:text="@string/dialog_add_form_submit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/alarm_cancel"
@@ -298,7 +297,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="12dp"
+            android:paddingVertical="18dp"
             android:text="@string/dialog_add_form_cancel"
             app:layout_constraintEnd_toStartOf="@id/alarm_submit"
             app:layout_constraintStart_toStartOf="parent"

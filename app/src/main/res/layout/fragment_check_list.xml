@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_500"
-    tools:context=".main.fragment.CheckListFragment" >
+    tools:context=".main.fragment.CheckFragment" >
 
     <TextView
         android:id="@+id/content_checklist_description_text"

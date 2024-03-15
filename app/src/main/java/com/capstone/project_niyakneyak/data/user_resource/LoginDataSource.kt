@@ -1,7 +1,7 @@
-package com.capstone.project_niyakneyak.data.patient_resource
+package com.capstone.project_niyakneyak.data.user_resource
 
 import com.capstone.project_niyakneyak.data.Result
-import com.capstone.project_niyakneyak.data.patient_model.SignInUser
+import com.capstone.project_niyakneyak.data.user_model.SignInUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase

@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.patient_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.main.adapter.CheckDataAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
-import com.capstone.project_niyakneyak.main.viewmodel.CheckListViewModel
+import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
 import java.text.DateFormat
 import java.text.ParseException
@@ -23,45 +23,31 @@ import java.util.Calendar
 import java.util.Date
 
 /**
- * This Fragment is used for showing daily Medication list by using [CheckListFragment.adapter].
- * [CheckListFragment.adapter] will be set by using [CheckDataAdapter]
+ * This Fragment is used for showing daily Medication list by using [CheckFragment.adapter].
+ * [CheckFragment.adapter] will be set by using [CheckDataAdapter]
  */
-class CheckListFragment : Fragment(), OnCheckedAlarmListener {
-    private var binding: FragmentCheckListBinding? = null
-    private var checkListViewModel: CheckListViewModel? = null
+class CheckFragment : Fragment(), OnCheckedAlarmListener {
+    private lateinit var binding: FragmentCheckListBinding
+    private var checkViewModel: CheckViewModel? = null
     private var adapter: CheckDataAdapter? = null
-    private var alarms: List<Alarm> = ArrayList()
-    private var medsList: List<MedsData> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkListViewModel = ViewModelProvider(this)[CheckListViewModel::class.java]
+        checkViewModel = ViewModelProvider(this)[CheckViewModel::class.java]
         adapter = CheckDataAdapter(this)
-        checkListViewModel!!.getAlarmsLiveData()?.observe(this) { alarms: List<Alarm> ->
-            this.alarms = alarms
-            val temp = getCertainMedsData(medsList, alarms)
-            if (temp.isEmpty()) binding!!.contentChecklistDescriptionText.visibility =
-                View.VISIBLE else binding!!.contentChecklistDescriptionText.visibility = View.GONE
-            adapter!!.setDataSet(temp, alarms)
-        }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCheckListBinding.inflate(
-            layoutInflater
-        )
-        return binding!!.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentCheckListBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding!!.contentChecklist.setHasFixedSize(false)
-        binding!!.contentChecklist.layoutManager = LinearLayoutManager(context)
-        binding!!.contentChecklist.adapter = adapter
-        binding!!.contentChecklist.addItemDecoration(HorizontalItemDecorator(10))
-        binding!!.contentChecklist.addItemDecoration(VerticalItemDecorator(20))
+        binding.contentChecklist.setHasFixedSize(false)
+        binding.contentChecklist.layoutManager = LinearLayoutManager(context)
+        binding.contentChecklist.addItemDecoration(HorizontalItemDecorator(10))
+        binding.contentChecklist.addItemDecoration(VerticalItemDecorator(20))
     }
 
     private fun getCertainMedsData(medsList: List<MedsData>, alarms: List<Alarm>): List<MedsData> {
@@ -85,7 +71,6 @@ class CheckListFragment : Fragment(), OnCheckedAlarmListener {
                     Log.d("CheckListFragment", "Parsing Failed!")
                 }
             }
-            if (isConsumeDate(alarms, data.alarms)) certainMeds.add(data)
         }
         return certainMeds
     }
@@ -148,8 +133,8 @@ class CheckListFragment : Fragment(), OnCheckedAlarmListener {
     override fun onItemClicked(medsID: Long, alarm: Alarm, isChecked: Boolean) {}
 
     companion object {
-        fun newInstance(): CheckListFragment {
-            return CheckListFragment()
+        fun newInstance(): CheckFragment {
+            return CheckFragment()
         }
     }
 }

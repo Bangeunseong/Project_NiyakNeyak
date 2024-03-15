@@ -1,7 +1,5 @@
 package com.capstone.project_niyakneyak.data
 
-import com.capstone.project_niyakneyak.data.patient_model.PatientData
-
 /**
  * A generic class that holds a result success w/ data or an error exception.
  */

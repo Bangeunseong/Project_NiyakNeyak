@@ -2,18 +2,17 @@ package com.capstone.project_niyakneyak.main.fragment
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.patient_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentAlarmListBinding
 import com.capstone.project_niyakneyak.main.activity.AlarmSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.AlarmAdapter
@@ -24,15 +23,11 @@ import com.capstone.project_niyakneyak.main.listener.OnAlarmChangedListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.snapshots
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
-import java.util.ArrayList
 import java.util.Calendar
 
 /**
@@ -124,18 +119,10 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         builder.setTitle("Warning!")
         builder.setMessage("Do you want to delete this timer?")
         builder.setPositiveButton("OK") { dialog: DialogInterface?, which: Int ->
-            val medicationRef = firestore.collection("medications")
             if (alarm.isStarted) alarm.cancelAlarm(requireContext())
-
-            medicationRef.whereArrayContains(MedsData.FIELD_ALARMS, alarm.alarmCode).get()
-                .addOnSuccessListener { documents ->
-                    firestore.runBatch { batch ->
-                        for(document in documents){
-                            batch.update(medicationRef.document(document.id), MedsData.FIELD_ALARMS, FieldValue.arrayRemove(alarm.alarmCode))
-                        }
-                        batch.delete(alarmRef)
-                    }
-                }.addOnFailureListener { Log.w(TAG, "Terrible Error Occurred: Alarm Deletion Failed!") }
+            alarmRef.delete().addOnSuccessListener {
+                Log.w(TAG, "Delete Alarm Success")
+            }.addOnFailureListener { Log.w(TAG, "Delete Alarm Failed") }
         }
         builder.setNegativeButton("CANCEL") { dialog: DialogInterface?, which: Int -> }
         builder.create().show()
@@ -146,13 +133,11 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         showAlarmSettingDialog(snapshot, alarm)
     }
 
-    private fun showAlarmSettingDialog(snapshot: DocumentSnapshot?, alarm: Alarm?) {
-        val alarmSettingActivity: DialogFragment = AlarmSettingActivity()
-        val bundle = Bundle()
-        if (snapshot != null) bundle.putString("snapshot_id", snapshot.id)
-        bundle.putParcelable(getString(R.string.arg_alarm_obj), alarm)
-        alarmSettingActivity.arguments = bundle
-        alarmSettingActivity.show(requireActivity().supportFragmentManager, "ALARM_DIALOG_FRAGMENT")
+    private fun showAlarmSettingDialog(snapshot: DocumentSnapshot, alarm: Alarm) {
+        val intent = Intent(context, AlarmSettingActivity::class.java)
+        intent.putExtra("snapshot_id",snapshot.id)
+        intent.putExtra(getString(R.string.arg_alarm_obj),alarm)
+        startActivity(intent)
     }
 
     private fun shouldStartSignIn(): Boolean {

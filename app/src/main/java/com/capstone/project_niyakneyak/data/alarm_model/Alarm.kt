@@ -9,22 +9,19 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import android.widget.Toast
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.alarm.receiver.AlarmReceiver
 import com.google.firebase.firestore.IgnoreExtraProperties
 import java.util.Calendar
 import java.util.Locale
 @IgnoreExtraProperties
-@Entity(tableName = "alarm_table")
 data class Alarm(
-    @PrimaryKey var alarmCode: Int = 0, var hour: Int = 6, var min: Int = 0,
+    var alarmCode: Int = 0, var hour: Int = 6, var min: Int = 0,
     var isStarted: Boolean = false, var isRecurring: Boolean = false, var isMon: Boolean = false,
     var isTue: Boolean = false, var isWed: Boolean = false, var isThu: Boolean = false,
     var isFri: Boolean = false, var isSat: Boolean = false, var isSun: Boolean = false,
-    var title: String? = null, var tone: String? = null, var isVibrate: Boolean = false
-) : Parcelable {
+    var title: String? = null, var tone: String? = null, var isVibrate: Boolean = false,
+    var medsList: MutableList<Long> = mutableListOf()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         alarmCode = parcel.readInt()
@@ -42,6 +39,7 @@ data class Alarm(
         title = parcel.readString().toString()
         tone = parcel.readString().toString()
         isVibrate = parcel.readByte().toInt() != 0
+        medsList = parcel.readValue(MutableList::class.java.classLoader) as MutableList<Long>
     }
 
     // Scheduling and Canceling Alarm
@@ -180,6 +178,7 @@ data class Alarm(
         dest.writeString(title)
         dest.writeString(tone)
         dest.writeByte((if (isVibrate) 1 else 0).toByte())
+        dest.writeValue(medsList)
     }
 
     companion object CREATOR : Parcelable.Creator<Alarm> {
@@ -198,6 +197,7 @@ data class Alarm(
         const val FIELD_TITLE = "title"
         const val FIELD_TONE = "tone"
         const val FIELD_IS_VIBRATE = "isVibrate"
+        const val FIELD_MEDICATION_LIST = "medsList"
 
         override fun createFromParcel(parcel: Parcel): Alarm {
             return Alarm(parcel)

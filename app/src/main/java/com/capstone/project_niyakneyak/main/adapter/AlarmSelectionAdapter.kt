@@ -18,18 +18,18 @@ import java.util.Locale
  * Adapter needs [OnCheckedAlarmListener] to deliver checked alarm info to
  * [com.capstone.project_niyakneyak.main.activity.DataSettingActivity]
  */
-open class AlarmSelectionAdapter(query: Query, private val alarms: Array<Int>?, private val onCheckedAlarmListener: OnCheckedAlarmListener) :
+open class AlarmSelectionAdapter(query: Query, private val medsID: String?, private val onCheckedAlarmListener: OnCheckedAlarmListener) :
     FireStoreAdapter<AlarmSelectionAdapter.ViewHolder>(query) {
 
     class ViewHolder(val binding: ItemRecyclerMedsTimeSelectionBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(snapshot: DocumentSnapshot, alarms: Array<Int>?, onCheckedAlarmListener: OnCheckedAlarmListener) {
+        fun bind(snapshot: DocumentSnapshot, medsID: String?, onCheckedAlarmListener: OnCheckedAlarmListener) {
             val alarm = snapshot.toObject<Alarm>() ?: return
 
             binding.clockTime.text = String.format(Locale.KOREAN, "%02d:%02d", alarm.hour, alarm.min)
             binding.clockRecursion.text = alarm.daysText
             binding.clockCheckbox.isEnabled = alarm.isStarted
-            if(alarms != null)
-                binding.clockCheckbox.isChecked = alarms.contains(alarm.alarmCode)
+            if(medsID != null)
+                binding.clockCheckbox.isChecked = alarm.medsList.contains(medsID.toLong())
             binding.clockCheckbox.setOnClickListener {
                 onCheckedAlarmListener.onItemClicked(alarm)
             }
@@ -43,6 +43,6 @@ open class AlarmSelectionAdapter(query: Query, private val alarms: Array<Int>?, 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getSnapshot(position), alarms, onCheckedAlarmListener)
+        holder.bind(getSnapshot(position), medsID, onCheckedAlarmListener)
     }
 }

@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/checkListFragment"
-        android:name="com.capstone.project_niyakneyak.main.fragment.CheckListFragment"
+        android:name="com.capstone.project_niyakneyak.main.fragment.CheckFragment"
         android:label="fragment_check_list"
         tools:layout="@layout/fragment_check_list" >
         <action

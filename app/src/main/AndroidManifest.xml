@@ -33,6 +33,8 @@
             android:name=".alarm.activity.RingActivity"
             android:exported="false"
             android:theme="@style/Theme.Design.NoActionBar"/>
+        <activity android:name=".main.activity.AlarmSettingActivity"
+            android:exported="false" />
         <activity android:name=".main.activity.DataSettingActivity"
             android:exported="false" />
         <activity

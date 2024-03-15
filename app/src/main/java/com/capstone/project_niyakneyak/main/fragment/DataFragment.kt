@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.capstone.project_niyakneyak.data.patient_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
 import com.capstone.project_niyakneyak.main.activity.DataSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.MedicationAdapter

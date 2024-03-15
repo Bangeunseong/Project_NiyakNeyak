@@ -1,7 +1,7 @@
-package com.capstone.project_niyakneyak.data.patient_resource
+package com.capstone.project_niyakneyak.data.user_resource
 
 import com.capstone.project_niyakneyak.data.Result
-import com.capstone.project_niyakneyak.data.patient_model.SignInUser
+import com.capstone.project_niyakneyak.data.user_model.SignInUser
 
 /**
  * Class that requests authentication and user information from the remote data source and

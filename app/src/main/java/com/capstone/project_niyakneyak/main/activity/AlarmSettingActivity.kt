@@ -1,29 +1,30 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.DialogFragment
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.databinding.FragmentAlarmSettingDialogBinding
+import com.capstone.project_niyakneyak.databinding.ActivityAlarmSettingBinding
 import com.capstone.project_niyakneyak.main.etc.ActionResult
 import com.capstone.project_niyakneyak.main.etc.AlarmDataView
-import com.capstone.project_niyakneyak.main.viewmodel.AlarmSettingViewModel
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.util.Random
 
 /**
@@ -31,15 +32,16 @@ import java.util.Random
  * by user interaction.
  */
 //TODO: Modify Activity
-class AlarmSettingActivity : DialogFragment() {
-    private var alarmSettingViewModel: AlarmSettingViewModel? = null
-    private lateinit var binding: FragmentAlarmSettingDialogBinding
+class AlarmSettingActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAlarmSettingBinding
     private lateinit var tone: String
+    private lateinit var firestore: FirebaseFirestore
+    private var snapshot_id: String? = null
     private val actionResult = MutableLiveData<ActionResult?>()
     private var alarm: Alarm? = null
     private var ringtone: Ringtone? = null
     private var isRecurring = false
-    private var alarms: List<Alarm?>? = null
+
     private val mStartForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { o: ActivityResult ->
             if (o.resultCode == Activity.RESULT_OK) {
@@ -48,8 +50,8 @@ class AlarmSettingActivity : DialogFragment() {
                         o.data!!.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java)
                     else o.data!!.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-                ringtone = RingtoneManager.getRingtone(context, uri)
-                val title = ringtone!!.getTitle(context)
+                ringtone = RingtoneManager.getRingtone(applicationContext, uri)
+                val title = ringtone!!.getTitle(applicationContext)
                 if (uri != null) {
                     tone = uri.toString()
                     if (title != null && title.isNotEmpty()) binding.alarmRingtoneText.text = title
@@ -60,30 +62,33 @@ class AlarmSettingActivity : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Accessible data
-        val data = arguments
+        // Get Accessible data if needed
+        snapshot_id = intent.getStringExtra("snapshot_id")
         alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            data?.getParcelable(getString(R.string.arg_alarm_obj), Alarm::class.java)
-        } else data?.getParcelable(getString(R.string.arg_alarm_obj))
+            intent.getParcelableExtra(getString(R.string.arg_alarm_obj), Alarm::class.java)
+        } else intent.getParcelableExtra(getString(R.string.arg_alarm_obj))
 
-        // Setting ViewModel
-        alarmSettingViewModel = ViewModelProvider(this)[AlarmSettingViewModel::class.java]
-        alarmSettingViewModel!!.getAlarmsLiveData()
-            ?.observe(this) { alarms: List<Alarm?>? -> this.alarms = alarms }
+        // Set View Binding
+        binding = ActivityAlarmSettingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Setting firestore
+        firestore = Firebase.firestore
+
+        // Set Activity Component
+        setActivity(alarm)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // Main Dialog Builder
-        val builder = AlertDialog.Builder(context, R.style.DialogBackground)
-        binding = FragmentAlarmSettingDialogBinding.inflate(layoutInflater)
-        val view: View = binding.root
-        tone = RingtoneManager.getActualDefaultRingtoneUri(requireContext(), RingtoneManager.TYPE_ALARM).toString()
-        ringtone = RingtoneManager.getRingtone(context, Uri.parse(tone))
-        builder.setView(view)
-        if (alarm != null) updateAlarmInfo(alarm!!) else {
+    private fun setActivity(alarm: Alarm?){
+        // Setting Base Tone
+        tone = RingtoneManager.getActualDefaultRingtoneUri(applicationContext, RingtoneManager.TYPE_ALARM).toString()
+        ringtone = RingtoneManager.getRingtone(applicationContext, Uri.parse(tone))
+
+        // Get bundle data if needed
+        if (alarm != null) updateAlarmInfo(alarm) else {
             binding.timePicker.hour = 6
             binding.timePicker.minute = 0
-            binding.alarmRingtoneText.text = ringtone!!.getTitle(context)
+            binding.alarmRingtoneText.text = ringtone!!.getTitle(applicationContext)
         }
 
         // Setting TimePickerView in 24hourView
@@ -95,10 +100,10 @@ class AlarmSettingActivity : DialogFragment() {
                 (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
                         || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in))
                 buttonView.alpha = 1f
             } else {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out))
                 buttonView.alpha = 0.5f
             }
             if (actionResult.value == null) {
@@ -116,10 +121,10 @@ class AlarmSettingActivity : DialogFragment() {
                 (isChecked || binding.toggleSunday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
                         || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in))
                 buttonView.alpha = 1f
             } else {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out))
                 buttonView.alpha = 0.5f
             }
             if (actionResult.value == null) {
@@ -137,10 +142,10 @@ class AlarmSettingActivity : DialogFragment() {
                 (isChecked || binding.toggleMonday.isChecked || binding.toggleSunday.isChecked || binding.toggleWednesday.isChecked
                         || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in))
                 buttonView.alpha = 1f
             } else {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out))
                 buttonView.alpha = 0.5f
             }
             if (actionResult.value == null) {
@@ -158,10 +163,10 @@ class AlarmSettingActivity : DialogFragment() {
                 (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleSunday.isChecked
                         || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in))
                 buttonView.alpha = 1f
             } else {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out))
                 buttonView.alpha = 0.5f
             }
             if (actionResult.value == null) {
@@ -179,10 +184,10 @@ class AlarmSettingActivity : DialogFragment() {
                 (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
                         || binding.toggleSunday.isChecked || binding.toggleFriday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in))
                 buttonView.alpha = 1f
             } else {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out))
                 buttonView.alpha = 0.5f
             }
             if (actionResult.value == null) {
@@ -200,10 +205,10 @@ class AlarmSettingActivity : DialogFragment() {
                 (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
                         || binding.toggleThursday.isChecked || binding.toggleSunday.isChecked || binding.toggleSaturday.isChecked)
             if (isChecked) {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in))
                 buttonView.alpha = 1f
             } else {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out))
                 buttonView.alpha = 0.5f
             }
             if (actionResult.value == null) {
@@ -221,10 +226,10 @@ class AlarmSettingActivity : DialogFragment() {
                 (isChecked || binding.toggleMonday.isChecked || binding.toggleTuesday.isChecked || binding.toggleWednesday.isChecked
                         || binding.toggleThursday.isChecked || binding.toggleFriday.isChecked || binding.toggleSunday.isChecked)
             if (isChecked) {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in))
                 buttonView.alpha = 1f
             } else {
-                buttonView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+                buttonView.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out))
                 buttonView.alpha = 0.5f
             }
             if (actionResult.value == null) {
@@ -255,18 +260,11 @@ class AlarmSettingActivity : DialogFragment() {
         }
         binding.alarmSubmit.setOnClickListener { v: View? ->
             if (alarm != null) updateAlarm() else scheduleAlarm()
-            dismiss()
         }
         binding.alarmCancel.setOnClickListener { v: View? ->
-            if (alarm != null) alarm!!.scheduleAlarm(requireContext())
-            dismiss()
+            if(alarm != null && alarm.isStarted)
+                alarm.scheduleAlarm(applicationContext)
         }
-        return builder.create()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        alarmSettingViewModel = null
     }
 
     private fun scheduleAlarm() {
@@ -278,7 +276,7 @@ class AlarmSettingActivity : DialogFragment() {
             alarmCode,
             binding.timePicker.hour,
             binding.timePicker.minute,
-            true,
+            false,
             isRecurring,
             binding.toggleMonday.isChecked,
             binding.toggleTuesday.isChecked,
@@ -294,20 +292,19 @@ class AlarmSettingActivity : DialogFragment() {
 
         // Validate alarm's existence
         if (isAlreadyExistsAlarm(alarm)) {
-            Toast.makeText(
-                context,
-                String.format(
-                    "Alarm already exists at %02d:%02d!",
-                    binding.timePicker.hour,
-                    binding.timePicker.minute
-                ),
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(applicationContext, String.format("Alarm already exists at %02d:%02d!", binding.timePicker.hour, binding.timePicker.minute), Toast.LENGTH_SHORT).show()
             return
         }
         //TODO: Add data in firestore and scheduleAlarm when selected in medication data addition process
-        alarmSettingViewModel!!.insert(alarm)
-        alarm.scheduleAlarm(requireContext())
+        firestore.collection("alarms").document(alarm.alarmCode.toString()).set(alarm)
+            .addOnSuccessListener {
+                setResult(RESULT_OK)
+                finish()
+            }.addOnFailureListener {
+                Log.w(TAG,"Alarm registration Failed")
+                setResult(RESULT_CANCELED)
+                finish()
+            }
     }
 
     private fun updateAlarm() {
@@ -319,7 +316,7 @@ class AlarmSettingActivity : DialogFragment() {
             alarm!!.alarmCode,
             binding.timePicker.hour,
             binding.timePicker.minute,
-            true,
+            alarm!!.isStarted,
             isRecurring,
             binding.toggleMonday.isChecked,
             binding.toggleTuesday.isChecked,
@@ -333,9 +330,19 @@ class AlarmSettingActivity : DialogFragment() {
             binding.alarmVibSwt.isChecked
         )
 
-        //TODO: Update data in firestroe and scheduleAlarm in medication data modification process
-        alarmSettingViewModel!!.update(updatedAlarm)
-        updatedAlarm.scheduleAlarm(requireContext())
+        //TODO: Update data in firestore and scheduleAlarm in medication data modification process
+        firestore.collection("alarms").document(updatedAlarm.alarmCode.toString()).set(updatedAlarm)
+            .addOnSuccessListener {
+                if(alarm!!.isStarted)
+                    updatedAlarm.scheduleAlarm(applicationContext)
+                setResult(RESULT_OK)
+                finish()
+            }
+            .addOnFailureListener {
+                Log.w(TAG,"Terrible Error Occurred: Alarm Modification Failed, Alarm Canceled!")
+                setResult(RESULT_CANCELED)
+                finish()
+            }
     }
 
     private fun updateAlarmInfo(alarm: Alarm) {
@@ -384,19 +391,24 @@ class AlarmSettingActivity : DialogFragment() {
             )
         )
         tone = alarm.tone.toString()
-        ringtone = RingtoneManager.getRingtone(requireContext(), Uri.parse(tone))
-        binding.alarmRingtoneText.text = ringtone!!.getTitle(context)
+        ringtone = RingtoneManager.getRingtone(applicationContext, Uri.parse(tone))
+        binding.alarmRingtoneText.text = ringtone!!.getTitle(applicationContext)
         if (alarm.isVibrate) binding.alarmVibSwt.isChecked = true
     }
 
     private fun isAlreadyExistsAlarm(data: Alarm): Boolean {
-        for (alarm in alarms!!) if (alarm!!.hour == data.hour && alarm.min == data.min) {
-            return alarm.daysText == data.daysText
-        }
-        return false
+        var flag = false
+        firestore.collection("alarms").document(alarm?.alarmCode.toString()).get()
+            .addOnSuccessListener { flag = false }
+            .addOnFailureListener { flag = true }
+        return flag
     }
 
     private fun codeGenerator(): Int {
         return Random().nextInt(Int.MAX_VALUE)
+    }
+
+    companion object{
+        private const val TAG = "ALARM_SETTING_ACTIVITY"
     }
 }

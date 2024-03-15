@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.Result
-import com.capstone.project_niyakneyak.data.patient_model.SignInUser
-import com.capstone.project_niyakneyak.data.patient_resource.LoginRepository
+import com.capstone.project_niyakneyak.data.user_model.SignInUser
+import com.capstone.project_niyakneyak.data.user_resource.LoginRepository
 import com.capstone.project_niyakneyak.login.etc.LoginFormState
 import com.capstone.project_niyakneyak.login.etc.LoggedInUserView
 import com.capstone.project_niyakneyak.login.etc.LoginResult
