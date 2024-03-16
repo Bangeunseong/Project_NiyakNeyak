@@ -129,7 +129,6 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     }
 
     override fun onItemClick(snapshot: DocumentSnapshot, alarm: Alarm) {
-        if (alarm.isStarted) alarm.cancelAlarm(requireContext())
         showAlarmSettingDialog(snapshot, alarm)
     }
 

@@ -21,7 +21,7 @@ data class Alarm(
     var isTue: Boolean = false, var isWed: Boolean = false, var isThu: Boolean = false,
     var isFri: Boolean = false, var isSat: Boolean = false, var isSun: Boolean = false,
     var title: String? = null, var tone: String? = null, var isVibrate: Boolean = false,
-    var medsList: MutableList<Long> = mutableListOf()) : Parcelable {
+    var medsList: MutableList<Int> = mutableListOf()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         alarmCode = parcel.readInt()
@@ -39,7 +39,7 @@ data class Alarm(
         title = parcel.readString().toString()
         tone = parcel.readString().toString()
         isVibrate = parcel.readByte().toInt() != 0
-        medsList = parcel.readValue(MutableList::class.java.classLoader) as MutableList<Long>
+        medsList = parcel.readValue(MutableList::class.java.classLoader) as MutableList<Int>
     }
 
     // Scheduling and Canceling Alarm
@@ -72,11 +72,6 @@ data class Alarm(
         }
         if (!isRecurring) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                Toast.makeText(
-                    context,
-                    String.format("Alarm exact for %02d:%02d", hour, min),
-                    Toast.LENGTH_SHORT
-                ).show()
                 if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
@@ -91,11 +86,6 @@ data class Alarm(
                 alarmPendingIntent
             )
         } else {
-            Toast.makeText(
-                context,
-                String.format("Alarm recurring for %02d:%02d", hour, min),
-                Toast.LENGTH_SHORT
-            ).show()
             alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
@@ -123,11 +113,6 @@ data class Alarm(
             )
         isStarted = false
         alarmManager.cancel(alarmPendingIntent)
-        Toast.makeText(
-            context,
-            String.format("Alarm cancelled for %02d:%02d", hour, min),
-            Toast.LENGTH_SHORT
-        ).show()
     }
 
     val daysText: String
@@ -185,7 +170,7 @@ data class Alarm(
         const val FIELD_ALARM_CODE = "alarmCode"
         const val FIELD_HOUR = "hour"
         const val FIELD_MINUTE = "min"
-        const val FIELD_IS_STARTED = "isStarted"
+        const val FIELD_IS_STARTED = "started"
         const val FIELD_IS_RECURRING = "isRecurring"
         const val FIELD_IS_MONDAY = "isMon"
         const val FIELD_IS_TUESDAY = "isTue"

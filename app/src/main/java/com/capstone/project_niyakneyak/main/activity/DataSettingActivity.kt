@@ -2,6 +2,7 @@ package com.capstone.project_niyakneyak.main.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
@@ -78,7 +79,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 // Setting Activity Components
                 setActivity(originData, binding)
             }.addOnFailureListener {
-                Log.w(TAG, "Terrible Error Occurred!: Data not exists!")
+                Log.w(TAG, "Terrible Error Occurred!: $it")
                 setResult(RESULT_CANCELED)
                 finish()
             }
@@ -247,45 +248,53 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         val alarmRef = firestore.collection("alarms")
         if(snapshotID == null){
             firestore.runTransaction {transaction ->
+                // Data Read and Write Process
                 for(snapshotId in includedAlarmID){
+                    // Data Read -> Need to be executed before Write Process
                     val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                    // Data Write
                     if(!alarm.isStarted) {
-                        transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_IS_STARTED, true)
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
                         alarm.scheduleAlarm(applicationContext)
                     }
-                    transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                    transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
                 }
                 transaction.set(medicationRef.document(data.medsID.toString()), data)
             }.addOnSuccessListener {
                 Log.w(TAG, "Added Medication Data Successfully!")
-            }.addOnFailureListener { Log.w(TAG, "Medication Data Addition Failed!") }
+            }.addOnFailureListener { Log.w(TAG, "Medication Data Addition Failed!: $it") }
         }
         else{
             firestore.runTransaction {transaction ->
+                // Data Read and Write -> Need to be executed before Write Process
                 for(snapshotId in includedAlarmID){
-                    if(!originAlarmID.contains(snapshotId)){
+                    if(!originAlarmID.contains(snapshotId)) {
                         val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
                         if(!alarm.isStarted) {
-                            transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_IS_STARTED, true)
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
                             alarm.scheduleAlarm(applicationContext)
                         }
-                        transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
                     }
                 }
+
                 for(snapshotId in originAlarmID){
                     if(!includedAlarmID.contains(snapshotId)){
                         val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
                         if(alarm.isStarted && alarm.medsList.size <= 1) {
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, false)
                             alarm.cancelAlarm(applicationContext)
-                            transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_IS_STARTED, false)
                         }
-                        transaction.update(alarmRef.document(snapshotId), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(data.medsID))
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(data.medsID))
                     }
                 }
-                transaction.set(medicationRef.document(data.medsID.toString()), data)
+                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_NAME, data.medsName)
+                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_DETAIL, data.medsDetail)
+                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_START_DATE, data.medsStartDate)
+                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_END_DATE, data.medsEndDate)
             }.addOnSuccessListener {
                 Log.w(TAG, "Data Modification Success")
-            }.addOnFailureListener { Log.w(TAG, "Data Modification Failed") }
+            }.addOnFailureListener { Log.w(TAG, "Data Modification Failed: $it") }
         }
     }
 
@@ -312,7 +321,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     override fun onItemClicked(medsID: Long, alarm: Alarm, isChecked: Boolean) {}
 
-    private fun codeGenerator(): Long {
-        return Random(System.currentTimeMillis()).nextLong()
+    private fun codeGenerator(): Int {
+        val random = Random(System.currentTimeMillis())
+        return random.nextInt(Int.MAX_VALUE)
     }
 }

@@ -6,13 +6,14 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class MedsData(
-    var medsID: Long = -1,
+    var medsID: Int = -1,
     var medsName: String? = null,
     var medsDetail: String? = null,
     var medsStartDate: String? = null,
     var medsEndDate: String? = null) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
+        medsID = parcel.readInt()
         medsName = parcel.readString()
         medsDetail = parcel.readString()
         medsStartDate = parcel.readString()
@@ -20,6 +21,7 @@ data class MedsData(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(medsID)
         parcel.writeString(medsName)
         parcel.writeString(medsDetail)
         parcel.writeString(medsStartDate)
@@ -31,6 +33,7 @@ data class MedsData(
     }
 
     companion object CREATOR : Parcelable.Creator<MedsData> {
+        const val FIELD_ID = "medsID"
         const val FIELD_NAME = "medsName"
         const val FIELD_DETAIL = "medsDetail"
         const val FIELD_START_DATE = "medsStartDate"

@@ -27,14 +27,11 @@ open class AlarmSelectionAdapter(query: Query, private val medsID: String?, priv
 
             binding.clockTime.text = String.format(Locale.KOREAN, "%02d:%02d", alarm.hour, alarm.min)
             binding.clockRecursion.text = alarm.daysText
-            binding.clockCheckbox.isEnabled = alarm.isStarted
             if(medsID != null)
-                binding.clockCheckbox.isChecked = alarm.medsList.contains(medsID.toLong())
+                binding.clockCheckbox.isChecked = alarm.medsList.contains(medsID.toInt())
             binding.clockCheckbox.setOnClickListener {
                 onCheckedAlarmListener.onItemClicked(alarm)
             }
-            if (!alarm.isStarted) binding.clockSelectionSingle.setBackgroundResource(R.drawable.item_recycler_bg_disabled)
-            else binding.clockSelectionSingle.setBackgroundResource(R.drawable.item_recycler_bg_secondary)
         }
     }
 

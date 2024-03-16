@@ -34,7 +34,7 @@ import java.util.Random
 //TODO: Modify Activity
 class AlarmSettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAlarmSettingBinding
-    private lateinit var tone: String
+        private lateinit var tone: String
     private lateinit var firestore: FirebaseFirestore
     private var snapshot_id: String? = null
     private val actionResult = MutableLiveData<ActionResult?>()
@@ -259,11 +259,16 @@ class AlarmSettingActivity : AppCompatActivity() {
                 binding.weeklyDate.text = String.format("Weekly: %s", actionResult.alarmDateView!!.displayData)
         }
         binding.alarmSubmit.setOnClickListener { v: View? ->
-            if (alarm != null) updateAlarm() else scheduleAlarm()
+            if (alarm != null) {
+                updateAlarm()
+                if(alarm.isStarted){
+                    alarm.cancelAlarm(applicationContext)
+                    alarm.scheduleAlarm(applicationContext)
+                }
+            } else scheduleAlarm()
         }
         binding.alarmCancel.setOnClickListener { v: View? ->
-            if(alarm != null && alarm.isStarted)
-                alarm.scheduleAlarm(applicationContext)
+            finish()
         }
     }
 
@@ -330,10 +335,9 @@ class AlarmSettingActivity : AppCompatActivity() {
             binding.alarmVibSwt.isChecked
         )
 
-        //TODO: Update data in firestore and scheduleAlarm in medication data modification process
         firestore.collection("alarms").document(updatedAlarm.alarmCode.toString()).set(updatedAlarm)
             .addOnSuccessListener {
-                if(alarm!!.isStarted)
+                if(alarm!!.medsList.isNotEmpty())
                     updatedAlarm.scheduleAlarm(applicationContext)
                 setResult(RESULT_OK)
                 finish()
