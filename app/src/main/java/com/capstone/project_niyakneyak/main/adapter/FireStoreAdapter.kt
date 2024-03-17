@@ -9,7 +9,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-
+/**
+ * Abstract Class to show data in a single firebase collection
+ * Use [FireStoreAdapter.startListening] in {onStart} which is an override Function
+ * Use [FireStoreAdapter.stopListening] in {onStop} which is an override Function
+ * Use [FireStoreAdapter.setQuery] when you want to filter data list
+ * */
 abstract class FireStoreAdapter<VH: RecyclerView.ViewHolder>(private var query: Query?) :
     RecyclerView.Adapter<VH>(),
     EventListener<QuerySnapshot> {

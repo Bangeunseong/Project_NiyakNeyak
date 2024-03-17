@@ -31,12 +31,6 @@ class CheckFragment : Fragment(), OnCheckedAlarmListener {
     private var checkViewModel: CheckViewModel? = null
     private var adapter: CheckDataAdapter? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        checkViewModel = ViewModelProvider(this)[CheckViewModel::class.java]
-        adapter = CheckDataAdapter(this)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCheckListBinding.inflate(layoutInflater)
         return binding.root
@@ -44,90 +38,17 @@ class CheckFragment : Fragment(), OnCheckedAlarmListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checkViewModel = ViewModelProvider(this)[CheckViewModel::class.java]
+
+
         binding.contentChecklist.setHasFixedSize(false)
         binding.contentChecklist.layoutManager = LinearLayoutManager(context)
         binding.contentChecklist.addItemDecoration(HorizontalItemDecorator(10))
         binding.contentChecklist.addItemDecoration(VerticalItemDecorator(20))
     }
 
-    private fun getCertainMedsData(medsList: List<MedsData>, alarms: List<Alarm>): List<MedsData> {
-        val today = Calendar.getInstance()
-        today.timeInMillis = System.currentTimeMillis()
-        val format: DateFormat = SimpleDateFormat("yyyy/MM/dd")
-        var start: Date?
-        var end: Date?
-        val startCal = Calendar.getInstance()
-        val endCal = Calendar.getInstance()
-        val certainMeds: MutableList<MedsData> = ArrayList()
-        for (data in medsList) {
-            if (data.medsStartDate != null) {
-                try {
-                    start = format.parse(data.medsStartDate!!)
-                    end = format.parse(data.medsEndDate!!)
-                    startCal.time = start
-                    endCal.time = end
-                    if (startCal > today || endCal < today) continue
-                } catch (e: ParseException) {
-                    Log.d("CheckListFragment", "Parsing Failed!")
-                }
-            }
-        }
-        return certainMeds
-    }
-
-    private fun isConsumeDate(alarms: List<Alarm?>?, includedAlarms: List<Int>): Boolean {
-        val today = Calendar.getInstance()
-        today.timeInMillis = System.currentTimeMillis()
-        var flag = false
-        for (alarm in alarms!!) {
-            if (includedAlarms.contains(alarm!!.alarmCode) && alarm.isStarted) {
-                if (alarm.isRecurring) {
-                    when (today[Calendar.DAY_OF_WEEK]) {
-                        Calendar.SUNDAY -> {
-                            if (alarm.isSun) flag = true
-                        }
-
-                        Calendar.MONDAY -> {
-                            if (alarm.isMon) flag = true
-                        }
-
-                        Calendar.TUESDAY -> {
-                            if (alarm.isTue) flag = true
-                        }
-
-                        Calendar.WEDNESDAY -> {
-                            if (alarm.isWed) flag = true
-                        }
-
-                        Calendar.THURSDAY -> {
-                            if (alarm.isThu) flag = true
-                        }
-
-                        Calendar.FRIDAY -> {
-                            if (alarm.isFri) flag = true
-                        }
-
-                        Calendar.SATURDAY -> {
-                            if (alarm.isSat) flag = true
-                        }
-                    }
-                } else {
-                    val alarmClock = Calendar.getInstance()
-                    alarmClock.timeInMillis = System.currentTimeMillis()
-                    alarmClock[Calendar.HOUR_OF_DAY] = alarm.hour
-                    alarmClock[Calendar.MINUTE] = alarm.min
-                    alarmClock[Calendar.SECOND] = 0
-                    alarmClock[Calendar.MILLISECOND] = 0
-                    if (alarmClock > today) flag = true
-                }
-            }
-        }
-        return flag
-    }
-
-    @Deprecated("")
-    override fun onItemClicked(alarm: Alarm) {
-    }
+    @Deprecated("This Function is for Alarm adapter")
+    override fun onItemClicked(alarm: Alarm) {}
 
     //TODO: Need to add action when checkbox is checked
     override fun onItemClicked(medsID: Long, alarm: Alarm, isChecked: Boolean) {}

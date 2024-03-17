@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
 import android.widget.Toast
@@ -22,7 +21,6 @@ import com.capstone.project_niyakneyak.databinding.ActivityAlarmSettingBinding
 import com.capstone.project_niyakneyak.main.etc.ActionResult
 import com.capstone.project_niyakneyak.main.etc.AlarmDataView
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.Random
@@ -36,7 +34,7 @@ class AlarmSettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAlarmSettingBinding
         private lateinit var tone: String
     private lateinit var firestore: FirebaseFirestore
-    private var snapshot_id: String? = null
+    private var snapshotId: String? = null
     private val actionResult = MutableLiveData<ActionResult?>()
     private var alarm: Alarm? = null
     private var ringtone: Ringtone? = null
@@ -63,7 +61,7 @@ class AlarmSettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Get Accessible data if needed
-        snapshot_id = intent.getStringExtra("snapshot_id")
+        snapshotId = intent.getStringExtra("snapshot_id")
         alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(getString(R.string.arg_alarm_obj), Alarm::class.java)
         } else intent.getParcelableExtra(getString(R.string.arg_alarm_obj))
@@ -244,7 +242,7 @@ class AlarmSettingActivity : AppCompatActivity() {
         }
 
         // Ringtone Setting
-        binding.alarmRingtoneLayout.setOnClickListener { v: View? ->
+        binding.alarmRingtoneLayout.setOnClickListener {
             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Sound")
@@ -258,7 +256,7 @@ class AlarmSettingActivity : AppCompatActivity() {
             if (actionResult.alarmDateView != null)
                 binding.weeklyDate.text = String.format("Weekly: %s", actionResult.alarmDateView!!.displayData)
         }
-        binding.alarmSubmit.setOnClickListener { v: View? ->
+        binding.alarmSubmit.setOnClickListener {
             if (alarm != null) {
                 updateAlarm()
                 if(alarm.isStarted){
@@ -267,7 +265,7 @@ class AlarmSettingActivity : AppCompatActivity() {
                 }
             } else scheduleAlarm()
         }
-        binding.alarmCancel.setOnClickListener { v: View? ->
+        binding.alarmCancel.setOnClickListener {
             finish()
         }
     }
@@ -275,7 +273,7 @@ class AlarmSettingActivity : AppCompatActivity() {
     private fun scheduleAlarm() {
         var alarmTitle = getString(R.string.alarm_title)
         val alarmCode = codeGenerator()
-        if (!binding.dialogAlarmTitleText.text.toString().isEmpty()) alarmTitle =
+        if (binding.dialogAlarmTitleText.text.toString().isNotEmpty()) alarmTitle =
             binding.dialogAlarmTitleText.text.toString()
         val alarm = Alarm(
             alarmCode,
@@ -296,7 +294,7 @@ class AlarmSettingActivity : AppCompatActivity() {
         )
 
         // Validate alarm's existence
-        if (isAlreadyExistsAlarm(alarm)) {
+        if (isAlreadyExistsAlarm()) {
             Toast.makeText(applicationContext, String.format("Alarm already exists at %02d:%02d!", binding.timePicker.hour, binding.timePicker.minute), Toast.LENGTH_SHORT).show()
             return
         }
@@ -315,7 +313,7 @@ class AlarmSettingActivity : AppCompatActivity() {
     private fun updateAlarm() {
         var alarmTitle = getString(R.string.alarm_title)
         //int alarmCode = codeGenerator();
-        if (!binding.dialogAlarmTitleText.text.toString().isEmpty()) alarmTitle =
+        if (binding.dialogAlarmTitleText.text.toString().isNotEmpty()) alarmTitle =
             binding.dialogAlarmTitleText.text.toString()
         val updatedAlarm = Alarm(
             alarm!!.alarmCode,
@@ -400,7 +398,7 @@ class AlarmSettingActivity : AppCompatActivity() {
         if (alarm.isVibrate) binding.alarmVibSwt.isChecked = true
     }
 
-    private fun isAlreadyExistsAlarm(data: Alarm): Boolean {
+    private fun isAlreadyExistsAlarm(): Boolean {
         var flag = false
         firestore.collection("alarms").document(alarm?.alarmCode.toString()).get()
             .addOnSuccessListener { flag = false }

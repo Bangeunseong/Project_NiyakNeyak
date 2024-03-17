@@ -3,7 +3,6 @@ package com.capstone.project_niyakneyak.main.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerMedsTimeSelectionBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
