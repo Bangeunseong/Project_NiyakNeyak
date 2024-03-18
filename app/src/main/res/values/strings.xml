@@ -47,8 +47,8 @@
 
     <string name="dialog_add_form_title">Insert Information</string>
     <string name="dialog_modify_form_title">Change Information</string>
-    <string name="dialog_add_form_submit">save</string>
-    <string name="dialog_add_form_cancel">cancel</string>
+    <string name="dialog_add_form_submit">Save</string>
+    <string name="dialog_add_form_cancel">Cancel</string>
     <string name="dialog_add_form_meds_name">Type Medication Name</string>
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>

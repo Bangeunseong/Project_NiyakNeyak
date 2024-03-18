@@ -100,19 +100,6 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         adapter?.stopListening()
     }
 
-    // Override Methods for data manipulation
-    override fun onToggle(snapshot: DocumentSnapshot, alarm: Alarm) {
-        //TODO: Evaluate that Alarm needs to be canceled or started
-        val alarmRef = firestore.collection("alarms").document(snapshot.id)
-        if (alarm.isStarted) {
-            alarm.cancelAlarm(requireContext())
-            alarmRef.update(Alarm.FIELD_IS_STARTED, false)
-        } else {
-            alarm.scheduleAlarm(requireContext())
-            alarmRef.update(Alarm.FIELD_IS_STARTED, true)
-        }
-    }
-
     override fun onDelete(snapshot: DocumentSnapshot, alarm: Alarm) {
         val alarmRef = firestore.collection("alarms").document(snapshot.id)
         val builder = AlertDialog.Builder(context)

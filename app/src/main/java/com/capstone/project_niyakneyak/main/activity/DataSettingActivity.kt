@@ -319,8 +319,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         else includedAlarmID.add(alarm.alarmCode.toString())
     }
 
-    override fun onItemClicked(medsID: Long, alarm: Alarm, isChecked: Boolean) {}
-
     private fun codeGenerator(): Int {
         val random = Random(System.currentTimeMillis())
         return random.nextInt(Int.MAX_VALUE)

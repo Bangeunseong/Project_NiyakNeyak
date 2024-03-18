@@ -1,67 +1,87 @@
 package com.capstone.project_niyakneyak.main.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.TextView
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.databinding.ItemRecyclerCheckBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
+import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
+import com.google.firebase.ktx.Firebase
 
 /**
- *
+ * This adapter is used for showing Medication info. which should be consumed in current date.
+ * It needs [OnCheckedAlarmListener] to deliver which alarm is checked
+ * When alarm is checked, [com.capstone.project_niyakneyak.main.fragment.CheckFragment]
+ * will handle the process of recording
  */
-class CheckAlarmAdapter(private val onCheckedAlarmListener: OnCheckedAlarmListener) :
-    RecyclerView.Adapter<CheckAlarmAdapter.ViewHolder>() {
-    private var alarms: List<Alarm>
-    private var medsID: Long
-
-    init {
-        alarms = ArrayList()
-        medsID = -1
+open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedicationListener) :
+    FireStoreAdapter<CheckAlarmAdapter.ViewHolder>(query) {
+    private var secondQuery: Query? = null
+    private lateinit var firestore: FirebaseFirestore
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(ItemRecyclerCheckBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val checkTitle: TextView
-        private val checkRecursion: TextView
-        private val checkBox: CheckBox
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val snapshot = getSnapshot(position)
+        val alarm = snapshot.toObject<Alarm>() ?: return
 
-        init {
-            checkTitle = view.findViewById(R.id.check_clock_time)
-            checkRecursion = view.findViewById(R.id.check_clock_recursion)
-            checkBox = view.findViewById(R.id.check_clock_checkbox)
-        }
+        FirebaseFirestore.setLoggingEnabled(true)
+        firestore = Firebase.firestore
+        secondQuery = firestore.collection("medications")
+            .whereIn(MedsData.FIELD_ID, alarm.medsList)
 
-        fun bind(medsID: Long, alarm: Alarm, onCheckedAlarmListener: OnCheckedAlarmListener) {
-            checkTitle.text = String.format("%02d:%02d", alarm.hour, alarm.min)
-            checkRecursion.text = alarm.daysText
-            checkBox.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
-                onCheckedAlarmListener.onItemClicked(medsID, alarm, isChecked)
+        holder.bind(snapshot, secondQuery, listener)
+    }
+
+    class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
+        private lateinit var adapter: CheckMedicationAdapter
+        fun bind(snapshot: DocumentSnapshot, query: Query?, listener: OnCheckedMedicationListener){
+            val alarm = snapshot.toObject<Alarm>() ?: return
+            binding.checkTimeText.text = String.format("%02d:%02d",alarm.hour, alarm.min)
+            binding.checkTitleText.text = alarm.title
+
+            query?.let {
+                adapter = object: CheckMedicationAdapter(query, listener){
+                    override fun onDataChanged() {
+                        if(itemCount == 0){
+                            binding.imageView.isEnabled = false
+                            if(binding.alarmCheckList.isVisible)
+                                binding.alarmCheckList.visibility = View.GONE
+                        }
+                        else{
+                            binding.imageView.isEnabled = true
+                        }
+                    }
+
+                    override fun onError(e: FirebaseFirestoreException) {
+                        Log.w(TAG, "Terrible Error Occurred!: $it")
+                    }
+                }
+                binding.alarmCheckList.adapter = adapter
+            }
+            binding.alarmCheckList.layoutManager = LinearLayoutManager(binding.root.context)
+
+            binding.imageView.setOnClickListener {
+                if(binding.imageView.isVisible) binding.alarmCheckList.visibility = View.GONE
+                else binding.alarmCheckList.visibility = View.VISIBLE
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_recycler_check_item, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val alarm = alarms[position]
-        holder.bind(medsID, alarm, onCheckedAlarmListener)
-    }
-
-    override fun getItemCount(): Int {
-        return alarms.size
-    }
-
-    fun setAlarms(medsID: Long, alarms: List<Alarm>) {
-        this.alarms = alarms
-        this.medsID = medsID
-        notifyDataSetChanged()
+    companion object{
+        private const val TAG = "CHECK_ALARM_ADAPTER"
     }
 }

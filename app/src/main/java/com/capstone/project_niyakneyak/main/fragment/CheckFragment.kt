@@ -1,7 +1,6 @@
 package com.capstone.project_niyakneyak.main.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,25 +10,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
-import com.capstone.project_niyakneyak.main.adapter.CheckDataAdapter
+import com.capstone.project_niyakneyak.main.adapter.CheckAlarmAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
-import java.text.DateFormat
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
+import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
 
 /**
  * This Fragment is used for showing daily Medication list by using [CheckFragment.adapter].
- * [CheckFragment.adapter] will be set by using [CheckDataAdapter]
+ * [CheckFragment.adapter] will be set by using [CheckAlarmAdapter]
  */
-class CheckFragment : Fragment(), OnCheckedAlarmListener {
+
+//TODO: Modify Checklist Fragment
+class CheckFragment : Fragment(), OnCheckedMedicationListener {
     private lateinit var binding: FragmentCheckListBinding
     private var checkViewModel: CheckViewModel? = null
-    private var adapter: CheckDataAdapter? = null
+    private var adapter: CheckAlarmAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCheckListBinding.inflate(layoutInflater)
@@ -47,11 +44,9 @@ class CheckFragment : Fragment(), OnCheckedAlarmListener {
         binding.contentChecklist.addItemDecoration(VerticalItemDecorator(20))
     }
 
-    @Deprecated("This Function is for Alarm adapter")
-    override fun onItemClicked(alarm: Alarm) {}
-
-    //TODO: Need to add action when checkbox is checked
-    override fun onItemClicked(medsID: Long, alarm: Alarm, isChecked: Boolean) {}
+    override fun onItemClicked(data: MedsData) {
+        TODO("Not yet Implemented")
+    }
 
     companion object {
         fun newInstance(): CheckFragment {
