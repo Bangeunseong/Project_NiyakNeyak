@@ -45,7 +45,14 @@ class RingActivity : AppCompatActivity() {
         }
 
         val bundle = intent.getBundleExtra(getString(R.string.arg_alarm_bundle_obj))
-        if (bundle != null) alarm = bundle.getParcelable(getString(R.string.arg_alarm_obj))
+        if (bundle != null) {
+            alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getParcelable(getString(R.string.arg_alarm_obj), Alarm::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                bundle.getParcelable(getString(R.string.arg_alarm_obj))
+            }
+        }
         binding!!.alarmRingSnoozeTime.adapter = ArrayAdapter(applicationContext, android.R.layout.simple_spinner_dropdown_item, snoozeTime)
         binding!!.alarmRingSnoozeTime.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {

@@ -46,7 +46,10 @@ class AlarmSettingActivity : AppCompatActivity() {
                 val uri =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         o.data!!.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java)
-                    else o.data!!.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                    else {
+                        @Suppress("DEPRECATION")
+                        o.data!!.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                    }
 
                 ringtone = RingtoneManager.getRingtone(applicationContext, uri)
                 val title = ringtone!!.getTitle(applicationContext)
@@ -64,7 +67,10 @@ class AlarmSettingActivity : AppCompatActivity() {
         snapshotId = intent.getStringExtra("snapshot_id")
         alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(getString(R.string.arg_alarm_obj), Alarm::class.java)
-        } else intent.getParcelableExtra(getString(R.string.arg_alarm_obj))
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(getString(R.string.arg_alarm_obj))
+        }
 
         // Set View Binding
         binding = ActivityAlarmSettingBinding.inflate(layoutInflater)

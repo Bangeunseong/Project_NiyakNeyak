@@ -7,14 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.main.adapter.CheckAlarmAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
-import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
 
 /**
@@ -49,8 +47,6 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
     }
 
     companion object {
-        fun newInstance(): CheckFragment {
-            return CheckFragment()
-        }
+        private const val TAG = "CHECK_FRAGMENT"
     }
 }

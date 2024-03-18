@@ -66,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
         }
         binding!!.mainIdEditText.addTextChangedListener(afterTextChanged)
         binding!!.mainPwEditText.addTextChangedListener(afterTextChanged)
-        binding!!.mainPwEditText.setOnEditorActionListener { v: TextView?, actionId: Int, event: KeyEvent? ->
+        binding!!.mainPwEditText.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel!!.login(
                     binding!!.mainIdEditText.text.toString(),
@@ -75,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
             }
             false
         }
-        binding!!.mainLoginPlain.setOnClickListener { v: View? ->
+        binding!!.mainLoginPlain.setOnClickListener {
             binding!!.loadingBarPlain.visibility = View.VISIBLE
             loginViewModel!!.login(
                 binding!!.mainIdEditText.text.toString(),

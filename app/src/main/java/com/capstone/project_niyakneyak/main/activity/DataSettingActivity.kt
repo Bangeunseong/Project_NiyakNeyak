@@ -2,7 +2,6 @@ package com.capstone.project_niyakneyak.main.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
@@ -168,7 +167,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         } else data.medsID = codeGenerator()
 
         val filter =
-            InputFilter { source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int ->
+            InputFilter { source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
                 for (i in start until end)
                     if (Character.isWhitespace(source[i]))
                         return@InputFilter ""

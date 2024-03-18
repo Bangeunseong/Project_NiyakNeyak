@@ -29,7 +29,10 @@ class AlarmService : Service() {
         vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
             vibratorManager.defaultVibrator
-        } else getSystemService(VIBRATOR_SERVICE) as Vibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
         ringtone = RingtoneManager.getActualDefaultRingtoneUri(
             this.baseContext,
             RingtoneManager.TYPE_ALARM
@@ -41,7 +44,10 @@ class AlarmService : Service() {
         if(bundle != null){
             alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getParcelable(getString(R.string.arg_alarm_obj), Alarm::class.java)
-            } else bundle.getParcelable(getString(R.string.arg_alarm_obj))
+            } else {
+                @Suppress("DEPRECATION")
+                bundle.getParcelable(getString(R.string.arg_alarm_obj))
+            }
         }
         val notificationIntent = Intent(this, com.capstone.project_niyakneyak.alarm.activity.RingActivity::class.java)
         notificationIntent.putExtra(getString(R.string.arg_alarm_bundle_obj), bundle)

@@ -3,8 +3,8 @@ package com.capstone.project_niyakneyak.alarm.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.widget.Toast
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
@@ -21,8 +21,14 @@ class AlarmReceiver : BroadcastReceiver() {
             startRescheduleAlarmsService(context)
         } else {
             val bundle = intent.getBundleExtra(context.getString(R.string.arg_alarm_bundle_obj))
-            if (bundle != null) alarm =
-                bundle.getParcelable<Parcelable>(context.getString(R.string.arg_alarm_obj)) as Alarm?
+            if (bundle != null) {
+                alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    bundle.getParcelable(context.getString(R.string.arg_alarm_obj), Alarm::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    bundle.getParcelable(context.getString(R.string.arg_alarm_obj))
+                }
+            }
             val toastText = String.format("Alarm Received")
             Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
             if (alarm != null) {

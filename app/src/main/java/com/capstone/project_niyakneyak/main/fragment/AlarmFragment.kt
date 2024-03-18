@@ -33,8 +33,7 @@ import java.util.Calendar
 /**
  * This Fragment is used for showing currently registered alarmList.
  * This Fragment implements [OnAlarmChangedListener] to update alarm data
- * by using [OnAlarmChangedListener.onToggle], [OnAlarmChangedListener.onItemClick],
- * [OnAlarmChangedListener.onDelete]
+ * by using [OnAlarmChangedListener.onItemClick], [OnAlarmChangedListener.onDelete]
  */
 class AlarmFragment : Fragment(), OnAlarmChangedListener {
     // Field
@@ -105,13 +104,13 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Warning!")
         builder.setMessage("Do you want to delete this timer?")
-        builder.setPositiveButton("OK") { dialog: DialogInterface?, which: Int ->
+        builder.setPositiveButton("OK") { _: DialogInterface?, _: Int ->
             if (alarm.isStarted) alarm.cancelAlarm(requireContext())
             alarmRef.delete().addOnSuccessListener {
                 Log.w(TAG, "Delete Alarm Success")
             }.addOnFailureListener { Log.w(TAG, "Delete Alarm Failed") }
         }
-        builder.setNegativeButton("CANCEL") { dialog: DialogInterface?, which: Int -> }
+        builder.setNegativeButton("CANCEL") { _: DialogInterface?, _: Int -> }
         builder.create().show()
     }
 

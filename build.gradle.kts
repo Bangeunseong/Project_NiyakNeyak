@@ -8,8 +8,13 @@ plugins {
     id("com.google.gms.google-services") version "4.4.1" apply false
 }
 buildscript{
+    val kotlinVersion by extra("1.9.23")
     dependencies{
         classpath("com.google.gms:google-services:4.4.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+    repositories {
+        mavenCentral()
     }
 }
 
