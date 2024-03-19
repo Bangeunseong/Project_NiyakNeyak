@@ -14,6 +14,11 @@ import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 /**
  * This Fragment is used for showing daily Medication list by using [CheckFragment.adapter].
@@ -26,6 +31,9 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
     private var checkViewModel: CheckViewModel? = null
     private var adapter: CheckAlarmAdapter? = null
 
+    private lateinit var firestore: FirebaseFirestore
+    private var query: Query? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCheckListBinding.inflate(layoutInflater)
         return binding.root
@@ -35,6 +43,8 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         super.onViewCreated(view, savedInstanceState)
         checkViewModel = ViewModelProvider(this)[CheckViewModel::class.java]
 
+        firestore = Firebase.firestore
+        query = firestore.collection("alarms")
 
         binding.contentChecklist.setHasFixedSize(false)
         binding.contentChecklist.layoutManager = LinearLayoutManager(context)
