@@ -55,8 +55,8 @@ dependencies {
     implementation("androidx.work:work-runtime:$workVersion")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
 
-    //implementation platform("com.google.firebase:firebase-bom:31.2.8")
-
+    implementation("com.google.firebase:firebase-bom:31.2.8")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 
 
     testImplementation("junit:junit:4.13.2")
