@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import android.widget.Toast
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.alarm.receiver.AlarmReceiver
 import com.google.firebase.firestore.IgnoreExtraProperties
@@ -172,13 +171,13 @@ data class Alarm(
         const val FIELD_MINUTE = "min"
         const val FIELD_IS_STARTED = "started"
         const val FIELD_IS_RECURRING = "isRecurring"
-        const val FIELD_IS_MONDAY = "isMon"
-        const val FIELD_IS_TUESDAY = "isTue"
-        const val FIELD_IS_WEDNESDAY = "isWed"
-        const val FIELD_IS_THURSDAY = "isThu"
-        const val FIELD_IS_FRIDAY = "isFri"
-        const val FIELD_IS_SATURDAY = "isSat"
-        const val FIELD_IS_SUNDAY = "isSun"
+        const val FIELD_IS_MONDAY = "mon"
+        const val FIELD_IS_TUESDAY = "tue"
+        const val FIELD_IS_WEDNESDAY = "wed"
+        const val FIELD_IS_THURSDAY = "thu"
+        const val FIELD_IS_FRIDAY = "fri"
+        const val FIELD_IS_SATURDAY = "sat"
+        const val FIELD_IS_SUNDAY = "sun"
         const val FIELD_TITLE = "title"
         const val FIELD_TONE = "tone"
         const val FIELD_IS_VIBRATE = "isVibrate"

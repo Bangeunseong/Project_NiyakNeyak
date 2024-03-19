@@ -40,6 +40,8 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
 
         FirebaseFirestore.setLoggingEnabled(true)
         firestore = Firebase.firestore
+
+        //TODO: Modify Query to filter medication info. by valid date
         secondQuery = firestore.collection("medications")
             .whereIn(MedsData.FIELD_ID, alarm.medsList)
 

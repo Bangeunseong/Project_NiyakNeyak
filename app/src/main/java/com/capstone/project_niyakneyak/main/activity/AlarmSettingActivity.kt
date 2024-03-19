@@ -29,7 +29,6 @@ import java.util.Random
  * This DialogFragment is used to set [Alarm] getting information
  * by user interaction.
  */
-//TODO: Modify Activity
 class AlarmSettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAlarmSettingBinding
         private lateinit var tone: String
@@ -304,7 +303,7 @@ class AlarmSettingActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, String.format("Alarm already exists at %02d:%02d!", binding.timePicker.hour, binding.timePicker.minute), Toast.LENGTH_SHORT).show()
             return
         }
-        //TODO: Add data in firestore and scheduleAlarm when selected in medication data addition process
+
         firestore.collection("alarms").document(alarm.alarmCode.toString()).set(alarm)
             .addOnSuccessListener {
                 setResult(RESULT_OK)
