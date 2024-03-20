@@ -30,6 +30,7 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
     FireStoreAdapter<CheckAlarmAdapter.ViewHolder>(query) {
     private var secondQuery: Query? = null
     private lateinit var firestore: FirebaseFirestore
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemRecyclerCheckBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
@@ -43,7 +44,7 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
 
         //TODO: Modify Query to filter medication info. by valid date
         secondQuery = firestore.collection("medications")
-            .whereIn(MedsData.FIELD_ID, alarm.medsList)
+            .whereArrayContainsAny(MedsData.FIELD_ID, alarm.medsList)
 
         holder.bind(snapshot, secondQuery, listener)
     }
