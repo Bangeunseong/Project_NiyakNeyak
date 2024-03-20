@@ -58,8 +58,8 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         FirebaseFirestore.setLoggingEnabled(true)
         firestore = Firebase.firestore
         query = firestore.collection("alarms")
-            .orderBy(Alarm.FIELD_HOUR, Query.Direction.DESCENDING)
-            .orderBy(Alarm.FIELD_MINUTE, Query.Direction.DESCENDING)
+            .orderBy(Alarm.FIELD_HOUR, Query.Direction.ASCENDING)
+            .orderBy(Alarm.FIELD_MINUTE, Query.Direction.ASCENDING)
 
         query?.let {
             adapter = object: AlarmAdapter(it, this@AlarmFragment){

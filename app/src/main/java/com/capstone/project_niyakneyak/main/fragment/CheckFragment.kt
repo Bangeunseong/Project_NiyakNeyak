@@ -12,7 +12,6 @@ import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.main.adapter.CheckAlarmAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
-import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
 import com.google.android.material.snackbar.Snackbar
@@ -55,7 +54,14 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         query?.let {
             adapter = object: CheckAlarmAdapter(it, this@CheckFragment){
                 override fun onDataChanged() {
-
+                    if(itemCount == 0) {
+                        binding.contentChecklistDescriptionText.visibility = View.VISIBLE
+                        binding.contentChecklist.visibility = View.GONE
+                    }
+                    else {
+                        binding.contentChecklistDescriptionText.visibility = View.GONE
+                        binding.contentChecklist.visibility = View.VISIBLE
+                    }
                 }
 
                 override fun onError(e: FirebaseFirestoreException) {
@@ -68,7 +74,6 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         binding.contentChecklist.setHasFixedSize(false)
         binding.contentChecklist.layoutManager = LinearLayoutManager(context)
         binding.contentChecklist.addItemDecoration(HorizontalItemDecorator(10))
-        binding.contentChecklist.addItemDecoration(VerticalItemDecorator(20))
     }
 
     override fun onStart() {
