@@ -42,8 +42,6 @@ android {
 }
 
 dependencies {
-
-
     val workVersion = "2.9.0"
     val roomVersion = "2.6.1"
 
@@ -51,8 +49,10 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.annotation:annotation:1.7.1")
 
     implementation("androidx.work:work-runtime:$workVersion")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.lifecycle:lifecycle-service:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 

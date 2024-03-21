@@ -104,10 +104,22 @@
                 android:layout_height="wrap_content"
                 android:minWidth="250dp"
                 android:text="@string/main_login_naver_text"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/main_register_btn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/main_login_google" />
+
+            <Button
+                android:id="@+id/main_register_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="250dp"
+                android:text="@string/main_register_text"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/main_login_naver" />
 
             <ProgressBar
                 android:id="@+id/loadingBar_Plain"

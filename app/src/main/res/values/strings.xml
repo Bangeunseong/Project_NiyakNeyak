@@ -15,6 +15,7 @@
     <string name="main_login_plain_text">Login</string>
     <string name="main_login_google_text">Login with Google</string>
     <string name="main_login_naver_text">Login with Naver</string>
+    <string name="main_register_text">Register</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid ID or Email</string>
     <string name="invalid_password_less">Password must be more than 5 characters</string>

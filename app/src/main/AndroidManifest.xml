@@ -29,6 +29,7 @@
             android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="false" />
+
         <activity
             android:name=".alarm.activity.RingActivity"
             android:exported="false"
@@ -39,6 +40,9 @@
             android:exported="false" />
         <activity
             android:name=".main.activity.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.activity.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".login.activity.LoginActivity"
