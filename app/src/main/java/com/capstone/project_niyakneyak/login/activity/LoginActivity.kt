@@ -22,17 +22,21 @@ import com.capstone.project_niyakneyak.login.viewmodel.LoginViewModelFactory
 import com.capstone.project_niyakneyak.main.activity.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
+
 class LoginActivity : AppCompatActivity() {
-    private val mGoogleSignInClient: GoogleSignInClient? = null
-    private val mAuth: FirebaseAuth? = null
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var binding: ActivityLoginBinding
+
+    private var gso: GoogleSignInOptions? = null
+    private var mGoogleSignInClient: GoogleSignInClient? = null
     private var loginViewModel: LoginViewModel? = null
-    private var binding: ActivityLoginBinding? = null
-    private val launcher = registerForActivityResult<Intent, ActivityResult>(
+    private val launcher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.resultCode == RESULT_OK) {
@@ -44,12 +48,24 @@ class LoginActivity : AppCompatActivity() {
     companion object{
         private const val TAG = "GOOGLE_ACTIVITY"
         private const val default_web_client_id = "264335307721-6gi684ianko5vqjira4o4uqttlppl6ab.apps.googleusercontent.com"
-
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(default_web_client_id)
+            .requestEmail()
+            .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso!!)
+
+        mAuth = FirebaseAuth.getInstance()
+
+        // Setting View by Binding
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())[LoginViewModel::class.java]
         loginViewModel!!.loginFormState.observe(this, Observer { loginFormState ->
             if (loginFormState == null) {
