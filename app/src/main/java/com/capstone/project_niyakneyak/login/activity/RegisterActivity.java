@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.ui.login.activity;
+package com.capstone.project_niyakneyak.login.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.capstone.project_niyakneyak.R;
 import com.capstone.project_niyakneyak.data.user_model.UserAccount ;
-import com.capstone.project_niyakneyak.ui.main.activity.MainActivity;
+import com.capstone.project_niyakneyak.main.activity.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

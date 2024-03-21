@@ -42,7 +42,7 @@
             android:name=".main.activity.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.login.activity.RegisterActivity"
+            android:name=".login.activity.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".login.activity.LoginActivity"
