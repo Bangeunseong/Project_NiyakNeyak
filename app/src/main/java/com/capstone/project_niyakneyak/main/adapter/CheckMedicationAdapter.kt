@@ -15,7 +15,6 @@ import com.google.firebase.firestore.toObject
  */
 open class CheckMedicationAdapter(query: Query, private val onCheckedMedicationListener: OnCheckedMedicationListener) :
     FireStoreAdapter<CheckMedicationAdapter.ViewHolder>(query){
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemRecyclerCheckItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }

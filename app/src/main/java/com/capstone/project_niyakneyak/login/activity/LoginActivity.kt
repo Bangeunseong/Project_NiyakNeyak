@@ -24,9 +24,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
 
 
 class LoginActivity : AppCompatActivity() {
@@ -36,14 +38,13 @@ class LoginActivity : AppCompatActivity() {
     private var gso: GoogleSignInOptions? = null
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var loginViewModel: LoginViewModel? = null
-    private val launcher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result: ActivityResult ->
-        if (result.resultCode == RESULT_OK) {
-            val data = result.data
-            handleSignInResult(data)
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                handleSignInResult(data)
+            }
         }
-    }
 
     companion object{
         private const val TAG = "GOOGLE_ACTIVITY"
@@ -60,34 +61,34 @@ class LoginActivity : AppCompatActivity() {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso!!)
 
-        mAuth = FirebaseAuth.getInstance()
+        mAuth = Firebase.auth
 
         // Setting View by Binding
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())[LoginViewModel::class.java]
         loginViewModel!!.loginFormState.observe(this, Observer { loginFormState ->
             if (loginFormState == null) {
                 return@Observer
             }
-            binding!!.mainLoginPlain.isEnabled = loginFormState.isDataValid
+            binding.mainLoginPlain.isEnabled = loginFormState.isDataValid
             if (loginFormState.usernameError != null) {
-                binding!!.mainIdLayout.isErrorEnabled = true
-                binding!!.mainIdLayout.error = getString(loginFormState.usernameError!!)
-            } else binding!!.mainIdLayout.isErrorEnabled = false
+                binding.mainIdLayout.isErrorEnabled = true
+                binding.mainIdLayout.error = getString(loginFormState.usernameError!!)
+            } else binding.mainIdLayout.isErrorEnabled = false
             if (loginFormState.passwordError != null) {
-                binding!!.mainPasswordLayout.isErrorEnabled = true
-                binding!!.mainPasswordLayout.error = getString(loginFormState.passwordError!!)
-            } else binding!!.mainPasswordLayout.isErrorEnabled = false
+                binding.mainPasswordLayout.isErrorEnabled = true
+                binding.mainPasswordLayout.error = getString(loginFormState.passwordError!!)
+            } else binding.mainPasswordLayout.isErrorEnabled = false
         })
         loginViewModel!!.loginResult.observe(this, Observer { loginResult ->
             if (loginResult == null) {
                 return@Observer
             }
-            binding!!.loadingBarPlain.visibility = View.GONE
-            binding!!.loadingBarGoogle.visibility = View.GONE
-            binding!!.loadingBarNaver.visibility = View.GONE
+            binding.loadingBarPlain.visibility = View.GONE
+            binding.loadingBarGoogle.visibility = View.GONE
+            binding.loadingBarNaver.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
             }
@@ -100,35 +101,35 @@ class LoginActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
                 loginViewModel!!.loginDataChanged(
-                    binding!!.mainIdEditText.text.toString(),
-                    binding!!.mainPwEditText.text.toString()
+                    binding.mainIdEditText.text.toString(),
+                    binding.mainPwEditText.text.toString()
                 )
             }
         }
-        binding!!.mainIdEditText.addTextChangedListener(afterTextChanged)
-        binding!!.mainPwEditText.addTextChangedListener(afterTextChanged)
-        binding!!.mainPwEditText.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
+        binding.mainIdEditText.addTextChangedListener(afterTextChanged)
+        binding.mainPwEditText.addTextChangedListener(afterTextChanged)
+        binding.mainPwEditText.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel!!.login(
-                    binding!!.mainIdEditText.text.toString(),
-                    binding!!.mainPwEditText.text.toString()
+                    binding.mainIdEditText.text.toString(),
+                    binding.mainPwEditText.text.toString()
                 )
             }
             false
         }
-        binding!!.mainLoginPlain.setOnClickListener { v ->
-            binding!!.loadingBarPlain.visibility = View.VISIBLE
+        binding.mainLoginPlain.setOnClickListener {
+            binding.loadingBarPlain.visibility = View.VISIBLE
             loginViewModel!!.login(
-                binding!!.mainIdEditText.text.toString(),
-                binding!!.mainPwEditText.text.toString()
+                binding.mainIdEditText.text.toString(),
+                binding.mainPwEditText.text.toString()
             )
         }
 
-        binding!!.mainLoginPlain.setOnClickListener {
-            binding!!.loadingBarPlain.visibility = View.VISIBLE
-            val email = binding!!.mainIdEditText.text.toString()
-            val password = binding!!.mainPwEditText.text.toString()
-            mAuth!!.signInWithEmailAndPassword(email, password).addOnCompleteListener(this@LoginActivity) { task ->
+        binding.mainLoginPlain.setOnClickListener {
+            binding.loadingBarPlain.visibility = View.VISIBLE
+            val email = binding.mainIdEditText.text.toString()
+            val password = binding.mainPwEditText.text.toString()
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this@LoginActivity) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
@@ -142,12 +143,12 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        binding!!.mainLoginGoogle.setOnClickListener {
-            binding!!.loadingBarGoogle.visibility = View.VISIBLE
+        binding.mainLoginGoogle.setOnClickListener {
+            binding.loadingBarGoogle.visibility = View.VISIBLE
             signIn()
         }
 
-        binding!!.mainRegisterBtn.setOnClickListener {
+        binding.mainRegisterBtn.setOnClickListener {
             //회원가입 화면으로 이동
             val intent = Intent(this@LoginActivity, RegisterActivity::class.java) //현재 acitivity, 이동할 activity
             startActivity(intent) //액티비티 이동
@@ -157,7 +158,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth!!.currentUser
+        val currentUser = mAuth.currentUser
         currentUser?.let { updateUI(it) }
     }
 
@@ -184,18 +185,18 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun signIn() {
+    private fun signIn() {
         val signInIntent = mGoogleSignInClient!!.signInIntent
         launcher.launch(signInIntent)
     }
-    fun signOut() {
-        Log.d(TAG, "signOut: " + mAuth!!.currentUser!!.email)
+    private fun signOut() {
+        Log.d(TAG, "signOut: " + mAuth.currentUser!!.email)
         mAuth.signOut()
     }
 
     private fun firebaseAuthWithGoogle(idToken: String?) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        mAuth!!.signInWithCredential(credential)
+        mAuth.signInWithCredential(credential)
             .addOnCompleteListener(
                 this
             ) { task ->
@@ -228,8 +229,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun updateUiWithUser() {
         val intent = Intent(this@LoginActivity, MainActivity::class.java)
-        intent.putExtra("USER_ID", binding!!.mainIdEditText.text.toString())
-        intent.putExtra("USER_PW", binding!!.mainPwEditText.text.toString())
+        intent.putExtra("USER_ID", binding.mainIdEditText.text.toString())
+        intent.putExtra("USER_PW", binding.mainPwEditText.text.toString())
         startActivityIfNeeded(intent, 0)
     }
 

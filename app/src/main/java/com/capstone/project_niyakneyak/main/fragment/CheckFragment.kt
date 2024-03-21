@@ -11,15 +11,14 @@ import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.main.adapter.CheckAlarmAdapter
-import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.Firebase
 import java.util.Calendar
 
 /**
@@ -27,7 +26,6 @@ import java.util.Calendar
  * [CheckFragment.adapter] will be set by using [CheckAlarmAdapter]
  */
 
-//TODO: Modify Checklist Fragment
 class CheckFragment : Fragment(), OnCheckedMedicationListener {
     private lateinit var binding: FragmentCheckListBinding
     private lateinit var firestore: FirebaseFirestore
@@ -73,7 +71,6 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
 
         binding.contentChecklist.setHasFixedSize(false)
         binding.contentChecklist.layoutManager = LinearLayoutManager(context)
-        binding.contentChecklist.addItemDecoration(HorizontalItemDecorator(10))
     }
 
     override fun onStart() {
@@ -95,38 +92,38 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         when(calendar.get(Calendar.DAY_OF_WEEK)){
             Calendar.SUNDAY -> {
                 query = firestore.collection("alarms")
+                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_SUNDAY, true)
-                    .orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.MONDAY -> {
                 query = firestore.collection("alarms")
+                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_MONDAY, true)
-                    .orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.TUESDAY -> {
                 query = firestore.collection("alarms")
+                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_TUESDAY, true)
-                    .orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.WEDNESDAY -> {
                 query = firestore.collection("alarms")
+                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_WEDNESDAY, true)
-                    .orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.THURSDAY -> {
                 query = firestore.collection("alarms")
+                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_THURSDAY, true)
-                    .orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.FRIDAY -> {
                 query = firestore.collection("alarms")
+                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_FRIDAY, true)
-                    .orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.SATURDAY -> {
                 query = firestore.collection("alarms")
+                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_SATURDAY, true)
-                    .orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
         }
         return query

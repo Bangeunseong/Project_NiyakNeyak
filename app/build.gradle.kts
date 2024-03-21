@@ -43,7 +43,6 @@ android {
 
 dependencies {
     val workVersion = "2.9.0"
-    val roomVersion = "2.6.1"
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -59,19 +58,14 @@ dependencies {
     // firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
-    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-firestore")
 
-    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+    implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     // navigation dependencies
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-
-    // room dependencies
-    ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    implementation("androidx.room:room-common:$roomVersion")
 
     // test dependencies
     testImplementation("junit:junit:4.13.2")

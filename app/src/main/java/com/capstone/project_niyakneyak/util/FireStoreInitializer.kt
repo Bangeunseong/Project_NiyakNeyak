@@ -2,10 +2,10 @@ package com.capstone.project_niyakneyak.util
 
 import android.content.Context
 import androidx.startup.Initializer
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.BuildConfig
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
 
 class FireStoreInitializer: Initializer<FirebaseFirestore> {
     private val FIRESTORE_EMULATOR_HOST = "10.0.2.2"

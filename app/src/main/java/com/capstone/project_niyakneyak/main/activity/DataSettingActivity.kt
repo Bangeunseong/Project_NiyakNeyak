@@ -230,6 +230,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 data.medsStartDate = dates[0]
                 data.medsEndDate = dates[1]
             }
+
             if(snapshotId == null) submitData(null, data)
             else submitData(snapshotId, data)
 
@@ -266,27 +267,38 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         else{
             firestore.runTransaction {transaction ->
                 // Data Read and Write -> Need to be executed before Write Process
+                val includedAlarms = mutableListOf<String>()
+                val deletedAlarms = mutableListOf<String>()
                 for(snapshotId in includedAlarmID){
-                    if(!originAlarmID.contains(snapshotId)) {
-                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
-                        if(!alarm.isStarted) {
-                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
-                            alarm.scheduleAlarm(applicationContext)
-                        }
-                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                    if(!originAlarmID.contains(snapshotId)) includedAlarms.add(snapshotId)
+                }
+                for(snapshotId in originAlarmID){
+                    if(!includedAlarmID.contains(snapshotId)) deletedAlarms.add(snapshotId)
+                }
+
+                val maxPos =
+                    if(includedAlarms.size > deletedAlarms.size) includedAlarms.size
+                    else deletedAlarms.size
+                for(pos in 0..maxPos){
+                    var includedAlarm: Alarm? = null
+                    var deletedAlarm: Alarm? = null
+                    if(includedAlarms.size > pos)
+                        includedAlarm = transaction.get(alarmRef.document(includedAlarms[pos])).toObject<Alarm>()
+                    if(deletedAlarms.size > pos)
+                        deletedAlarm = transaction.get(alarmRef.document(deletedAlarms[pos])).toObject<Alarm>()
+
+                    if(includedAlarm != null){
+                        transaction.update(alarmRef.document(includedAlarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
+                        transaction.update(alarmRef.document(includedAlarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                        includedAlarm.scheduleAlarm(applicationContext)
+                    }
+                    if(deletedAlarm != null){
+                        transaction.update(alarmRef.document(deletedAlarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, false)
+                        transaction.update(alarmRef.document(deletedAlarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(data.medsID))
+                        deletedAlarm.cancelAlarm(applicationContext)
                     }
                 }
 
-                for(snapshotId in originAlarmID){
-                    if(!includedAlarmID.contains(snapshotId)){
-                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
-                        if(alarm.isStarted && alarm.medsList.size <= 1) {
-                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, false)
-                            alarm.cancelAlarm(applicationContext)
-                        }
-                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(data.medsID))
-                    }
-                }
                 transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_NAME, data.medsName)
                 transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_DETAIL, data.medsDetail)
                 transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_START_DATE, data.medsStartDate)

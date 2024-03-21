@@ -62,6 +62,8 @@
             tools:node="merge">
             <meta-data android:name="com.capstone.project_niyakneyak.util.FireStoreInitializer"
                 android:value="androidx.startup" />
+            <meta-data android:name="com.capstone.project_niyakneyak.util.AuthInitializer"
+                android:value="androidx.startup" />
         </provider>
     </application>
 

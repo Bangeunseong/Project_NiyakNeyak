@@ -2,12 +2,14 @@ package com.capstone.project_niyakneyak.main.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
 import com.capstone.project_niyakneyak.main.activity.DataSettingActivity
@@ -17,13 +19,15 @@ import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.DataViewModel
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.toObject
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 
 /**
  * This Fragment is used for showing Medication info. by using [DataFragment.adapter].
@@ -114,9 +118,33 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
         startActivity(intent)
     }
     override fun onDeleteBtnClicked(target: DocumentSnapshot) {
-        //TODO: Need to erase timer also!!
-        val medicationsRef = firestore.collection("medications")
-        medicationsRef.document(target.id).delete()
+        val alarmList = firestore.collection("alarms")
+            .whereArrayContains(Alarm.FIELD_MEDICATION_LIST, target.id.toInt())
+        val medicationRef = firestore.collection("medications").document(target.id)
+        val alarmRef = firestore.collection("alarms")
+
+        alarmList.get().addOnSuccessListener { querySnapshot ->
+            val alarms = querySnapshot.documents
+            firestore.runTransaction { transaction ->
+                for(snapshotId in alarms){
+                    val alarm = transaction.get(alarmRef.document(snapshotId.id)).toObject<Alarm>()
+                    if(alarm!!.medsList.size <= 1){
+                        transaction.update(alarmRef.document(snapshotId.id), Alarm.FIELD_IS_STARTED, false)
+                        alarm.cancelAlarm(requireContext())
+                    }
+                    transaction.update(alarmRef.document(snapshotId.id), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(target.id.toInt()))
+                }
+                transaction.delete(medicationRef)
+            }.addOnSuccessListener {
+                Log.w(TAG, "Successfully Updated Alarm Data")
+            }.addOnFailureListener {
+                Log.w(TAG, "Failed to Update Alarm Data")
+                FirebaseFirestoreException.Code.ABORTED
+            }
+        }.addOnFailureListener {
+            Log.w(TAG, "Failed to Delete Medication ID in Alarm Object")
+            FirebaseFirestoreException.Code.ABORTED
+        }
     }
 
     companion object {
