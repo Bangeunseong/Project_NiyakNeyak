@@ -44,9 +44,19 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
 
         //TODO: Modify Query to filter medication info. by valid date
         secondQuery = firestore.collection("medications")
-            .whereArrayContainsAny(MedsData.FIELD_ID, alarm.medsList)
+            .whereIn(MedsData.FIELD_ID, alarm.medsList)
 
         holder.bind(snapshot, secondQuery, listener)
+    }
+
+    override fun onViewAttachedToWindow(holder: ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.startListening()
+    }
+
+    override fun onViewDetachedFromWindow(holder: ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.stopListening()
     }
 
     class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
@@ -57,7 +67,7 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
             binding.checkTitleText.text = alarm.title
 
             query?.let {
-                adapter = object: CheckMedicationAdapter(query, listener){
+                adapter = object: CheckMedicationAdapter(it, listener){
                     override fun onDataChanged() {
                         if(itemCount == 0){
                             binding.imageView.isEnabled = false
@@ -78,9 +88,16 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
             binding.alarmCheckList.layoutManager = LinearLayoutManager(binding.root.context)
 
             binding.imageView.setOnClickListener {
-                if(binding.imageView.isVisible) binding.alarmCheckList.visibility = View.GONE
+                if(binding.alarmCheckList.isVisible) binding.alarmCheckList.visibility = View.GONE
                 else binding.alarmCheckList.visibility = View.VISIBLE
             }
+        }
+
+        fun startListening(){
+            adapter.startListening()
+        }
+        fun stopListening(){
+            adapter.stopListening()
         }
     }
 
