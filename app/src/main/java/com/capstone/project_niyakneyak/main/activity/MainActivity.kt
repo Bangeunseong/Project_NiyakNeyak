@@ -1,6 +1,5 @@
 package com.capstone.project_niyakneyak.main.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,6 +9,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 /**
  * This activity is used for showing fragments which are linked by [MainActivity.navHostFragment].
@@ -17,10 +19,10 @@ import com.google.android.material.navigation.NavigationBarView
  * BottomNavigationBar(NavigationBar listener is created as ItemSelectionListener)
  */
 class MainActivity : AppCompatActivity() {
+    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var binding: ActivityMainBinding
     private var navHostFragment: NavHostFragment? = null
     private var navController: NavController? = null
-    private var intent: Intent? = null
 
     internal inner class ItemSelectionListener : NavigationBarView.OnItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -46,20 +48,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        intent = getIntent()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        firebaseAuth = Firebase.auth
+
         binding.toolbar.setTitle(R.string.toolbar_main_title)
         setSupportActionBar(binding.toolbar)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
         assert(navHostFragment != null)
         navController = navHostFragment!!.navController
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        setResult(RESULT_OK, intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -70,8 +69,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             0 -> {
-                setResult(RESULT_OK, intent)
-                finish()
+                //TODO: When Signing Out Send Fragment that user is currently loggedOut
+                firebaseAuth.signOut()
             }
         }
         return super.onOptionsItemSelected(item)
