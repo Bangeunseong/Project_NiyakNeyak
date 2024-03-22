@@ -6,10 +6,10 @@ package com.capstone.project_niyakneyak.login.etc
 class LoginResult {
     var success: LoggedInUserView? = null
         private set
-    var error: Int? = null
+    var error: Exception? = null
         private set
 
-    constructor(error: Int?) {
+    constructor(error: Exception?) {
         this.error = error
     }
 

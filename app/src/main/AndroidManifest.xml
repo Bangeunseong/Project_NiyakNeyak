@@ -39,15 +39,14 @@
         <activity android:name=".main.activity.DataSettingActivity"
             android:exported="false" />
         <activity
-            android:name=".main.activity.MainActivity"
-            android:exported="false" />
-        <activity
             android:name=".login.activity.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".login.activity.LoginActivity"
-            android:exported="true"
-            android:label="@string/title_activity_login">
+            android:exported="false" />
+        <activity
+            android:name=".main.activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

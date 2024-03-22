@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.fragment
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -8,12 +9,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.databinding.FragmentAlarmListBinding
+import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.AlarmSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.AlarmAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
@@ -45,6 +48,12 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
 
     private var adapter: AlarmAdapter? = null
     private var query: Query? = null
+
+    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == Activity.RESULT_OK){
+            viewModel.isSignedIn = true
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -95,6 +104,10 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
 
     override fun onStart() {
         super.onStart()
+        if(shouldStartSignIn()){
+            val intent = Intent(activity, LoginActivity::class.java)
+            loginProcessLauncher.launch(intent)
+        }
 
         // Start Listening Data changes from firebase when activity starts
         adapter?.startListening()

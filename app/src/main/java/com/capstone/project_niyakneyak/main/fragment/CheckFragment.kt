@@ -1,15 +1,19 @@
 package com.capstone.project_niyakneyak.main.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
+import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.adapter.CheckAlarmAdapter
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
@@ -32,10 +36,16 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
     private lateinit var binding: FragmentCheckListBinding
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var viewModel: CheckViewModel
 
-    private var checkViewModel: CheckViewModel? = null
     private var adapter: CheckAlarmAdapter? = null
     private var query: Query? = null
+
+    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == Activity.RESULT_OK){
+            viewModel.isSignedIn = true
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCheckListBinding.inflate(layoutInflater)
@@ -44,7 +54,7 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkViewModel = ViewModelProvider(this)[CheckViewModel::class.java]
+        viewModel = ViewModelProvider(this)[CheckViewModel::class.java]
 
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
@@ -82,6 +92,10 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
 
     override fun onStart() {
         super.onStart()
+        if(shouldStartSignIn()){
+            val intent = Intent(activity, LoginActivity::class.java)
+            loginProcessLauncher.launch(intent)
+        }
 
         // Start Listening Data changes
         adapter?.startListening()
@@ -141,6 +155,10 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
             }
         }
         return query
+    }
+
+    private fun shouldStartSignIn(): Boolean {
+        return !viewModel.isSignedIn && Firebase.auth.currentUser == null
     }
 
     override fun onItemClicked(data: MedsData) {

@@ -1,56 +1,24 @@
-package com.capstone.project_niyakneyak.data.user_model;
+package com.capstone.project_niyakneyak.data.user_model
+
+import com.google.firebase.firestore.IgnoreExtraProperties
 
 /**
  * 사용자 계정 정보 모델 클래스
  */
-public class UserAccount {
+// 파이어베이스에서는 빈 생성자를 만들어줘야 한다. 모델클래스를 통해서 가져오는데 빈 생성자 반드시 필요하다.
+@IgnoreExtraProperties
+data class UserAccount(
+    var idToken: String? = null,
+    var emailId: String? = null,
+    var password: String? = null,
+    var name: String? = null,
+    var phoneNum: String? = null){
 
-    private String idToken;      // Firebase Uid (고유 토큰정보)
-    private String emailId;
-    private String password;
-
-    private String name;        // Renamed from 'userName'
-    private String phoneNumber;
-
-    public UserAccount() { }    // 파이어베이스에서는 빈 생성자를 만들어줘야 한다. 모델클래스를 통해서 가져오는데 빈 생성자 반드시 필요하다.
-
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public void setIdToken(String idToken) {
-        this.idToken = idToken;
-    }
-
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public void setEmailId(String emailId) {
-        this.emailId = emailId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPhoneNum() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNum(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    companion object{
+        const val ID_TOKEN = "idToken"
+        const val EMAIL_ID = "emailId"
+        const val PASSWORD = "password"
+        const val NAME = "name"
+        const val PHONE_NUMBER = "phoneNum"
     }
 }
