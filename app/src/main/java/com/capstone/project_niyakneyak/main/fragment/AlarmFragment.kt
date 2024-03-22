@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
 
 /**
@@ -38,6 +39,7 @@ import java.util.Calendar
 class AlarmFragment : Fragment(), OnAlarmChangedListener {
     // Field
     private lateinit var binding: FragmentAlarmListBinding
+    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var viewModel: AlarmViewModel
 
@@ -57,9 +59,14 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
 
         FirebaseFirestore.setLoggingEnabled(true)
         firestore = Firebase.firestore
-        query = firestore.collection("alarms")
-            .orderBy(Alarm.FIELD_HOUR, Query.Direction.ASCENDING)
-            .orderBy(Alarm.FIELD_MINUTE, Query.Direction.ASCENDING)
+        firebaseAuth = Firebase.auth
+
+        if(firebaseAuth.currentUser != null){
+            query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
+                .collection("alarms")
+                .orderBy(Alarm.FIELD_HOUR, Query.Direction.ASCENDING)
+                .orderBy(Alarm.FIELD_MINUTE, Query.Direction.ASCENDING)
+        }
 
         query?.let {
             adapter = object: AlarmAdapter(it, this@AlarmFragment){

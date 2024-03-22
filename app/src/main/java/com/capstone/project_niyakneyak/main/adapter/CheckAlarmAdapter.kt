@@ -19,6 +19,8 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 /**
  * This adapter is used for showing Medication info. which should be consumed in current date.
@@ -30,6 +32,7 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
     FireStoreAdapter<CheckAlarmAdapter.ViewHolder>(query) {
     private var secondQuery: Query? = null
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemRecyclerCheckBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -41,10 +44,13 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
 
         FirebaseFirestore.setLoggingEnabled(true)
         firestore = Firebase.firestore
+        firebaseAuth = Firebase.auth
 
-        //TODO: Modify Query to filter medication info. by valid date
-        secondQuery = firestore.collection("medications")
-            .whereIn(MedsData.FIELD_ID, alarm.medsList)
+        if(firebaseAuth.currentUser != null){
+            secondQuery = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
+                .collection("medications")
+                .whereIn(MedsData.FIELD_ID, alarm.medsList)
+        }
 
         holder.bind(snapshot, secondQuery, listener)
     }

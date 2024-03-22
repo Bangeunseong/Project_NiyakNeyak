@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.firestore
  * [DataFragment.adapter] will be set by using [MedicationAdapter]
  */
 class DataFragment : Fragment(), OnMedicationChangedListener {
+    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private var query: Query? = null
 
@@ -55,9 +57,15 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
 
         // Firebase Stuffs
         FirebaseFirestore.setLoggingEnabled(true)
+        firebaseAuth = Firebase.auth
         firestore = Firebase.firestore
-        query = firestore.collection("medications")
-            .orderBy(MedsData.FIELD_NAME, Query.Direction.ASCENDING)
+
+        if(firebaseAuth.currentUser != null){
+            query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
+                .collection("medications")
+                .orderBy(MedsData.FIELD_NAME, Query.Direction.ASCENDING)
+        }
+
 
         // RecyclerAdapter for Medication Info.
         query?.let {
@@ -93,8 +101,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
 
     override fun onStart() {
         super.onStart()
-        //TODO: Add Authentication Step
-        //if(shouldStartSignIn()){ return }
+        if(shouldStartSignIn()){ return }
 
         // Start Listening Data changes from firebase when activity starts
         adapter?.startListening()
