@@ -17,9 +17,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityAlarmSettingBinding
 import com.capstone.project_niyakneyak.main.etc.ActionResult
 import com.capstone.project_niyakneyak.main.etc.AlarmDataView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -31,8 +34,10 @@ import java.util.Random
  */
 class AlarmSettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAlarmSettingBinding
-        private lateinit var tone: String
+    private lateinit var tone: String
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var firebaseAuth: FirebaseAuth
+
     private var snapshotId: String? = null
     private val actionResult = MutableLiveData<ActionResult?>()
     private var alarm: Alarm? = null
@@ -75,8 +80,9 @@ class AlarmSettingActivity : AppCompatActivity() {
         binding = ActivityAlarmSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setting firestore
+        // Setting firestore and firebaseAuth
         firestore = Firebase.firestore
+        firebaseAuth = Firebase.auth
 
         // Set Activity Component
         setActivity(alarm)
@@ -304,7 +310,8 @@ class AlarmSettingActivity : AppCompatActivity() {
             return
         }
 
-        firestore.collection("alarms").document(alarm.alarmCode.toString()).set(alarm)
+        firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID).document(alarm.alarmCode.toString()).set(alarm)
             .addOnSuccessListener {
                 setResult(RESULT_OK)
                 finish()
@@ -338,7 +345,8 @@ class AlarmSettingActivity : AppCompatActivity() {
             binding.alarmVibSwt.isChecked
         )
 
-        firestore.collection("alarms").document(updatedAlarm.alarmCode.toString()).set(updatedAlarm)
+        firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID).document(updatedAlarm.alarmCode.toString()).set(updatedAlarm)
             .addOnSuccessListener {
                 if(alarm!!.medsList.isNotEmpty())
                     updatedAlarm.scheduleAlarm(applicationContext)
@@ -403,9 +411,11 @@ class AlarmSettingActivity : AppCompatActivity() {
         if (alarm.isVibrate) binding.alarmVibSwt.isChecked = true
     }
 
+    //TODO: Reprogram Redundancy Check
     private fun isAlreadyExistsAlarm(): Boolean {
         var flag = false
-        firestore.collection("alarms").document(alarm?.alarmCode.toString()).get()
+        firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID).document(alarm?.alarmCode.toString()).get()
             .addOnSuccessListener { flag = false }
             .addOnFailureListener { flag = true }
         return flag

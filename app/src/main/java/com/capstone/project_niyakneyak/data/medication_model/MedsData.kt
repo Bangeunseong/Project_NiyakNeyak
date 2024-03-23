@@ -33,6 +33,7 @@ data class MedsData(
     }
 
     companion object CREATOR : Parcelable.Creator<MedsData> {
+        const val COLLECTION_ID = "medications"
         const val FIELD_ID = "medsID"
         const val FIELD_NAME = "medsName"
         const val FIELD_DETAIL = "medsDetail"

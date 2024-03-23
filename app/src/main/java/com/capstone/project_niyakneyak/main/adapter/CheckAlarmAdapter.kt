@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerCheckBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
@@ -47,8 +48,8 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
         firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
-            secondQuery = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                .collection("medications")
+            secondQuery = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(MedsData.COLLECTION_ID)
                 .whereIn(MedsData.FIELD_ID, alarm.medsList)
         }
 

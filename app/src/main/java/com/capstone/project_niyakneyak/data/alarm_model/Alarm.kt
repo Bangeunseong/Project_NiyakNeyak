@@ -166,6 +166,7 @@ data class Alarm(
     }
 
     companion object CREATOR : Parcelable.Creator<Alarm> {
+        const val COLLECTION_ID = "alarms"
         const val FIELD_ALARM_CODE = "alarmCode"
         const val FIELD_HOUR = "hour"
         const val FIELD_MINUTE = "min"

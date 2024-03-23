@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentAlarmListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.AlarmSettingActivity
@@ -71,8 +72,8 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
-            query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                .collection("alarms")
+            query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(Alarm.COLLECTION_ID)
                 .orderBy(Alarm.FIELD_HOUR, Query.Direction.ASCENDING)
                 .orderBy(Alarm.FIELD_MINUTE, Query.Direction.ASCENDING)
         }
@@ -121,7 +122,8 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     }
 
     override fun onDelete(snapshot: DocumentSnapshot, alarm: Alarm) {
-        val alarmRef = firestore.collection("alarms").document(snapshot.id)
+        val alarmRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID).document(snapshot.id)
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Warning!")
         builder.setMessage("Do you want to delete this timer?")

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityDataSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.AlarmSelectionAdapter
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
@@ -25,6 +26,8 @@ import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -53,6 +56,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var includedAlarmID = mutableListOf<String>()
 
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var firebaseAuth: FirebaseAuth
 
     companion object{
         private const val TAG = "DATA_SETTING_ACTIVITY"
@@ -66,9 +70,13 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
         // Accessible Data
         firestore = Firebase.firestore
+        firebaseAuth = Firebase.auth
+
         snapshotId = intent.getStringExtra("snapshot_id")
         if(snapshotId != null){
-            val medicationRef = firestore.collection("medications").document(snapshotId!!)
+            val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(MedsData.COLLECTION_ID).document(snapshotId!!)
+
             medicationRef.get().addOnSuccessListener {
                 originData = it.toObject(MedsData::class.java)
 
@@ -89,7 +97,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         }
 
         // Setting RecyclerView Data Query
-        query = firestore.collection("alarms")
+        query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID)
 
         query?.let {
             adapter = object: AlarmSelectionAdapter(it, snapshotId, this@DataSettingActivity){
@@ -152,7 +161,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 Log.d("DataSettingDialog", "Meds_date parsing error")
                 throw RuntimeException()
             }
-            firestore.collection("alarms").whereArrayContains(Alarm.FIELD_MEDICATION_LIST, originData.medsID).get()
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(Alarm.COLLECTION_ID).whereArrayContains(Alarm.FIELD_MEDICATION_LIST, originData.medsID).get()
                 .addOnSuccessListener {
                     for(document in it.documents){
                         originAlarmID.add(document.id)
@@ -244,15 +254,21 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     }
 
     private fun submitData(snapshotID: String?, data: MedsData){
-        val medicationRef = firestore.collection("medications")
-        val alarmRef = firestore.collection("alarms")
+        val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(MedsData.COLLECTION_ID)
+        val alarmRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID)
         if(snapshotID == null){
             firestore.runTransaction {transaction ->
-                // Data Read and Write Process
+                // Data Read -> Need to be executed before Write Process
+                val alarms = mutableListOf<Alarm>()
                 for(snapshotId in includedAlarmID){
-                    // Data Read -> Need to be executed before Write Process
                     val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
-                    // Data Write
+                    alarms.add(alarm)
+                }
+
+                // Data Write
+                for(alarm in alarms){
                     if(!alarm.isStarted) {
                         transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
                         alarm.scheduleAlarm(applicationContext)
@@ -266,7 +282,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         }
         else{
             firestore.runTransaction {transaction ->
-                // Data Read and Write -> Need to be executed before Write Process
+                // Data Read -> Need to be executed before Write Process
                 val includedAlarms = mutableListOf<String>()
                 val deletedAlarms = mutableListOf<String>()
                 for(snapshotId in includedAlarmID){
@@ -276,6 +292,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     if(!includedAlarmID.contains(snapshotId)) deletedAlarms.add(snapshotId)
                 }
 
+                // Data Write
                 val maxPos =
                     if(includedAlarms.size > deletedAlarms.size) includedAlarms.size
                     else deletedAlarms.size
@@ -298,11 +315,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                         deletedAlarm.cancelAlarm(applicationContext)
                     }
                 }
-
-                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_NAME, data.medsName)
-                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_DETAIL, data.medsDetail)
-                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_START_DATE, data.medsStartDate)
-                transaction.update(medicationRef.document(data.medsID.toString()), MedsData.FIELD_END_DATE, data.medsEndDate)
+                transaction.set(medicationRef.document(data.medsID.toString()), data)
             }.addOnSuccessListener {
                 Log.w(TAG, "Data Modification Success")
             }.addOnFailureListener { Log.w(TAG, "Data Modification Failed: $it") }

@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.adapter.CheckAlarmAdapter
@@ -112,44 +113,44 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         var query: Query? = null
         when(calendar.get(Calendar.DAY_OF_WEEK)){
             Calendar.SUNDAY -> {
-                query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                    .collection("alarms")
+                query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID)
                     .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_SUNDAY, true)
             }
             Calendar.MONDAY -> {
-                query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                    .collection("alarms")
+                query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID)
                     .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_MONDAY, true)
             }
             Calendar.TUESDAY -> {
-                query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                    .collection("alarms")
+                query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID)
                     .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_TUESDAY, true)
             }
             Calendar.WEDNESDAY -> {
-                query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                    .collection("alarms")
+                query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID)
                     .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_WEDNESDAY, true)
             }
             Calendar.THURSDAY -> {
-                query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                    .collection("alarms")
+                query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID)
                     .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_THURSDAY, true)
             }
             Calendar.FRIDAY -> {
-                query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                    .collection("alarms")
+                query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID)
                     .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_FRIDAY, true)
             }
             Calendar.SATURDAY -> {
-                query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                    .collection("alarms")
+                query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID)
                     .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
                     .whereEqualTo(Alarm.FIELD_IS_SATURDAY, true)
             }

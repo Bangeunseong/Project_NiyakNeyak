@@ -15,6 +15,7 @@ data class UserAccount(
     var phoneNum: String? = null){
 
     companion object{
+        const val COLLECTION_ID = "users"
         const val ID_TOKEN = "idToken"
         const val EMAIL_ID = "emailId"
         const val PASSWORD = "password"

@@ -48,7 +48,7 @@ class RegisterActivity : AppCompatActivity() {
                         )
 
                         // 가입이 이루어졌을 때, 가입 정보를 데이터베이스에 저장
-                        firestore.collection("Users").document(account.idToken!!).set(account)
+                        firestore.collection(UserAccount.COLLECTION_ID).document(account.idToken!!).set(account)
                             .addOnSuccessListener {
                                 setResult(RESULT_OK)
                                 finish()

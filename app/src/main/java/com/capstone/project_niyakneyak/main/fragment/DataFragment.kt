@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.DataSettingActivity
@@ -70,8 +71,8 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
         firestore = Firebase.firestore
 
         if(firebaseAuth.currentUser != null){
-            query = firestore.collection("Users").document(firebaseAuth.currentUser!!.uid)
-                .collection("medications")
+            query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(MedsData.COLLECTION_ID)
                 .orderBy(MedsData.FIELD_NAME, Query.Direction.ASCENDING)
         }
 
@@ -137,10 +138,13 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
         startActivity(intent)
     }
     override fun onDeleteBtnClicked(target: DocumentSnapshot) {
-        val alarmList = firestore.collection("alarms")
+        val alarmList = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID)
             .whereArrayContains(Alarm.FIELD_MEDICATION_LIST, target.id.toInt())
-        val medicationRef = firestore.collection("medications").document(target.id)
-        val alarmRef = firestore.collection("alarms")
+        val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(MedsData.COLLECTION_ID).document(target.id)
+        val alarmRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(Alarm.COLLECTION_ID)
 
         alarmList.get().addOnSuccessListener { querySnapshot ->
             val alarms = querySnapshot.documents
