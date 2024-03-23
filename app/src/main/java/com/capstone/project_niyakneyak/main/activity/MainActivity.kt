@@ -1,13 +1,18 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
+import com.capstone.project_niyakneyak.login.activity.LoginActivity
+import com.capstone.project_niyakneyak.main.fragment.AlarmFragment
+import com.capstone.project_niyakneyak.main.viewmodel.AlarmViewModel
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -61,6 +66,13 @@ class MainActivity : AppCompatActivity() {
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // When Application closed automatically signs out
+        firebaseAuth.signOut()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menu.add(0, 0, 0, R.string.action_menu_logout)
         return super.onCreateOptionsMenu(menu)
@@ -69,8 +81,10 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             0 -> {
-                //TODO: When Signing Out Send Fragment that user is currently loggedOut
+                // When SignOut option clicked signs out
                 firebaseAuth.signOut()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)
