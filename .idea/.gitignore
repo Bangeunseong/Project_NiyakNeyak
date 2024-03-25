@@ -7,3 +7,7 @@
 /misc.xml
 # GitHub Copilot persisted chat sessions
 /copilot/chatSessions
+
+#순교가 추가한 부분
+.name
+deploymentTargetDropDown.xml
