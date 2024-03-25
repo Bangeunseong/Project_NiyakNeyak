@@ -26,6 +26,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.Filter
 import java.util.Calendar
 
 /**
@@ -114,52 +115,59 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         when(calendar.get(Calendar.DAY_OF_WEEK)){
             Calendar.SUNDAY -> {
                 query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(Alarm.COLLECTION_ID)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_SUNDAY, true)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                        Filter.equalTo(Alarm.FIELD_IS_STARTED, true),
+                        Filter.equalTo(Alarm.FIELD_IS_SUNDAY, true))
+                    ).orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.MONDAY -> {
                 query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(Alarm.COLLECTION_ID)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_MONDAY, true)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                        Filter.equalTo(Alarm.FIELD_IS_STARTED, true),
+                        Filter.equalTo(Alarm.FIELD_IS_MONDAY, true))
+                    ).orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.TUESDAY -> {
                 query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(Alarm.COLLECTION_ID)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_TUESDAY, true)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                        Filter.equalTo(Alarm.FIELD_IS_STARTED, true),
+                        Filter.equalTo(Alarm.FIELD_IS_TUESDAY, true))
+                    ).orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.WEDNESDAY -> {
                 query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(Alarm.COLLECTION_ID)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_WEDNESDAY, true)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                        Filter.equalTo(Alarm.FIELD_IS_STARTED, true),
+                        Filter.equalTo(Alarm.FIELD_IS_WEDNESDAY, true))
+                    ).orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.THURSDAY -> {
                 query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(Alarm.COLLECTION_ID)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_THURSDAY, true)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                        Filter.equalTo(Alarm.FIELD_IS_STARTED, true),
+                        Filter.equalTo(Alarm.FIELD_IS_THURSDAY, true))
+                    ).orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.FRIDAY -> {
                 query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(Alarm.COLLECTION_ID)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_FRIDAY, true)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                        Filter.equalTo(Alarm.FIELD_IS_STARTED, true),
+                        Filter.equalTo(Alarm.FIELD_IS_FRIDAY, true))
+                    ).orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.SATURDAY -> {
                 query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(Alarm.COLLECTION_ID)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_SATURDAY, true)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                        Filter.equalTo(Alarm.FIELD_IS_STARTED, true),
+                        Filter.equalTo(Alarm.FIELD_IS_SATURDAY, true))
+                    ).orderBy(Alarm.FIELD_HOUR).orderBy(Alarm.FIELD_MINUTE)
             }
         }
         return query
     }
 
     private fun shouldStartSignIn(): Boolean {
-        return !viewModel.isSignedIn && Firebase.auth.currentUser == null
+        return !viewModel.isSignedIn && firebaseAuth.currentUser == null
     }
 
     override fun onItemClicked(data: MedsData) {

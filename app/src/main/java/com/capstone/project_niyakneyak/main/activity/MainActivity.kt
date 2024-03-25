@@ -83,6 +83,8 @@ class MainActivity : AppCompatActivity() {
             0 -> {
                 // When SignOut option clicked signs out
                 firebaseAuth.signOut()
+
+                // Return to SignIn Activity
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
             }

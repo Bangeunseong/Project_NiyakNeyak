@@ -43,9 +43,7 @@
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/dialog_meds_detail_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/dialog_meds_daily_amount_layout"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed">
@@ -59,15 +57,28 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialog_meds_daily_amount_layout"
+            style="@style/TextInputLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_name_layout"
+            app:layout_constraintBottom_toTopOf="@id/dialog_meds_detail_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/meds_daily_amount_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="@string/dialog_add_form_meds_daily_amount" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/dialog_meds_detail_layout"
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@id/dialog_meds_date_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dialog_meds_name_layout">
+            app:layout_constraintTop_toBottomOf="@id/dialog_meds_daily_amount_layout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/meds_detail_text"
@@ -84,8 +95,6 @@
             android:focusable="false"
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@id/divider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dialog_meds_detail_layout">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -139,13 +148,15 @@
         android:layout_height="wrap_content"
         android:background="@color/white_500"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_meds_data_layout">
+        app:layout_constraintTop_toBottomOf="@id/dialog_meds_data_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/submit"
             style="@style/customSubmitBtnStyle"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:enabled="false"
             android:paddingHorizontal="20dp"
             android:paddingVertical="12dp"

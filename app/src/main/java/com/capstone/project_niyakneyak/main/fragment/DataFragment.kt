@@ -128,7 +128,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
     }
 
     private fun shouldStartSignIn(): Boolean {
-        return !viewModel.isSignedIn && Firebase.auth.currentUser == null
+        return !viewModel.isSignedIn && firebaseAuth.currentUser == null
     }
 
     //<-- Do actions, when adapter component interacted with user -->

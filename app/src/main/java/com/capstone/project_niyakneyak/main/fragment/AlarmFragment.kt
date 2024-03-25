@@ -33,6 +33,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.toObject
 import java.util.Calendar
 
 /**
@@ -121,15 +122,18 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         adapter?.stopListening()
     }
 
-    override fun onDelete(snapshot: DocumentSnapshot, alarm: Alarm) {
+    override fun onDelete(snapshot: DocumentSnapshot) {
         val alarmRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(Alarm.COLLECTION_ID).document(snapshot.id)
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Warning!")
         builder.setMessage("Do you want to delete this timer?")
         builder.setPositiveButton("OK") { _: DialogInterface?, _: Int ->
-            if (alarm.isStarted) alarm.cancelAlarm(requireContext())
-            alarmRef.delete().addOnSuccessListener {
+            firestore.runTransaction {transaction ->
+                val alarm = transaction.get(alarmRef).toObject<Alarm>()
+                if (alarm!!.isStarted) alarm.cancelAlarm(requireContext())
+                alarmRef.delete()
+            }.addOnSuccessListener {
                 Log.w(TAG, "Delete Alarm Success")
             }.addOnFailureListener { Log.w(TAG, "Delete Alarm Failed") }
         }
@@ -137,19 +141,18 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         builder.create().show()
     }
 
-    override fun onItemClick(snapshot: DocumentSnapshot, alarm: Alarm) {
-        showAlarmSettingDialog(snapshot, alarm)
+    override fun onItemClick(snapshot: DocumentSnapshot) {
+        showAlarmSettingDialog(snapshot)
     }
 
-    private fun showAlarmSettingDialog(snapshot: DocumentSnapshot, alarm: Alarm) {
+    private fun showAlarmSettingDialog(snapshot: DocumentSnapshot) {
         val intent = Intent(context, AlarmSettingActivity::class.java)
         intent.putExtra("snapshot_id",snapshot.id)
-        intent.putExtra(getString(R.string.arg_alarm_obj),alarm)
         startActivity(intent)
     }
 
     private fun shouldStartSignIn(): Boolean {
-        return !viewModel.isSignedIn && Firebase.auth.currentUser == null
+        return !viewModel.isSignedIn && firebaseAuth.currentUser == null
     }
 
     //Functions for getting time difference between next time and current time

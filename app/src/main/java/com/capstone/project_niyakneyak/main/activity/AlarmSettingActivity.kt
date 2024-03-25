@@ -23,8 +23,10 @@ import com.capstone.project_niyakneyak.main.etc.ActionResult
 import com.capstone.project_niyakneyak.main.etc.AlarmDataView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import java.util.Random
 
@@ -66,26 +68,28 @@ class AlarmSettingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Get Accessible data if needed
-        snapshotId = intent.getStringExtra("snapshot_id")
-        alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(getString(R.string.arg_alarm_obj), Alarm::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(getString(R.string.arg_alarm_obj))
-        }
+        // Setting firestore and firebaseAuth
+        firestore = Firebase.firestore
+        firebaseAuth = Firebase.auth
 
         // Set View Binding
         binding = ActivityAlarmSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setting firestore and firebaseAuth
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        // Get Accessible data if needed
+        snapshotId = intent.getStringExtra("snapshot_id")
 
-        // Set Activity Component
-        setActivity(alarm)
+        if(snapshotId != null){
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(Alarm.COLLECTION_ID).document(snapshotId!!).get()
+                .addOnSuccessListener {
+                    alarm = it.toObject(Alarm::class.java)
+                    setActivity(alarm)
+                }.addOnFailureListener {
+                    alarm = null
+                    setActivity(alarm)
+                }
+        }
     }
 
     private fun setActivity(alarm: Alarm?){
@@ -269,11 +273,9 @@ class AlarmSettingActivity : AppCompatActivity() {
         }
         binding.alarmSubmit.setOnClickListener {
             if (alarm != null) {
-                updateAlarm()
-                if(alarm.isStarted){
+                if(alarm.isStarted)
                     alarm.cancelAlarm(applicationContext)
-                    alarm.scheduleAlarm(applicationContext)
-                }
+                updateAlarm()
             } else scheduleAlarm()
         }
         binding.alarmCancel.setOnClickListener {
@@ -305,7 +307,7 @@ class AlarmSettingActivity : AppCompatActivity() {
         )
 
         // Validate alarm's existence
-        if (isAlreadyExistsAlarm()) {
+        if (isAlreadyExistsAlarm(alarm)) {
             Toast.makeText(applicationContext, String.format("Alarm already exists at %02d:%02d!", binding.timePicker.hour, binding.timePicker.minute), Toast.LENGTH_SHORT).show()
             return
         }
@@ -331,7 +333,7 @@ class AlarmSettingActivity : AppCompatActivity() {
             alarm!!.alarmCode,
             binding.timePicker.hour,
             binding.timePicker.minute,
-            alarm!!.isStarted,
+            alarm!!.medsList.isNotEmpty(),
             isRecurring,
             binding.toggleMonday.isChecked,
             binding.toggleTuesday.isChecked,
@@ -342,13 +344,20 @@ class AlarmSettingActivity : AppCompatActivity() {
             binding.toggleSunday.isChecked,
             alarmTitle,
             tone,
-            binding.alarmVibSwt.isChecked
+            binding.alarmVibSwt.isChecked,
+            alarm!!.medsList
         )
+
+        // Validate alarm's existence
+        if (isAlreadyExistsAlarm(updatedAlarm)) {
+            Toast.makeText(applicationContext, String.format("Alarm already exists at %02d:%02d!", binding.timePicker.hour, binding.timePicker.minute), Toast.LENGTH_SHORT).show()
+            return
+        }
 
         firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(Alarm.COLLECTION_ID).document(updatedAlarm.alarmCode.toString()).set(updatedAlarm)
             .addOnSuccessListener {
-                if(alarm!!.medsList.isNotEmpty())
+                if(updatedAlarm.isStarted)
                     updatedAlarm.scheduleAlarm(applicationContext)
                 setResult(RESULT_OK)
                 finish()
@@ -411,13 +420,25 @@ class AlarmSettingActivity : AppCompatActivity() {
         if (alarm.isVibrate) binding.alarmVibSwt.isChecked = true
     }
 
-    //TODO: Reprogram Redundancy Check
-    private fun isAlreadyExistsAlarm(): Boolean {
+    private fun isAlreadyExistsAlarm(alarm: Alarm): Boolean {
         var flag = false
         firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-            .collection(Alarm.COLLECTION_ID).document(alarm?.alarmCode.toString()).get()
-            .addOnSuccessListener { flag = false }
-            .addOnFailureListener { flag = true }
+            .collection(Alarm.COLLECTION_ID).where(Filter.and(
+                Filter.notEqualTo(Alarm.FIELD_ALARM_CODE, alarm.alarmCode),
+                Filter.equalTo(Alarm.FIELD_HOUR, alarm.hour),
+                Filter.equalTo(Alarm.FIELD_MINUTE, alarm.min),
+                Filter.equalTo(Alarm.FIELD_IS_SUNDAY, alarm.isSun),
+                Filter.equalTo(Alarm.FIELD_IS_MONDAY, alarm.isMon),
+                Filter.equalTo(Alarm.FIELD_IS_TUESDAY, alarm.isTue),
+                Filter.equalTo(Alarm.FIELD_IS_WEDNESDAY, alarm.isWed),
+                Filter.equalTo(Alarm.FIELD_IS_THURSDAY, alarm.isThu),
+                Filter.equalTo(Alarm.FIELD_IS_FRIDAY, alarm.isFri),
+                Filter.equalTo(Alarm.FIELD_IS_SATURDAY, alarm.isSat))).get()
+            .addOnSuccessListener {
+                flag = !it.isEmpty
+            }.addOnFailureListener {
+
+            }
         return flag
     }
 

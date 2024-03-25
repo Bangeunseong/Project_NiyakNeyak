@@ -144,6 +144,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         if(originData != null){
             data.medsID = originData.medsID
             binding.medsNameText.setText(originData.medsName)
+            if(originData.dailyAmount > 0){
+                binding.medsDailyAmountText.setText(originData.dailyAmount.toString())
+            }
             if (originData.medsDetail != null) binding.medsDetailText.setText(originData.medsDetail)
             if (originData.medsStartDate != null && originData.medsEndDate != null) {
                 binding.medsDateText.setText(String.format("%s~%s", originData.medsStartDate, originData.medsEndDate))
@@ -176,10 +179,18 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             binding.submit.isEnabled = true
         } else data.medsID = codeGenerator()
 
-        val filter =
+        val nameFilter =
             InputFilter { source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
                 for (i in start until end)
                     if (Character.isWhitespace(source[i]))
+                        return@InputFilter ""
+                null
+            }
+
+        val amountFilter =
+            InputFilter{ source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
+                for(i in start until end)
+                    if(!Character.isDigit(source[i]))
                         return@InputFilter ""
                 null
             }
@@ -204,7 +215,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
         // Main Body(Setting Functions for each Components)
         binding.medsNameText.addTextChangedListener(afterTextChanged)
-        binding.medsNameText.filters = arrayOf(filter)
+        binding.medsNameText.filters = arrayOf(nameFilter)
+        binding.medsDailyAmountText.filters = arrayOf(amountFilter)
         binding.medsDateText.setOnClickListener {
             val calBuilder = CalendarConstraints.Builder()
                 .setStart(MaterialDatePicker.thisMonthInUtcMilliseconds())
@@ -231,6 +243,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         binding.dialogMedsTimerAddBtn.setOnClickListener { showAlarmSettingActivity() }
         binding.submit.setOnClickListener {
             data.medsName = binding.medsNameText.text.toString()
+            data.dailyAmount = binding.medsDailyAmountText.text.toString().toInt()
             data.medsDetail =
                 if (binding.medsDetailText.text.toString() == "null") null else binding.medsDetailText.text.toString()
             val medsDateText =
@@ -283,13 +296,23 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         else{
             firestore.runTransaction {transaction ->
                 // Data Read -> Need to be executed before Write Process
-                val includedAlarms = mutableListOf<String>()
-                val deletedAlarms = mutableListOf<String>()
+                val includedAlarms = mutableListOf<Alarm>()
+                val deletedAlarms = mutableListOf<Alarm>()
                 for(snapshotId in includedAlarmID){
-                    if(!originAlarmID.contains(snapshotId)) includedAlarms.add(snapshotId)
+                    if(!originAlarmID.contains(snapshotId)) {
+                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                        if(!alarm.isStarted)
+                            alarm.scheduleAlarm(applicationContext)
+                        includedAlarms.add(alarm)
+                    }
                 }
                 for(snapshotId in originAlarmID){
-                    if(!includedAlarmID.contains(snapshotId)) deletedAlarms.add(snapshotId)
+                    if(!includedAlarmID.contains(snapshotId)) {
+                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                        if(alarm.medsList.size <= 1)
+                            alarm.cancelAlarm(applicationContext)
+                        deletedAlarms.add(alarm)
+                    }
                 }
 
                 // Data Write
@@ -297,22 +320,13 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     if(includedAlarms.size > deletedAlarms.size) includedAlarms.size
                     else deletedAlarms.size
                 for(pos in 0..maxPos){
-                    var includedAlarm: Alarm? = null
-                    var deletedAlarm: Alarm? = null
-                    if(includedAlarms.size > pos)
-                        includedAlarm = transaction.get(alarmRef.document(includedAlarms[pos])).toObject<Alarm>()
-                    if(deletedAlarms.size > pos)
-                        deletedAlarm = transaction.get(alarmRef.document(deletedAlarms[pos])).toObject<Alarm>()
-
-                    if(includedAlarm != null){
-                        transaction.update(alarmRef.document(includedAlarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
-                        transaction.update(alarmRef.document(includedAlarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
-                        includedAlarm.scheduleAlarm(applicationContext)
+                    if(includedAlarms.size > pos){
+                        transaction.update(alarmRef.document(includedAlarms[pos].alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
+                        transaction.update(alarmRef.document(includedAlarms[pos].alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
                     }
-                    if(deletedAlarm != null){
-                        transaction.update(alarmRef.document(deletedAlarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, false)
-                        transaction.update(alarmRef.document(deletedAlarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(data.medsID))
-                        deletedAlarm.cancelAlarm(applicationContext)
+                    if(deletedAlarms.size > pos){
+                        transaction.update(alarmRef.document(deletedAlarms[pos].alarmCode.toString()), Alarm.FIELD_IS_STARTED, false)
+                        transaction.update(alarmRef.document(deletedAlarms[pos].alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(data.medsID))
                     }
                 }
                 transaction.set(medicationRef.document(data.medsID.toString()), data)

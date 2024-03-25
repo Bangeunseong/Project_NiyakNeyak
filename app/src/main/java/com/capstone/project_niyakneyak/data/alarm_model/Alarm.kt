@@ -38,7 +38,6 @@ data class Alarm(
         title = parcel.readString().toString()
         tone = parcel.readString().toString()
         isVibrate = parcel.readByte().toInt() != 0
-        medsList = parcel.readValue(MutableList::class.java.classLoader) as MutableList<Int>
     }
 
     // Scheduling and Canceling Alarm
@@ -162,7 +161,6 @@ data class Alarm(
         dest.writeString(title)
         dest.writeString(tone)
         dest.writeByte((if (isVibrate) 1 else 0).toByte())
-        dest.writeValue(medsList)
     }
 
     companion object CREATOR : Parcelable.Creator<Alarm> {

@@ -26,8 +26,8 @@ open class AlarmAdapter(query: Query, private val onAlarmChangedListener: OnAlar
             binding.weeklyDateDisplay.text = alarm.daysText
             if(alarm.title!!.isNotEmpty()) binding.alarmTitle.text = alarm.title
             else binding.alarmTitle.text = "My Alarm"
-            binding.itemEditBtn.setOnClickListener { listener.onItemClick(snapshot, alarm) }
-            binding.itemDeleteBtn.setOnClickListener { listener.onDelete(snapshot, alarm) }
+            binding.itemEditBtn.setOnClickListener { listener.onItemClick(snapshot) }
+            binding.itemDeleteBtn.setOnClickListener { listener.onDelete(snapshot) }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

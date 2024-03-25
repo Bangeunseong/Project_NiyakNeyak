@@ -23,6 +23,7 @@
             android:gravity="start|center"
             android:textColor="@color/black_500"
             android:textSize="40sp"
+            android:paddingVertical="5dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="6dp"
             app:layout_constraintHorizontal_bias="0"
@@ -59,13 +60,14 @@
 
         <ImageButton
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@color/transparent"
-            android:src="@drawable/baseline_keyboard_double_arrow_down_24"
+            android:src="@drawable/baseline_arrow_drop_up_24"
+            android:rotation="180"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.99"
+            app:layout_constraintHorizontal_bias="0.98"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/action_open_check_list" />
@@ -77,6 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:layout_margin="5dp"
         android:background="@drawable/item_recycler_bg_check_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/check_title_layout" />

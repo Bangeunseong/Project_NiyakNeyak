@@ -5,22 +5,35 @@
     android:id="@+id/clock_selection_single"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/item_recycler_bg_trinary">
+    android:background="@color/transparent">
 
     <TextView
         android:id="@+id/medication_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:textSize="30sp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="20dp"
         android:paddingVertical="10dp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@id/medicationCheckbox"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <TextView
+        android:id="@+id/medication_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.367"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/medication_detail"
-        android:layout_width="85dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
         android:textSize="14sp"

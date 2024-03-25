@@ -16,8 +16,6 @@ class AlarmReceiver : BroadcastReceiver() {
     var alarm: Alarm? = null
     override fun onReceive(context: Context, intent: Intent) {
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-            val toastText = String.format("Alarm Reboot")
-            Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
             startRescheduleAlarmsService(context)
         } else {
             val bundle = intent.getBundleExtra(context.getString(R.string.arg_alarm_bundle_obj))

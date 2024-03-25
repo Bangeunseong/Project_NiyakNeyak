@@ -27,6 +27,7 @@ open class CheckMedicationAdapter(query: Query, private val onCheckedMedicationL
         fun bind(snapshot: DocumentSnapshot, listener: OnCheckedMedicationListener){
             val medicationData = snapshot.toObject<MedsData>() ?: return
             binding.medicationName.text = medicationData.medsName
+            binding.medicationAmount.text = String.format("%d pills",medicationData.dailyAmount)
             binding.medicationDetail.text = medicationData.medsDetail
             binding.medicationCheckbox.setOnClickListener { listener.onItemClicked(medicationData) }
         }

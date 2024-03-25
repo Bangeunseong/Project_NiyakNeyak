@@ -8,6 +8,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 data class MedsData(
     var medsID: Int = -1,
     var medsName: String? = null,
+    var dailyAmount: Int = 0,
     var medsDetail: String? = null,
     var medsStartDate: String? = null,
     var medsEndDate: String? = null) : Parcelable {
@@ -15,6 +16,7 @@ data class MedsData(
     constructor(parcel: Parcel) : this() {
         medsID = parcel.readInt()
         medsName = parcel.readString()
+        dailyAmount = parcel.readInt()
         medsDetail = parcel.readString()
         medsStartDate = parcel.readString()
         medsEndDate = parcel.readString()
@@ -23,6 +25,7 @@ data class MedsData(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(medsID)
         parcel.writeString(medsName)
+        parcel.writeInt(dailyAmount)
         parcel.writeString(medsDetail)
         parcel.writeString(medsStartDate)
         parcel.writeString(medsEndDate)
@@ -36,6 +39,7 @@ data class MedsData(
         const val COLLECTION_ID = "medications"
         const val FIELD_ID = "medsID"
         const val FIELD_NAME = "medsName"
+        const val FIELD_DAILY_AMOUNT = "dailyAmount"
         const val FIELD_DETAIL = "medsDetail"
         const val FIELD_START_DATE = "medsStartDate"
         const val FIELD_END_DATE = "medsEndDate"

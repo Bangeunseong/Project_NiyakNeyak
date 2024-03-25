@@ -52,6 +52,7 @@
     <string name="dialog_add_form_cancel">Cancel</string>
     <string name="dialog_add_form_meds_name">Type Medication Name</string>
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
+    <string name="dialog_add_form_meds_daily_amount">Type Daily Amount of Pills</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
     <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
     <string name="dialog_add_form_meds_timer">Click here to Add Timer</string>
