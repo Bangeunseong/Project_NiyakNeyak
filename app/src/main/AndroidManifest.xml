@@ -21,9 +21,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project_NiyakNeyak"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.main.activity.PracticeActivity"
+            android:exported="false" />
 
-        <service android:name=".ui.alarm.service.AlarmService"/>
+        <service android:name=".ui.alarm.service.AlarmService" />
         <service android:name=".ui.alarm.service.RescheduleAlarmService" />
+
         <receiver
             android:name=".ui.alarm.receiver.AlarmReceiver"
             android:enabled="true"
@@ -32,7 +36,7 @@
         <activity
             android:name=".ui.alarm.activity.RingActivity"
             android:exported="false"
-            android:theme="@style/Theme.Design.NoActionBar"/>
+            android:theme="@style/Theme.Design.NoActionBar" />
         <activity
             android:name=".ui.main.fragment.DataSettingDialog"
             android:exported="false" />
