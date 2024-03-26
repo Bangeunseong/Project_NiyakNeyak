@@ -9,33 +9,28 @@ import android.widget.Toast
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.alarm.service.AlarmService
-import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import java.util.Calendar
 
 class AlarmReceiver : BroadcastReceiver() {
     var alarm: Alarm? = null
     override fun onReceive(context: Context, intent: Intent) {
-        if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-            startRescheduleAlarmsService(context)
-        } else {
-            val bundle = intent.getBundleExtra(context.getString(R.string.arg_alarm_bundle_obj))
-            if (bundle != null) {
-                alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    bundle.getParcelable(context.getString(R.string.arg_alarm_obj), Alarm::class.java)
-                } else {
-                    @Suppress("DEPRECATION")
-                    bundle.getParcelable(context.getString(R.string.arg_alarm_obj))
-                }
+        val bundle = intent.getBundleExtra(context.getString(R.string.arg_alarm_bundle_obj))
+        if (bundle != null) {
+            alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getParcelable(context.getString(R.string.arg_alarm_obj), Alarm::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                bundle.getParcelable(context.getString(R.string.arg_alarm_obj))
             }
-            val toastText = String.format("Alarm Received")
-            Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
-            if (alarm != null) {
-                if (!alarm!!.isRecurring) {
+        }
+        val toastText = String.format("Alarm Received")
+        Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
+        if (alarm != null) {
+            if (!alarm!!.isRecurring) {
+                startAlarmService(context, alarm!!)
+            } else {
+                if (isAlarmToday(alarm!!)) {
                     startAlarmService(context, alarm!!)
-                } else {
-                    if (isAlarmToday(alarm!!)) {
-                        startAlarmService(context, alarm!!)
-                    }
                 }
             }
         }
@@ -62,11 +57,6 @@ class AlarmReceiver : BroadcastReceiver() {
         val bundle = Bundle()
         bundle.putParcelable(context.getString(R.string.arg_alarm_obj), alarm1)
         intentService.putExtra(context.getString(R.string.arg_alarm_bundle_obj), bundle)
-        context.startForegroundService(intentService)
-    }
-
-    private fun startRescheduleAlarmsService(context: Context) {
-        val intentService = Intent(context, RescheduleAlarmService::class.java)
         context.startForegroundService(intentService)
     }
 }

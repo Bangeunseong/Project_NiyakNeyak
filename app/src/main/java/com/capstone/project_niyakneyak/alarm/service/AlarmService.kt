@@ -14,6 +14,7 @@ import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
 import com.capstone.project_niyakneyak.App
 import com.capstone.project_niyakneyak.R
+import com.capstone.project_niyakneyak.alarm.activity.RingActivity
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import java.io.IOException
 
@@ -49,7 +50,7 @@ class AlarmService : Service() {
                 bundle.getParcelable(getString(R.string.arg_alarm_obj))
             }
         }
-        val notificationIntent = Intent(this, com.capstone.project_niyakneyak.alarm.activity.RingActivity::class.java)
+        val notificationIntent = Intent(this, RingActivity::class.java)
         notificationIntent.putExtra(getString(R.string.arg_alarm_bundle_obj), bundle)
         val pendingIntent =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.getActivity(
