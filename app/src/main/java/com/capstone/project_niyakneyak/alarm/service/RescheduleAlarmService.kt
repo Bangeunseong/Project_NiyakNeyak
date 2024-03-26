@@ -14,6 +14,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.firestore
 
+//TODO: Create RescheduleReceiver, Modify Service as notification sender to get credential from firebaseAuth by user
+
 class RescheduleAlarmService : LifecycleService() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
@@ -31,6 +33,8 @@ class RescheduleAlarmService : LifecycleService() {
                         alarm.scheduleAlarm(applicationContext)
                     }
                 }.addOnFailureListener { Log.w("RescheduleService", "Reschedule Failed: $it") }
+        }else{
+            TODO("Implement notification builder and send notification when authentication not finished")
         }
         return START_STICKY
     }
