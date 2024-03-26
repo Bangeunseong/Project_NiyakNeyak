@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation("androidx.navigation:navigation-fragment:2.7.6")
     implementation("androidx.navigation:navigation-ui:2.7.6")
+    implementation("com.google.firebase:firebase-auth:22.3.1")
 
     val workVersion = "2.9.0"
 
