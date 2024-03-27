@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.activity.PracticeActivity">
+    tools:context=".ui.main.activity.Login_Practice">
 
     <EditText
         android:id="@+id/et_email_sun"
@@ -37,12 +37,24 @@
         app:layout_constraintVertical_bias="0.229" />
 
     <Button
+        android:id="@+id/button_login_sun"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="로그인"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_reg_sun"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
         android:id="@+id/button_reg_sun"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="가입완료"
+        android:text="회원가입"
+        android:backgroundTint="@color/black_500"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/button_login_sun" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
