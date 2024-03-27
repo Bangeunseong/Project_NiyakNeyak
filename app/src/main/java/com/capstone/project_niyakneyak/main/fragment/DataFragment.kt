@@ -50,6 +50,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
+            adapter?.startListening()
         }
     }
 
@@ -114,6 +115,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
         if(shouldStartSignIn()){
             val intent = Intent(activity, LoginActivity::class.java)
             loginProcessLauncher.launch(intent)
+            return
         }
 
         // Start Listening Data changes from firebase when activity starts

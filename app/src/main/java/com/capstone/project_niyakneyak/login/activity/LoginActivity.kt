@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -13,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding
 import com.capstone.project_niyakneyak.login.etc.LoggedInUserView
 import com.capstone.project_niyakneyak.login.etc.LoginResult
@@ -25,10 +28,15 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var mAuth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var binding: ActivityLoginBinding
     private lateinit var loginViewModel: LoginViewModel
 
@@ -44,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
         }
     private val signUpLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
-            loginViewModel.loginResult.value = LoginResult(LoggedInUserView(mAuth.currentUser!!.uid))
+            loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseAuth.currentUser!!.uid))
         }
     }
 
@@ -61,7 +69,9 @@ class LoginActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso!!)
-        mAuth = Firebase.auth
+
+        firestore = Firebase.firestore
+        firebaseAuth = Firebase.auth
 
         // Setting View by Binding
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -97,8 +107,20 @@ class LoginActivity : AppCompatActivity() {
                 showLoginFailed(loginResult.error!!)
             }
             if (loginResult.success != null) {
-                setResult(RESULT_OK)
-                finish()
+                firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(Alarm.COLLECTION_ID).where(Filter.equalTo(Alarm.FIELD_IS_STARTED, true)).get()
+                    .addOnSuccessListener {
+                        for(snapshot in it.documents){
+                            val alarm = snapshot.toObject<Alarm>() ?: continue
+                            alarm.scheduleAlarm(applicationContext)
+                        }
+                        setResult(RESULT_OK)
+                        finish()
+                    }.addOnFailureListener {
+                        Log.w("RescheduleService", "Reschedule Failed: $it")
+                        setResult(RESULT_OK)
+                        finish()
+                    }
             }
         })
 
@@ -140,10 +162,10 @@ class LoginActivity : AppCompatActivity() {
     private fun emailSignIn(){
         val email = binding.mainIdEditText.text.toString()
         val password = binding.mainPwEditText.text.toString()
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
                 // Change LiveData about LoginResult as Success
-                loginViewModel.loginResult.value = LoginResult(LoggedInUserView(mAuth.currentUser!!.uid))
+                loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseAuth.currentUser!!.uid))
             } else {
                 // Change LiveData about LoginResult as Failed
                 loginViewModel.loginResult.value = LoginResult(task.exception)
@@ -158,11 +180,11 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun firebaseAuthWithGoogle(idToken: String?) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        mAuth.signInWithCredential(credential)
+        firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Change LiveData about LoginResult as Success
-                    loginViewModel.loginResult.value = LoginResult(LoggedInUserView(mAuth.currentUser!!.uid))
+                    loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseAuth.currentUser!!.uid))
                 } else {
                     // Change LiveData about LoginResult as Failed
                     loginViewModel.loginResult.value = LoginResult(task.exception)
