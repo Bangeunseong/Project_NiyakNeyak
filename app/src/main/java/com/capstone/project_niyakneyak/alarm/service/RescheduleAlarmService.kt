@@ -9,7 +9,6 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import com.capstone.project_niyakneyak.App
 import com.capstone.project_niyakneyak.R
-import com.capstone.project_niyakneyak.alarm.activity.RingActivity
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
