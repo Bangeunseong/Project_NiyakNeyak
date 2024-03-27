@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.alarm.service
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
@@ -30,6 +31,8 @@ class RescheduleAlarmService : LifecycleService() {
         firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
+            var notification: Notification?
+
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).collection(Alarm.COLLECTION_ID)
                 .where(Filter.equalTo(Alarm.FIELD_IS_STARTED, true)).get()
                 .addOnSuccessListener {
@@ -37,18 +40,29 @@ class RescheduleAlarmService : LifecycleService() {
                         val alarm = snapshot.toObject<Alarm>() ?: continue
                         alarm.scheduleAlarm(applicationContext)
                     }
-                }.addOnFailureListener { Log.w("RescheduleService", "Reschedule Failed: $it") }
-
-            val notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
-                .setContentTitle("Project_NiyakNeyak")
-                .setContentText("Alarm rescheduled!")
-                .setSmallIcon(R.drawable.ic_alarm_purple)
-                .setSound(null)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .build()
-            startForeground(2, notification)
+                    notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
+                        .setContentTitle("Project_NiyakNeyak")
+                        .setContentText("Alarms rescheduled!")
+                        .setSmallIcon(R.drawable.ic_alarm_purple)
+                        .setSound(null)
+                        .setCategory(NotificationCompat.CATEGORY_ALARM)
+                        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .build()
+                    startForeground(2, notification)
+                }.addOnFailureListener {
+                    Log.w("RescheduleService", "Reschedule Failed: $it")
+                    notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
+                        .setContentTitle("Project_NiyakNeyak")
+                        .setContentText("Failed to reschedule Alarms")
+                        .setSmallIcon(R.drawable.ic_alarm_purple)
+                        .setSound(null)
+                        .setCategory(NotificationCompat.CATEGORY_ALARM)
+                        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .build()
+                    startForeground(2, notification)
+                }
         }else{
             val notificationIntent = Intent(this, LoginActivity::class.java)
             val pendingIntent =

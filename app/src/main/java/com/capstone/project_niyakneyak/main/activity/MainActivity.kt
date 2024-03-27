@@ -1,9 +1,11 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -63,13 +65,6 @@ class MainActivity : AppCompatActivity() {
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        // When Application closed automatically signs out
-        firebaseAuth.signOut()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menu.add(0, 0, 0, R.string.action_menu_logout)
         return super.onCreateOptionsMenu(menu)
@@ -78,12 +73,18 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             0 -> {
-                // When SignOut option clicked signs out
-                firebaseAuth.signOut()
+                val alertDialog = AlertDialog.Builder(this)
+                    .setTitle("Warning!")
+                    .setMessage("Do you really want to sign out?")
+                    .setPositiveButton("OK") { _: DialogInterface?, _: Int ->
+                        // When SignOut option clicked signs out
+                        firebaseAuth.signOut()
 
-                // Return to SignIn Activity
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
+                        // Return to SignIn Activity
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    }.setNegativeButton("Cancel"){ _: DialogInterface?, _: Int -> }
+                alertDialog.create().show()
             }
         }
         return super.onOptionsItemSelected(item)
