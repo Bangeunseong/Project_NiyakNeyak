@@ -5,10 +5,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_data_setting">DataSettingActivity</string>
 
-    <string name="arg_add_data_listener">onAddedDataListener</string>
-    <string name="arg_change_data_listener">onChangedDataListener</string>
     <string name="arg_origin_data">Medication_Data</string>
-
 
     <string name="hint_main_id">Type your ID</string>
     <string name="hint_main_password">Type your PW</string>
@@ -81,6 +78,7 @@
 
     <string name="action_open_check_list">Click to open check list!</string>
 
+
     <!-- Alarm Attributes -->
     <string name="alarm_title">Time to eat pills!</string>
     <string name="arg_alarm_obj">AlarmObject</string>
@@ -93,7 +91,6 @@
     <string name="alarm_clock_png">ic_alarm_purple</string>
 
 
-
     <!-- Check Attributes -->
     <string name="check_rcv_ListIntro">
         Today, there are no medications to consume!&#10;
@@ -102,4 +99,8 @@
 
     <!-- Global Attributes -->
     <string name="dayNightTheme">DayNightTheme</string>
+    <string name="all_medications">All Medications</string>
+    <string name="sorted_by_medication_name">Sorted by Medication Name</string>
+    <string name="sorted_by_medication_id">Sorted by Medicine ID</string>
+    <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
 </resources>
