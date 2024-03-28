@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.capstone.project_niyakneyak.alarm.service.AlarmService
+import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding
@@ -62,6 +64,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val requestToken = intent.getIntExtra("request_token", 0)
 
         // Initialize GoogleSignInOptions and FirebaseAuth
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -113,6 +117,10 @@ class LoginActivity : AppCompatActivity() {
                         for(snapshot in it.documents){
                             val alarm = snapshot.toObject<Alarm>() ?: continue
                             alarm.scheduleAlarm(applicationContext)
+                        }
+                        if(requestToken == 1){
+                            val intentService = Intent(applicationContext, RescheduleAlarmService::class.java)
+                            applicationContext.stopService(intentService)
                         }
                         setResult(RESULT_OK)
                         finish()

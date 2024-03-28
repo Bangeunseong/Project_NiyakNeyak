@@ -96,7 +96,7 @@ class AlarmService : Service() {
             vibrator!!.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE))
         }
         startForeground(1, notification)
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {

@@ -108,6 +108,7 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         super.onStart()
         if(shouldStartSignIn()){
             val intent = Intent(activity, LoginActivity::class.java)
+            intent.putExtra("request_token", 0)
             loginProcessLauncher.launch(intent)
             return
         }
