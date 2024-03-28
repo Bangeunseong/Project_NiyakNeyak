@@ -109,6 +109,7 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         if(shouldStartSignIn()){
             val intent = Intent(activity, LoginActivity::class.java)
             loginProcessLauncher.launch(intent)
+            return
         }
 
         // Start Listening Data changes from firebase when activity starts

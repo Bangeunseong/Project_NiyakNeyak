@@ -101,6 +101,7 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         if(shouldStartSignIn()){
             val intent = Intent(activity, LoginActivity::class.java)
             loginProcessLauncher.launch(intent)
+            return
         }
 
         // Start Listening Data changes

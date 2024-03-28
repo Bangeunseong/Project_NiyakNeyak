@@ -50,7 +50,6 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
-            adapter?.startListening()
         }
     }
 
@@ -76,7 +75,6 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
                 .collection(MedsData.COLLECTION_ID)
                 .orderBy(MedsData.FIELD_NAME, Query.Direction.ASCENDING)
         }
-
 
         // RecyclerAdapter for Medication Info.
         query?.let {

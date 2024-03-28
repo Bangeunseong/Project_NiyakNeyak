@@ -43,7 +43,6 @@ android {
 
 dependencies {
     val workVersion = "2.9.0"
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -62,6 +61,7 @@ dependencies {
 
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // navigation dependencies
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
