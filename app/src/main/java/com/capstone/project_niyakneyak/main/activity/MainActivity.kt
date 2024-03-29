@@ -78,15 +78,19 @@ class MainActivity : AppCompatActivity() {
         val data = BufferedReader(FileReader("${filesDir}/data.csv"))
 
         data.readLine()
-        while(true){
-            val string = data.readLine() ?: break
-            val params = string.split(",")
-            firestore.collection("medicines").add(
-                MedicineData(params[0],params[1],params[2],params[3],params[4],
-                    params[5],params[6],params[7],params[8],params[9],
-                    params[10],params[11],params[12],params[13],params[14],
-                    params[15],params[16], params[17] == "Y",params[18],
-                    params[19],params[20],params[21]))
+        for (i in 0 until 6){
+            firestore.runTransaction {transaction ->
+                for(j in 0 until 50000){
+                    val string = data.readLine() ?: break
+                    val params = string.split(",")
+                    firestore.collection("medicines").add(
+                        MedicineData(params[0],params[1],params[2],params[3],params[4],
+                            params[5],params[6],params[7],params[8],params[9],
+                            params[10],params[11],params[12],params[13],params[14],
+                            params[15],params[16], params[17] == "Y",params[18],
+                            params[19],params[20],params[21]))
+                }
+            }
         }
         data.close()
     }
