@@ -12,7 +12,7 @@ class Filters {
     var startDate: String? = null
     var endDate: String? = null
     var sortBy: String? = null
-    var sortDirection: Query.Direction = Query.Direction.DESCENDING
+    var sortDirection: Query.Direction = Query.Direction.ASCENDING
 
     fun hasCategory(): Boolean{
         return !TextUtils.isEmpty(category)
@@ -74,7 +74,7 @@ class Filters {
             get(){
                 val filters = Filters()
                 filters.sortBy = MedsData.FIELD_NAME
-                filters.sortDirection = Query.Direction.DESCENDING
+                filters.sortDirection = Query.Direction.ASCENDING
 
                 return filters
             }

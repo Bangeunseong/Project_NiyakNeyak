@@ -29,6 +29,7 @@
     <string name="action_menu_logout">Logout</string>
     <string name="action_menu_login">Login</string>
 
+
     <!-- Main Attributes -->
     <string name="action_main_rcv_addItem">Add Medication Info.</string>
     <string name="action_main_rcv_addIntro.">

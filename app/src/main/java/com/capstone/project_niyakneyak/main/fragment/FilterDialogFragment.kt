@@ -8,6 +8,6 @@ class FilterDialogFragment: DialogFragment() {
         fun onFilter(filters: Filters)
     }
 
-    
     private val filterListener: FilterListener? = null
+
 }
