@@ -7,7 +7,7 @@
     android:background="@color/white_500"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.alarm.activity.RingActivity">
+    tools:context=".alarm.activity.RingActivity">
 
     <Spinner
         android:id="@+id/alarm_ring_snooze_time"

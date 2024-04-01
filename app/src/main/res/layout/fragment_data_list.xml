@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_500"
-    tools:context=".ui.main.fragment.DataListFragment">
+    tools:context=".main.fragment.DataFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -20,10 +20,8 @@
             android:scrollbarStyle="insideOverlay"
             android:scrollbars="vertical"
 
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed">
 
         </androidx.recyclerview.widget.RecyclerView>

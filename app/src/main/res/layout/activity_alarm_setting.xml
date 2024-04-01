@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".main.activity.AlarmSettingActivity">
+
+    <TimePicker
+        android:id="@+id/time_picker"
+        style="@style/TimePickerTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/TimePickerTheme"
+        android:timePickerMode="spinner"
+        app:layout_constraintBottom_toTopOf="@id/dialog_alarm_setting_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/dialog_alarm_setting_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/dialog_button_layout"
+        app:layout_constraintTop_toBottomOf="@id/time_picker"
+        app:layout_constraintWidth_max="488dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="15dp">
+
+            <TextView
+                android:id="@+id/weekly_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/dialog_toggle_date_layout"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dialog_toggle_date_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/dialog_alarm_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/weekly_date">
+
+
+                <ToggleButton
+                    android:id="@+id/toggle_sunday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/item_alarm_tg_bg"
+                    android:textOff="@string/dialog_meds_time_tgbtn_sunday"
+                    android:textOn="@string/dialog_meds_time_tgbtn_sunday"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_monday"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ToggleButton
+                    android:id="@+id/toggle_monday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/item_alarm_tg_bg"
+                    android:foregroundGravity="center"
+                    android:textOff="@string/dialog_meds_time_tgbtn_monday"
+                    android:textOn="@string/dialog_meds_time_tgbtn_monday"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_tuesday"
+                    app:layout_constraintStart_toEndOf="@id/toggle_sunday"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ToggleButton
+                    android:id="@+id/toggle_tuesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/item_alarm_tg_bg"
+                    android:foregroundGravity="center"
+                    android:textOff="@string/dialog_meds_time_tgbtn_tuesday"
+                    android:textOn="@string/dialog_meds_time_tgbtn_tuesday"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_wednesday"
+                    app:layout_constraintStart_toEndOf="@id/toggle_monday"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ToggleButton
+                    android:id="@+id/toggle_wednesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/item_alarm_tg_bg"
+                    android:foregroundGravity="center"
+                    android:textOff="@string/dialog_meds_time_tgbtn_wednesday"
+                    android:textOn="@string/dialog_meds_time_tgbtn_wednesday"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_thursday"
+                    app:layout_constraintStart_toEndOf="@id/toggle_tuesday"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ToggleButton
+                    android:id="@+id/toggle_thursday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/item_alarm_tg_bg"
+                    android:foregroundGravity="center"
+                    android:textOff="@string/dialog_meds_time_tgbtn_thursday"
+                    android:textOn="@string/dialog_meds_time_tgbtn_thursday"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_friday"
+                    app:layout_constraintStart_toEndOf="@id/toggle_wednesday"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ToggleButton
+                    android:id="@+id/toggle_friday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/item_alarm_tg_bg"
+                    android:foregroundGravity="center"
+                    android:textOff="@string/dialog_meds_time_tgbtn_friday"
+                    android:textOn="@string/dialog_meds_time_tgbtn_friday"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_saturday"
+                    app:layout_constraintStart_toEndOf="@id/toggle_thursday"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ToggleButton
+                    android:id="@+id/toggle_saturday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/item_alarm_tg_bg"
+                    android:foregroundGravity="center"
+                    android:textOff="@string/dialog_meds_time_tgbtn_saturday"
+                    android:textOn="@string/dialog_meds_time_tgbtn_saturday"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/toggle_friday"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dialog_alarm_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                style="@style/TextInputLayoutStyle"
+                app:layout_constraintBottom_toTopOf="@id/dialog_alarm_vol_swt_layout"
+                app:layout_constraintTop_toBottomOf="@id/dialog_toggle_date_layout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dialog_alarm_title_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:hint="@string/dialog_alarm_name_text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dialog_alarm_vol_swt_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/divider2"
+                app:layout_constraintTop_toBottomOf="@id/dialog_alarm_title">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/alarm_ringtone_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="6dp"
+                    app:layout_constraintEnd_toStartOf="@id/alarm_vol_swt"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/alarm_vol_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/dialog_alarm_vol_text"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toTopOf="@id/alarm_ringtone_text"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/alarm_ringtone_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black_500"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/alarm_vol_text" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/alarm_vol_swt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:checked="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/alarm_ringtone_layout"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toTopOf="@id/dialog_alarm_vib_swt_layout"
+                app:layout_constraintTop_toBottomOf="@id/dialog_alarm_vol_swt_layout" />
+
+            <LinearLayout
+                android:id="@+id/dialog_alarm_vib_swt_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider2">
+
+                <TextView
+                    android:id="@+id/alarm_vib_text"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/dialog_alarm_vib_text"
+                    android:textSize="20sp" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/alarm_vib_swt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:checked="true" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white_500"
+        app:layout_constraintTop_toBottomOf="@id/dialog_alarm_setting_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/alarm_submit"
+            style="@style/customSubmitBtnStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="18dp"
+            android:text="@string/dialog_add_form_submit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/alarm_cancel"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <Button
+            android:id="@+id/alarm_cancel"
+            style="@style/customSubmitBtnStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="18dp"
+            android:text="@string/dialog_add_form_cancel"
+            app:layout_constraintEnd_toStartOf="@id/alarm_submit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
