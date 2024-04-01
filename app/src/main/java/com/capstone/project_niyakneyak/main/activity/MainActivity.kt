@@ -36,15 +36,24 @@ class MainActivity : AppCompatActivity() {
                 binding.toolbar.setTitle(R.string.toolbar_main_title)
                 if (currentFragmentId == R.id.alarmListFragment) navController!!.navigate(R.id.action_alarmListFragment_to_mainPageFragment)
                 else if (currentFragmentId == R.id.checkListFragment) navController!!.navigate(R.id.action_checkListFragment_to_mainPageFragment)
+                else if (currentFragmentId == R.id.settingFragment) navController!!.navigate(R.id.action_settingFragment_to_mainPageFragment)
             } else if (item.itemId == R.id.menu_time) {
                 binding.toolbar.setTitle(R.string.toolbar_main_timer)
                 if (currentFragmentId == R.id.mainPageFragment) navController!!.navigate(R.id.action_mainPageFragment_to_alarmListFragment)
                 else if (currentFragmentId == R.id.checkListFragment) navController!!.navigate(R.id.action_checkListFragment_to_alarmListFragment)
+                else if (currentFragmentId == R.id.settingFragment) navController!!.navigate(R.id.action_settingFragment_to_alarmListFragment)
             } else if (item.itemId == R.id.menu_time_check) {
                 binding.toolbar.setTitle(R.string.toolbar_main_checklist)
                 if (currentFragmentId == R.id.alarmListFragment) navController!!.navigate(R.id.action_alarmListFragment_to_checkListFragment)
                 else if (currentFragmentId == R.id.mainPageFragment) navController!!.navigate(R.id.action_mainPageFragment_to_checkListFragment)
+                else if (currentFragmentId == R.id.settingFragment) navController!!.navigate(R.id.action_settingFragment_to_checkListFragment)
             } else if (item.itemId == R.id.menu_setting) {
+                binding.toolbar.setTitle(R.string.toolbar_main_settings)
+                if (currentFragmentId == R.id.mainPageFragment) navController!!.navigate(R.id.action_mainPageFragment_to_settingFragment)
+                else if (currentFragmentId == R.id.alarmListFragment) navController!!.navigate(R.id.action_alarmListFragment_to_settingFragment)
+                else if (currentFragmentId == R.id.checkListFragment) navController!!.navigate(R.id.action_checkListFragment_to_settingFragment)
+
+
 
             }
             return true
