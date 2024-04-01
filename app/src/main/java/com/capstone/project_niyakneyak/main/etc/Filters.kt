@@ -39,14 +39,14 @@ class Filters {
             builder.append("</b>")
         }
 
-        if(category != null){
+        if(category != null) {
             builder.append("<b>")
             builder.append(category)
             builder.append("</b>")
         }
 
-        if(category != null && (startDate != null || endDate != null)){
-            builder.append(" in ")
+        if(startDate != null || endDate != null){
+            builder.append(" between ")
         }
 
         if(startDate != null || endDate != null){

@@ -153,7 +153,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <Button
-            android:id="@+id/submit"
+            android:id="@+id/ok"
             style="@style/customSubmitBtnStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -174,7 +174,7 @@
             android:paddingHorizontal="20dp"
             android:paddingVertical="12dp"
             android:text="@string/dialog_add_form_cancel"
-            app:layout_constraintEnd_toStartOf="@id/submit"
+            app:layout_constraintEnd_toStartOf="@id/ok"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

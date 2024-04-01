@@ -1,5 +1,7 @@
 package com.capstone.project_niyakneyak.data.medication_model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.firebase.firestore.IgnoreExtraProperties
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,7 +28,31 @@ data class MedicineData(
     var cancelDate: String? = null,
     var cancelName: String? = null,
     var ediCode: String? = null,
-    var bizrNo: String? = null) {
+    var bizrNo: String? = null) : Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString()
+    )
 
     fun convertDate(date: String): Date? {
         return SimpleDateFormat("yyyyMMdd").parse(date)
@@ -40,7 +66,35 @@ data class MedicineData(
                 "$bizrNo"
     }
 
-    companion object{
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(itemSeq)
+        parcel.writeString(itemName)
+        parcel.writeString(itemEngName)
+        parcel.writeString(entpName)
+        parcel.writeString(entpEngName)
+        parcel.writeString(entpSeq)
+        parcel.writeString(entpNo)
+        parcel.writeString(itemPermDate)
+        parcel.writeString(inDuty)
+        parcel.writeString(prdlstStrdCode)
+        parcel.writeString(spcltyPblc)
+        parcel.writeString(pdtType)
+        parcel.writeString(pdtPermNo)
+        parcel.writeString(itemIngrName)
+        parcel.writeString(itemIngrCnt)
+        parcel.writeString(bigPrdtImgUrl)
+        parcel.writeString(permKindCode)
+        parcel.writeString(cancelDate)
+        parcel.writeString(cancelName)
+        parcel.writeString(ediCode)
+        parcel.writeString(bizrNo)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<MedicineData> {
         const val FIELD_ITEM_SEQ = "ITEM_SEQ"
         const val FIELD_ITEM_NAME = "ITEM_NAME"
         const val FIELD_ITEM_ENG_NAME = "ITEM_ENG_NAME"
@@ -62,5 +116,13 @@ data class MedicineData(
         const val FIELD_CANCEL_NAME = "CANCEL_NAME"
         const val FIELD_EDI_CODE = "EDI_CODE"
         const val FIELD_BIZRNO = "BIZRNO"
+
+        override fun createFromParcel(parcel: Parcel): MedicineData {
+            return MedicineData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<MedicineData?> {
+            return arrayOfNulls(size)
+        }
     }
 }
