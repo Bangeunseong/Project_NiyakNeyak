@@ -51,8 +51,8 @@ class MainActivity : AppCompatActivity() {
             } else if (item.itemId == R.id.menu_time_check) {
                 binding.toolbar.setTitle(R.string.toolbar_main_checklist)
                 when (currentFragmentId){
-                    R.id.mainPageFragment -> navController!!.navigate(R.id.action_alarmListFragment_to_checkListFragment)
-                    R.id.alarmListFragment -> navController!!.navigate(R.id.action_mainPageFragment_to_checkListFragment)
+                    R.id.mainPageFragment -> navController!!.navigate(R.id.action_mainPageFragment_to_checkListFragment)
+                    R.id.alarmListFragment -> navController!!.navigate(R.id.action_alarmListFragment_to_checkListFragment)
                     R.id.settingFragment -> navController!!.navigate(R.id.action_settingFragment_to_checkListFragment)
                 }
             } else if (item.itemId == R.id.menu_setting) {
