@@ -54,8 +54,6 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.lifecycle:lifecycle-service:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    //순교 추가
-    implementation("androidx.room:room-runtime:2.6.1")
 
     // firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))

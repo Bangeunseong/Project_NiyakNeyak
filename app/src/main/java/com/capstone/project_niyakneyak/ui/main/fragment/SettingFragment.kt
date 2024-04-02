@@ -9,10 +9,14 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.capstone.project_niyakneyak.R
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityRegisterBinding
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
+
 /**
  * A simple [Fragment] subclass.
  * Use the [SettingFragment.newInstance] factory method to
@@ -42,9 +46,18 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding!!.profileButton.setOnClickListener {
-            val setProfile: DialogFragment = SetProfileFragment()
-            setProfile.show(requireActivity().supportFragmentManager, "PROFILE_SETTING")
+        binding.profileButton.setOnClickListener {
+            firestore.collection(UserAccount.COLLECTION_ID).document(mFirebaseAuth.currentUser!!.uid).get()
+                .addOnSuccessListener {
+                    val userAccount = it.toObject<UserAccount>()
+                    val setProfile: DialogFragment = SetProfileFragment()
+                    val bundle = Bundle()
+                    bundle.putString(UserAccount.REPRESENT_KEY,mFirebaseAuth.currentUser!!.uid)
+                    setProfile.arguments = bundle
+                    setProfile.show(requireActivity().supportFragmentManager, "PROFILE_SETTING")
+                }.addOnFailureListener{
+                    Snackbar.make(view, it.toString(), Snackbar.LENGTH_SHORT).show()
+                }
         }
         binding!!.advancedButton.setOnClickListener {
             val advancedSetting: DialogFragment = AdvancedSettingFragment()
@@ -53,8 +66,7 @@ class SettingFragment : Fragment() {
 
         val currentUser = auth.currentUser
 
-        val docRef = currentUser?.let { firestore.collection("users").document(it.uid) }
-
+        val docRef = firestore.collection("users").document(currentUser!!.uid)
         docRef?.get()
             ?.addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
