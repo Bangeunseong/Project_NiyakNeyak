@@ -59,6 +59,7 @@ class SettingFragment : Fragment() {
                     Snackbar.make(view, it.toString(), Snackbar.LENGTH_SHORT).show()
                 }
         }
+
         binding!!.advancedButton.setOnClickListener {
             val advancedSetting: DialogFragment = AdvancedSettingFragment()
             advancedSetting.show(requireActivity().supportFragmentManager, "ADVANCED_SETTING")
@@ -88,7 +89,7 @@ class SettingFragment : Fragment() {
     }
 
     companion object {
-        private const val TAG = "SettingFragment"
+        const val TAG = "SettingFragment"
         fun newInstance(): SettingFragment {
             return SettingFragment()
         }
