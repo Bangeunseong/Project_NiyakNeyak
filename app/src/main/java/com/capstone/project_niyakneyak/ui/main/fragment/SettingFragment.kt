@@ -66,8 +66,7 @@ class SettingFragment : Fragment() {
 
         val currentUser = auth.currentUser
 
-        val docRef = currentUser?.let { firestore.collection("users").document(it.uid) }
-
+        val docRef = firestore.collection("users").document(currentUser!!.uid)
         docRef?.get()
             ?.addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
