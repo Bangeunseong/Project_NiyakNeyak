@@ -33,30 +33,14 @@ class SettingFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance() // firestore 초기화
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // 레이아웃을 inflate하여 view 변수에 할당
-        val view = inflater.inflate(R.layout.fragment_setting, container, false)
-
-        // TextView 찾기
-        val yourCurrentNameTextView = view.findViewById<TextView>(R.id.your_current_name_textview)
-
-        // TextView 반환
-        return view
-        // Inflate the layout for this fragment
-        //binding = FragmentSettingBinding.inflate(inflater, container, false)
-        //bundle data = getArguments();
-
-        //assert data != null;
-        //return binding!!.getRoot()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
+        return binding.getRoot()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding = FragmentSettingBinding.bind(view)
 
         binding!!.profileButton.setOnClickListener {
             val setProfile: DialogFragment = SetProfileFragment()
@@ -68,14 +52,8 @@ class SettingFragment : Fragment() {
         }
 
         val currentUser = auth.currentUser
-        //val docRef = currentUser?.let {
-        //    firestore.collection("users").document(it.uid)
-        //}
-        val docRef = firestore.collection("users").document("BdFfnPeR8Faks3SZDijotQoSmqE2")
-        //println("hello my name is $currentUser")//com.google.firebase.auth.internal.zzaf@dda4090
-        println("watasiwa $docRef")//com.google.firebase.firestore.DocumentReference@3eefc560
-        //watasiwa com.google.firebase.firestore.DocumentReference@6a470fc3
 
+        val docRef = currentUser?.let { firestore.collection("users").document(it.uid) }
 
         docRef?.get()
             ?.addOnSuccessListener { document ->

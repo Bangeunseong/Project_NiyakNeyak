@@ -57,7 +57,7 @@
                     android:ems="10"
                     android:inputType="text"
                     android:textAlignment="center"
-                    android:text="방은성" />
+                    android:text="아무개" />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/profile_settings3"
