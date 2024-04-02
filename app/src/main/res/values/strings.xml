@@ -113,4 +113,6 @@
     <string name="sorted_by_medication_name">Sorted by Medication Name</string>
     <string name="sorted_by_medication_id">Sorted by Medicine ID</string>
     <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
+    <string name="search">Search</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -3,7 +3,7 @@
     <item
         android:id="@+id/menu_main"
         android:icon="@drawable/baseline_list_alt_24"
-        android:title="@string/toolbar_main_title"/>
+        android:title="@string/toolbar_main_title" />
     <item
         android:id="@+id/menu_time"
         android:icon="@drawable/baseline_timer_24"
