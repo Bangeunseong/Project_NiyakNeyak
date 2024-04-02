@@ -60,6 +60,16 @@ open class OpenApiFunctions {
         // Returns JSONObject
         return returnJSONObjectByString(urlString)
     }
+    // Get Dangerous Medicine for pregnant women
+    fun getPregWomPrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
+        if(itemSeq == null && prdtName == null) return null
+
+        // Setting URL String
+        val urlString = buildUrlString(5, itemSeq, prdtName, pageNo, numOfRows)
+
+        // Returns JSONObject
+        return returnJSONObjectByString(urlString)
+    }
 
     private fun buildUrlString(type: Int, itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): String{
         val builder = StringBuilder()
@@ -140,6 +150,22 @@ open class OpenApiFunctions {
                 if(itemSeq != null)
                     builder.append("&" + URLEncoder.encode("itemSeq", "UTF-8") + "=" + URLEncoder.encode(itemSeq, "UTF-8"))
             }
+            5 -> {
+                builder.append(DUR_PRODUCT_LIST_BASE_URL + DUR_PREGNANT_WOMAN_TABOO_LIST)
+                builder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=$OPEN_API_ENCODED_KEY")
+                if(pageNo != null)
+                    builder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("$pageNo", "UTF-8"))
+                else builder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"))
+                if(numOfRows != null)
+                    builder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("$numOfRows", "UTF-8"))
+                else builder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("10", "UTF-8"))
+                builder.append("&" + URLEncoder.encode("type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"))
+                builder.append("&" + URLEncoder.encode("typeName", "UTF-8") + "=" + URLEncoder.encode("임부금기", "UTF-8"))
+                if(prdtName != null)
+                    builder.append("&" + URLEncoder.encode("itemName", "UTF-8") + "=" + URLEncoder.encode(prdtName, "UTF-8"))
+                if(itemSeq != null)
+                    builder.append("&" + URLEncoder.encode("itemSeq", "UTF-8") + "=" + URLEncoder.encode(itemSeq, "UTF-8"))
+            }
         }
         return builder.toString()
     }
@@ -181,5 +207,6 @@ open class OpenApiFunctions {
         private const val DUR_USAGE_JOINT_TABOO_LIST = "/getUsjntTabooInfoList03"
         private const val DUR_SPECIFY_AGE_GRADE_TABOO_LIST = "/getSpcifyAgrdeTabooInfoList03"
         private const val DUR_MEDICINE_CONSUME_DATE_ATTENTION_PRODUCT_LIST = "/getMdctnPdAtentInfoList03"
+        private const val DUR_PREGNANT_WOMAN_TABOO_LIST = "/getPwnmTabooList03"
     }
 }
