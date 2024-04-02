@@ -7,6 +7,7 @@ import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.google.firebase.firestore.Query
 import java.lang.StringBuilder
 
+//TODO: Need Modification When data model changed!
 class Filters {
     var category: String? = null
     var startDate: String? = null
