@@ -1,22 +1,23 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
-import com.capstone.project_niyakneyak.main.fragment.AlarmFragment
-import com.capstone.project_niyakneyak.main.viewmodel.AlarmViewModel
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
 /**
  * This activity is used for showing fragments which are linked by [MainActivity.navHostFragment].
@@ -25,6 +26,7 @@ import com.google.firebase.auth.auth
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var binding: ActivityMainBinding
     private var navHostFragment: NavHostFragment? = null
     private var navController: NavController? = null
@@ -65,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        firestore = Firebase.firestore
         firebaseAuth = Firebase.auth
 
         binding.toolbar.setTitle(R.string.toolbar_main_title)
@@ -75,13 +78,6 @@ class MainActivity : AppCompatActivity() {
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        // When Application closed automatically signs out
-        firebaseAuth.signOut()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menu.add(0, 0, 0, R.string.action_menu_logout)
         return super.onCreateOptionsMenu(menu)
@@ -90,12 +86,18 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             0 -> {
-                // When SignOut option clicked signs out
-                firebaseAuth.signOut()
+                val alertDialog = AlertDialog.Builder(this)
+                    .setTitle("Warning!")
+                    .setMessage("Do you really want to sign out?")
+                    .setPositiveButton("OK") { _: DialogInterface?, _: Int ->
+                        // When SignOut option clicked signs out
+                        firebaseAuth.signOut()
 
-                // Return to SignIn Activity
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
+                        // Return to SignIn Activity
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    }.setNegativeButton("Cancel"){ _: DialogInterface?, _: Int -> }
+                alertDialog.create().show()
             }
         }
         return super.onOptionsItemSelected(item)
