@@ -48,10 +48,11 @@
 
     <string name="dialog_add_form_title">Insert Information</string>
     <string name="dialog_modify_form_title">Change Information</string>
-    <string name="dialog_add_form_submit">save</string>
-    <string name="dialog_add_form_cancel">cancel</string>
+    <string name="dialog_add_form_submit">Save</string>
+    <string name="dialog_add_form_cancel">Cancel</string>
     <string name="dialog_add_form_meds_name">Type Medication Name</string>
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
+    <string name="dialog_add_form_meds_daily_amount">Type Daily Amount of Pills</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
     <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
     <string name="dialog_add_form_meds_timer">Click here to Add Timer</string>
@@ -92,7 +93,6 @@
     <string name="alarm_clock_png">ic_alarm_purple</string>
 
 
-
     <!-- Check Attributes -->
     <string name="check_rcv_ListIntro">
         Today, there are no medications to consume!&#10;
@@ -101,4 +101,6 @@
 
     <!-- Global Attributes -->
     <string name="dayNightTheme">DayNightTheme</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
