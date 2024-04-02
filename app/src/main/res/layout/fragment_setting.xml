@@ -36,10 +36,11 @@
 
 
                 <TextView
+                    android:id="@+id/your_current_name_textview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="김아무게게게로"
+                    android:text="김아무개"
                     android:textSize="18sp" />
                 <Button
                     android:id="@+id/profile_button"

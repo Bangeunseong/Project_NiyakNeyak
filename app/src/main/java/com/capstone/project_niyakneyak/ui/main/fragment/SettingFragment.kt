@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityRegisterBinding
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -35,16 +37,27 @@ class SettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // 레이아웃을 inflate하여 view 변수에 할당
+        val view = inflater.inflate(R.layout.fragment_setting, container, false)
+
+        // TextView 찾기
+        val yourCurrentNameTextView = view.findViewById<TextView>(R.id.your_current_name_textview)
+
+        // TextView 반환
+        return view
         // Inflate the layout for this fragment
-        binding = FragmentSettingBinding.inflate(inflater, container, false)
+        //binding = FragmentSettingBinding.inflate(inflater, container, false)
         //bundle data = getArguments();
 
         //assert data != null;
-        return binding!!.getRoot()
+        //return binding!!.getRoot()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding = FragmentSettingBinding.bind(view)
+
         binding!!.profileButton.setOnClickListener {
             val setProfile: DialogFragment = SetProfileFragment()
             setProfile.show(requireActivity().supportFragmentManager, "PROFILE_SETTING")
@@ -53,7 +66,6 @@ class SettingFragment : Fragment() {
             val advancedSetting: DialogFragment = AdvancedSettingFragment()
             advancedSetting.show(requireActivity().supportFragmentManager, "ADVANCED_SETTING")
         }
-        //여기
 
         val currentUser = auth.currentUser
         //val docRef = currentUser?.let {
@@ -67,10 +79,14 @@ class SettingFragment : Fragment() {
 
         docRef?.get()
             ?.addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                if (document != null && document.exists()) {
+                    //Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     val name = document.getString("name")
-                    Log.d(TAG, "my name is~~~~~~~~~: $name")
+
+                    val yourCurrentNameTextView = view.findViewById<TextView>(R.id.your_current_name_textview)
+                    yourCurrentNameTextView.text = name
+                    Log.d(TAG, "YourCurrentNameTextView: $yourCurrentNameTextView")
+                    Log.d(TAG, "Name from document: $name")
                 } else {
                     Log.d(TAG, "No such document")
                 }
@@ -78,8 +94,6 @@ class SettingFragment : Fragment() {
             ?.addOnFailureListener { exception ->
                 Log.d(TAG, "get failed with ", exception)
             }
-
-
 
     }
 
