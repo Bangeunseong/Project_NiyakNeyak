@@ -52,7 +52,7 @@ class SettingFragment : Fragment() {
                     val userAccount = it.toObject<UserAccount>()
                     val setProfile: DialogFragment = SetProfileFragment()
                     val bundle = Bundle()
-                    bundle.putParcelable(UserAccount.REPRESENT_KEY, userAccount)
+                    bundle.putString(UserAccount.REPRESENT_KEY,mFirebaseAuth.currentUser!!.uid)
                     setProfile.arguments = bundle
                     setProfile.show(requireActivity().supportFragmentManager, "PROFILE_SETTING")
                 }.addOnFailureListener{
