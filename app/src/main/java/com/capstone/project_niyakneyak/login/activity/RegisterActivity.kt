@@ -44,7 +44,7 @@ class RegisterActivity : AppCompatActivity() {
                             firebaseUser?.email,
                             strPwd.toString(),
                             binding.etName.text.toString(),
-                            "2000/01/01",
+                            binding.etBirth.toString(),
                             binding.etPhoneNum.text.toString()
                         )
 

@@ -57,6 +57,9 @@
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
     <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
     <string name="dialog_add_form_meds_timer">Click here to Add Timer</string>
+
+    <string name="dialog_search_form_meds_name">Type Medicine Name</string>
+
     <string name="dialog_meds_time_title">Medication Cycle</string>
     <string name="dialog_meds_time_sw_morning_title">Morning</string>
     <string name="dialog_meds_time_sw_afternoon_title">Afternoon</string>
@@ -115,4 +118,5 @@
     <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
+    <string name="category">Category :</string>
 </resources>

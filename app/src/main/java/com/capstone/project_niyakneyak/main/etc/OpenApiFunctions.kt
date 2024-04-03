@@ -11,7 +11,7 @@ import java.lang.StringBuilder
 open class OpenApiFunctions {
 
     // Get Medicine Information
-    fun getPrdtMtrDetails(prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject? {
+    open fun getPrdtMtrDetails(prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject? {
         if(prdtName == null) return null
 
         // Setting URL String
@@ -21,7 +21,7 @@ open class OpenApiFunctions {
         return returnJSONObjectByString(urlString)
     }
     // Get Dangerous Medicines for Elderly people
-    fun getElderlyAttentionPrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
+    open fun getElderlyAttentionPrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
         if(itemSeq == null && prdtName == null) return null
 
         // Setting URL String
@@ -31,7 +31,7 @@ open class OpenApiFunctions {
         return returnJSONObjectByString(urlString)
     }
     // Get Usage Joint Medicines list in certain medicine
-    fun getUsageJointPrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
+    open fun getUsageJointPrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
         if(itemSeq == null && prdtName == null) return null
 
         // Setting URL String
@@ -41,7 +41,7 @@ open class OpenApiFunctions {
         return returnJSONObjectByString(urlString)
     }
     // Get Specific age range list in certain medicine
-    fun getSpecificAgeRangePrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
+    open fun getSpecificAgeRangePrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
         if(itemSeq == null && prdtName == null) return null
 
         // Setting URL String
@@ -51,7 +51,7 @@ open class OpenApiFunctions {
         return returnJSONObjectByString(urlString)
     }
     // Get Medicine Consume Date in certain medicine
-    fun getMdcCnsDatePrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
+    open fun getMdcCnsDatePrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
         if(itemSeq == null && prdtName == null) return null
 
         // Setting URL String
@@ -61,7 +61,7 @@ open class OpenApiFunctions {
         return returnJSONObjectByString(urlString)
     }
     // Get Dangerous Medicine for pregnant women
-    fun getPregWomPrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
+    open fun getPregWomPrdtList(itemSeq: String?, prdtName: String?, pageNo: Int?, numOfRows: Int?): JSONObject?{
         if(itemSeq == null && prdtName == null) return null
 
         // Setting URL String

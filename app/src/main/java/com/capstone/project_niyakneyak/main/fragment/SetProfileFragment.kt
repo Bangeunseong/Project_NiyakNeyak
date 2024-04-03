@@ -18,7 +18,7 @@ class SetProfileFragment: AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         firestore = Firebase.firestore
-        val bundle = intent // 번들을 받아옵니다.
+        val bundle = intent
         userId = bundle.getStringExtra(UserAccount.REPRESENT_KEY).toString()
         if(userId != "null"){
             firestore.collection(UserAccount.COLLECTION_ID).document(userId).get()
