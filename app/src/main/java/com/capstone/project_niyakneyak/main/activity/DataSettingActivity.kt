@@ -1,16 +1,19 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.Spanned
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityDataSettingBinding
@@ -46,12 +49,22 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     private var snapshotId: String? = null
     private var originData: MedsData? = null
+    private var fetchedData: MedicineData? = null
     private var query: Query? = null
     private var originAlarmID = mutableListOf<String>()
     private var includedAlarmID = mutableListOf<String>()
 
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
+
+    private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            //TODO: Modify Data Transfer Process
+            val intent = it.data ?: return@registerForActivityResult
+            val bundle = intent.getBundleExtra("MedicineData")
+
+        }
+    }
 
     companion object{
         private const val TAG = "DATA_SETTING_ACTIVITY"
@@ -206,7 +219,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 val end = Date()
                 start.time = selection.first
                 end.time = selection.second!!
-                val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd")
+                val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN)
                 binding.medsDateText.setText(String.format("%s~%s", dateFormat.format(start), dateFormat.format(end)))
             }
             datePicker.addOnNegativeButtonClickListener { }

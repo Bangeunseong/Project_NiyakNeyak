@@ -1,11 +1,12 @@
 package com.capstone.project_niyakneyak.data.medication_model
 
-import android.os.Parcel
-import android.os.Parcelable
+import android.text.TextUtils
+import com.capstone.project_niyakneyak.main.etc.Converter
 import com.google.firebase.firestore.IgnoreExtraProperties
 import com.google.firebase.firestore.ServerTimestamp
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 @IgnoreExtraProperties
 data class MedicineData(
@@ -16,7 +17,7 @@ data class MedicineData(
     var entpEngName: String? = null,
     var entpSeq: String? = null,
     var entpNo: String? = null,
-    var itemPermDate: String? = null,
+    var itemPermDate: Date? = null,
     var inDuty: String? = null,
     var prdlstStrdCode: String? = null,
     var spcltyPblc: String? = null,
@@ -26,7 +27,7 @@ data class MedicineData(
     var itemIngrCnt: String? = null,
     var bigPrdtImgUrl: String? = null,
     var permKindCode: String? = null,
-    var cancelDate: String? = null,
+    var cancelDate: Date? = null,
     var cancelName: String? = null,
     var ediCode: String? = null,
     var bizrNo: String? = null,
@@ -34,18 +35,19 @@ data class MedicineData(
     var medsStartDate: String? = null,
     var medsEndDate: String? = null,
     @ServerTimestamp
-    var timeStamp: Date? = null) {
-
-    fun convertDate(date: String): Date? {
-        return SimpleDateFormat("yyyyMMdd").parse(date)
-    }
+    var timeStamp: Date? = null) : Converter {
 
     fun getMedicineDataAsString(): String {
         return "$itemSeq, $itemName, $itemEngName, $entpName, $entpEngName, " +
-                "$entpSeq, $entpNo, $itemPermDate, $inDuty, $prdlstStrdCode, " +
+                "$entpSeq, $entpNo, ${itemPermDate.toString()}, $inDuty, $prdlstStrdCode, " +
                 "$spcltyPblc, $pdtType, $pdtPermNo, $itemIngrName, $itemIngrCnt, " +
-                "$bigPrdtImgUrl, $permKindCode, $cancelDate, $cancelName, $ediCode" +
+                "$bigPrdtImgUrl, $permKindCode, ${cancelDate.toString()}, $cancelName, $ediCode" +
                 "$bizrNo"
+    }
+
+    override fun convertStrToDate(date: String?): Date? {
+        if(TextUtils.isEmpty(date)) return null
+        return SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(date!!)
     }
 
     companion object {

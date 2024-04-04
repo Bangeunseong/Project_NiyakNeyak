@@ -35,13 +35,15 @@ class SearchActivity: AppCompatActivity() {
         _apiFunctions = OpenApiFunctions()
         setContentView(binding.root)
 
+        binding.searchResult.adapter = MedicineListAdapter()
+
         binding.searchBar.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
                 binding.searchBar.isSubmitButtonEnabled = newText != null && newText.length >= 2
                 return false
             }
 
-            //TODO: Think about coroutine behavior
+            //TODO: Think about coroutine behavior, Data Transfer Process
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if(!TextUtils.isEmpty(query)){
                     if(!ioScope.isActive){
@@ -74,5 +76,10 @@ class SearchActivity: AppCompatActivity() {
     private suspend fun performDataFetchTaskAsync(query: String): JSONObject? =
         withContext(Dispatchers.IO) {
             return@withContext apiFunctions.getPrdtMtrDetails(query, null, null)
+        }
+
+    private suspend fun performAdapterSettingTaskAsync() =
+        withContext(Dispatchers.IO){
+
         }
 }

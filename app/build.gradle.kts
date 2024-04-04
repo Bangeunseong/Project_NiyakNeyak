@@ -54,6 +54,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-service:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
+    // image URL fetch dependencies
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+
     // firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
