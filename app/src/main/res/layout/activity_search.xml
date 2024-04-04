@@ -7,7 +7,7 @@
     tools:context=".main.activity.SearchActivity">
 
 
-    <SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/search_result_layout">
 
-    </SearchView>
+    </androidx.appcompat.widget.SearchView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/search_result_layout"

@@ -3,8 +3,8 @@ package com.capstone.project_niyakneyak.main.activity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import com.capstone.project_niyakneyak.databinding.ActivitySearchBinding
 import com.capstone.project_niyakneyak.main.adapter.MedicineListAdapter
 import com.capstone.project_niyakneyak.main.etc.OpenApiFunctions
