@@ -2,15 +2,12 @@ package com.capstone.project_niyakneyak.main.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
@@ -19,7 +16,6 @@ import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityDataSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.AlarmSelectionAdapter
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
-import com.capstone.project_niyakneyak.main.etc.SubmitFormState
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
@@ -47,7 +43,6 @@ import java.util.Random
 class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private lateinit var binding: ActivityDataSettingBinding
     private var adapter: AlarmSelectionAdapter? = null
-    private var submitFormState = MutableLiveData<SubmitFormState>()
 
     private var snapshotId: String? = null
     private var originData: MedsData? = null
@@ -179,14 +174,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             binding.submit.isEnabled = true
         } else data.medsID = codeGenerator()
 
-        val nameFilter =
-            InputFilter { source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
-                for (i in start until end)
-                    if (Character.isWhitespace(source[i]))
-                        return@InputFilter ""
-                null
-            }
-
         val amountFilter =
             InputFilter{ source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
                 for(i in start until end)
@@ -195,27 +182,11 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 null
             }
 
-        // TextInput Exception Control Methods
-        val afterTextChanged: TextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable) {
-                submitDataChanged(binding.medsNameText.text.toString())
-            }
-        }
-
-        submitFormState.observe(this) { submitFormState: SubmitFormState? ->
-            if (submitFormState == null) return@observe
-            binding.submit.isEnabled = submitFormState.isDataValid
-            if (submitFormState.medsNameError != null) {
-                binding.dialogMedsNameLayout.isErrorEnabled = true
-                binding.dialogMedsNameLayout.error = getString(submitFormState.medsNameError!!)
-            } else binding.dialogMedsNameLayout.isErrorEnabled = false
-        }
-
         // Main Body(Setting Functions for each Components)
-        binding.medsNameText.addTextChangedListener(afterTextChanged)
-        binding.medsNameText.filters = arrayOf(nameFilter)
+        binding.medsNameText.isEnabled = false
+        binding.medsNameSearchBtn.setOnClickListener {
+            TODO("Not yet implemented")
+        }
         binding.medsDailyAmountText.filters = arrayOf(amountFilter)
         binding.medsDateText.setOnClickListener {
             val calBuilder = CalendarConstraints.Builder()
@@ -339,16 +310,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private fun showAlarmSettingActivity() {
         val intent = Intent(this, AlarmSettingActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun submitDataChanged(meds: String) {
-        if (!isMedsNameValid(meds)) {
-            submitFormState.setValue(SubmitFormState(R.string.dialog_add_form_meds_name_error))
-        } else submitFormState.setValue(SubmitFormState(true))
-    }
-
-    private fun isMedsNameValid(medsName: String?): Boolean {
-        return medsName != null && medsName.matches("\\w{1,20}".toRegex())
     }
 
     override fun onItemClicked(alarm: Alarm) {

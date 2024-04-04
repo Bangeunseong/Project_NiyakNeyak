@@ -66,7 +66,7 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
         holder.stopListening()
     }
 
-    class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
         private lateinit var adapter: CheckMedicationAdapter
         fun bind(snapshot: DocumentSnapshot, query: Query?, listener: OnCheckedMedicationListener){
             val alarm = snapshot.toObject<Alarm>() ?: return

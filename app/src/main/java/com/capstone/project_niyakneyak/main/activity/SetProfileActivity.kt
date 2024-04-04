@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.main.fragment
+package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 
-class SetProfileFragment: AppCompatActivity() {
+class SetProfileActivity: AppCompatActivity() {
     private lateinit var binding: ActivitySetProfileBinding
     private lateinit var firestore: FirebaseFirestore
     private lateinit var userId: String

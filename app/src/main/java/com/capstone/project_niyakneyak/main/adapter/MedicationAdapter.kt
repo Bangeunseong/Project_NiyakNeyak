@@ -20,7 +20,7 @@ open class MedicationAdapter(query: Query, private val listener: OnMedicationCha
         holder.bind(getSnapshot(position), listener)
     }
 
-    class ViewHolder(val binding: ItemRecyclerMedsBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemRecyclerMedsBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(snapshot: DocumentSnapshot, listener: OnMedicationChangedListener?){
             val medsData = snapshot.toObject<MedsData>() ?: return
 

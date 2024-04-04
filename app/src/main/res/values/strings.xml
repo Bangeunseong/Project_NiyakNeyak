@@ -119,4 +119,6 @@
     <string name="search">Search</string>
     <string name="logout">Logout</string>
     <string name="category">Category :</string>
+    <string name="dialog_search_loading_text">Loading</string>
+    <string name="meds_name_search_btn_text">Search your own medicine</string>
 </resources>

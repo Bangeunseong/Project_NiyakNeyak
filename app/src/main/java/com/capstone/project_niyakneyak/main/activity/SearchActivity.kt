@@ -1,13 +1,12 @@
-package com.capstone.project_niyakneyak.main.fragment
+package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.SearchView
-import androidx.fragment.app.DialogFragment
-import com.capstone.project_niyakneyak.databinding.DialogFragmentSearchBinding
+import androidx.appcompat.app.AppCompatActivity
+import com.capstone.project_niyakneyak.databinding.ActivitySearchBinding
+import com.capstone.project_niyakneyak.main.adapter.MedicineListAdapter
 import com.capstone.project_niyakneyak.main.etc.OpenApiFunctions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,18 +16,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class SearchDialogFragment: DialogFragment() {
-    private var _binding: DialogFragmentSearchBinding? = null
+class SearchActivity: AppCompatActivity() {
+    private var _binding: ActivitySearchBinding? = null
     private val binding get() = _binding!!
     private var _apiFunctions: OpenApiFunctions? = null
     private val apiFunctions get() = _apiFunctions!!
+    private var adapter: MedicineListAdapter? = null
     private var jsonObject: JSONObject? = null
 
+    // Using Coroutine for data fetch process in background thread
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = DialogFragmentSearchBinding.inflate(inflater, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Setting View Binding and Api Function class
+        _binding = ActivitySearchBinding.inflate(layoutInflater)
         _apiFunctions = OpenApiFunctions()
+        setContentView(binding.root)
 
         binding.searchBar.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -41,28 +46,30 @@ class SearchDialogFragment: DialogFragment() {
                 if(!TextUtils.isEmpty(query)){
                     if(!ioScope.isActive){
                         ioScope.launch {
+                            binding.loadingLayout.visibility = View.VISIBLE
                             jsonObject = performDataFetchTaskAsync(query!!)
+                            binding.loadingLayout.visibility = View.GONE
                         }
                     }
                     else{
                         ioScope.cancel()
                         ioScope.launch(Dispatchers.IO) {
+                            binding.loadingLayout.visibility = View.VISIBLE
                             jsonObject = performDataFetchTaskAsync(query!!)
+                            binding.loadingLayout.visibility = View.GONE
                         }
                     }
                 }
                 return false
             }
         })
-        return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         _binding = null
         if (ioScope.isActive) ioScope.cancel()
     }
-
 
     private suspend fun performDataFetchTaskAsync(query: String): JSONObject? =
         withContext(Dispatchers.IO) {

@@ -23,7 +23,7 @@ open class CheckMedicationAdapter(query: Query, private val onCheckedMedicationL
         holder.bind(getSnapshot(position), onCheckedMedicationListener)
     }
 
-    class ViewHolder(val binding: ItemRecyclerCheckItemBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemRecyclerCheckItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(snapshot: DocumentSnapshot, listener: OnCheckedMedicationListener){
             val medicationData = snapshot.toObject<MedsData>() ?: return
             binding.medicationName.text = medicationData.medsName

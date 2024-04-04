@@ -56,6 +56,19 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <ImageButton
+            android:id="@+id/meds_name_search_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_search_24"
+            android:background="@color/transparent"
+            android:contentDescription="@string/meds_name_search_btn_text"
+            app:layout_constraintHorizontal_bias="0.99"
+            app:layout_constraintStart_toStartOf="@id/dialog_meds_name_layout"
+            app:layout_constraintEnd_toEndOf="@id/dialog_meds_name_layout"
+            app:layout_constraintBottom_toTopOf="@+id/dialog_meds_daily_amount_layout"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/dialog_meds_daily_amount_layout"
             style="@style/TextInputLayoutStyle"
@@ -144,13 +157,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dialog_button_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_meds_data_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintStart_toStartOf="@id/dialog_meds_data_layout"
+        app:layout_constraintEnd_toEndOf="@id/dialog_meds_data_layout">
 
         <Button
             android:id="@+id/submit"
