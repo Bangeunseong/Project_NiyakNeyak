@@ -51,7 +51,7 @@
     <string name="dialog_modify_form_title">Change Information</string>
     <string name="dialog_add_form_submit">Save</string>
     <string name="dialog_add_form_cancel">Cancel</string>
-    <string name="dialog_add_form_meds_name">Type Medication Name</string>
+    <string name="dialog_add_form_meds_name">Click button to search medicine</string>
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
     <string name="dialog_add_form_meds_daily_amount">Type Daily Amount of Pills</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
@@ -121,4 +121,5 @@
     <string name="category">Category :</string>
     <string name="dialog_search_loading_text">Loading</string>
     <string name="meds_name_search_btn_text">Search your own medicine</string>
+    <string name="search_result_submit_text">submit</string>
 </resources>

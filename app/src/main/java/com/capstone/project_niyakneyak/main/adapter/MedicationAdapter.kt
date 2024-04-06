@@ -3,7 +3,7 @@ package com.capstone.project_niyakneyak.main.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerMedsBinding
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
 import com.google.firebase.firestore.DocumentSnapshot
@@ -22,9 +22,9 @@ open class MedicationAdapter(query: Query, private val listener: OnMedicationCha
 
     inner class ViewHolder(val binding: ItemRecyclerMedsBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(snapshot: DocumentSnapshot, listener: OnMedicationChangedListener?){
-            val medsData = snapshot.toObject<MedsData>() ?: return
+            val medsData = snapshot.toObject<MedicineData>() ?: return
 
-            binding.itemTitle.text = medsData.medsName
+            binding.itemTitle.text = medsData.itemName
             if (medsData.medsDetail != null) binding.itemDetail.text =
                 String.format("Detail: %s", medsData.medsDetail)
             else binding.itemDetail.text = String.format("Detail: %s", "None")

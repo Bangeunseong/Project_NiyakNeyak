@@ -21,13 +21,12 @@ import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityAlarmSettingBinding
 import com.capstone.project_niyakneyak.main.etc.ActionResult
 import com.capstone.project_niyakneyak.main.etc.AlarmDataView
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
 import java.util.Random
 
 /**
@@ -89,7 +88,7 @@ class AlarmSettingActivity : AppCompatActivity() {
                     alarm = null
                     setActivity(alarm)
                 }
-        }
+        } else setActivity(null)
     }
 
     private fun setActivity(alarm: Alarm?){

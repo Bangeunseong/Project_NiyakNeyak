@@ -31,7 +31,9 @@ data class MedicineData(
     var cancelName: String? = null,
     var ediCode: String? = null,
     var bizrNo: String? = null,
+    var medsID: Int = -1,
     var dailyAmount: Int = 0,
+    var medsDetail: String? = null,
     var medsStartDate: String? = null,
     var medsEndDate: String? = null,
     @ServerTimestamp
@@ -51,13 +53,15 @@ data class MedicineData(
     }
 
     companion object {
+        const val COLLECTION_ID = "medications"
+
         const val FIELD_ITEM_SEQ = "ITEM_SEQ"
         const val FIELD_ITEM_NAME = "ITEM_NAME"
         const val FIELD_ITEM_ENG_NAME = "ITEM_ENG_NAME"
         const val FIELD_ENPT_NAME = "ENTP_NAME"
         const val FIELD_ENPT_ENG_NAME = "ENTP_ENG_NAME"
-        const val FILED_ENTP_SEQ = "ENTP_SEQ"
-        const val FILED_ENTP_NO = "ENTP_NO"
+        const val FIELD_ENPT_SEQ = "ENTP_SEQ"
+        const val FIELD_ENPT_NO = "ENTP_NO"
         const val FIELD_ITEM_PERMIT_DATE = "ITEM_PERMIT_DATE"
         const val FIELD_INDUTY = "INDUTY"
         const val FIELD_PRDLST_STDR_CODE = "PRDLST_STDR_CODE"
@@ -75,8 +79,9 @@ data class MedicineData(
 
         const val FIELD_ITEM_SEQ_FB = "itemSeq"
         const val FIELD_ITEM_NAME_FB = "itemName"
-        const val FIELD_ENTP_NAME_FB = "entpName"
+        const val FIELD_ENPT_NAME_FB = "entpName"
         const val FIELD_IN_DUTY_FB = "inDuty"
+        const val FIELD_MEDICINE_ID_FB = "medsID"
         const val FIELD_DAILY_AMOUNT_FB = "dailyAmount"
         const val FIELD_START_DATE_FB = "medsStartDate"
         const val FIELD_END_DATE_FB = "medsEndDate"

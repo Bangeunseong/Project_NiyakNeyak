@@ -84,7 +84,7 @@ open class OpenApiFunctions {
                     builder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("$numOfRows", "UTF-8"))
                 else builder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("10", "UTF-8"))
                 builder.append("&" + URLEncoder.encode("type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"))
-                builder.append("&" + URLEncoder.encode("Prduct", "UTF-8") + "=" + URLEncoder.encode(prdtName, "UTF-8"))
+                builder.append("&" + URLEncoder.encode("item_name", "UTF-8") + "=" + URLEncoder.encode(prdtName, "UTF-8"))
             }
             1 -> {
                 builder.append(DUR_PRODUCT_LIST_BASE_URL + DUR_ELDERLY_ATTENTION_PRODUCT_LIST)
@@ -201,7 +201,7 @@ open class OpenApiFunctions {
 
         // REPRESENT URL
         private const val PRODUCT_INFO_BASE_URL = "https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService05"
-        private const val PRODUCT_MATERIAL_DETAILS = "/getDrugPrdtMcpnDtlInq04"
+        private const val PRODUCT_MATERIAL_DETAILS = "/getDrugPrdtPrmsnInq05"
         private const val DUR_PRODUCT_LIST_BASE_URL = "http://apis.data.go.kr/1471000/DURPrdlstInfoService03"
         private const val DUR_ELDERLY_ATTENTION_PRODUCT_LIST = "/getOdsnAtentInfoList03"
         private const val DUR_USAGE_JOINT_TABOO_LIST = "/getUsjntTabooInfoList03"

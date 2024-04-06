@@ -13,8 +13,8 @@ import androidx.core.util.Pair
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.medication_model.Container
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityDataSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.AlarmSelectionAdapter
@@ -48,8 +48,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var adapter: AlarmSelectionAdapter? = null
 
     private var snapshotId: String? = null
-    private var originData: MedsData? = null
-    private var fetchedData: MedicineData? = null
+    private var originData: MedicineData? = null
+    private var fetchedData: MedicineData = MedicineData()
     private var query: Query? = null
     private var originAlarmID = mutableListOf<String>()
     private var includedAlarmID = mutableListOf<String>()
@@ -59,10 +59,32 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
-            //TODO: Modify Data Transfer Process
             val intent = it.data ?: return@registerForActivityResult
-            val bundle = intent.getBundleExtra("MedicineData")
+            val bundle = intent.getBundleExtra(Container.CONTAINER_BUNDLE_KEY)
+            val container = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                bundle!!.getParcelable(Container.CONTAINER_KEY, Container::class.java)
+            else {
+                @Suppress("DEPRECATION")
+                bundle!!.getParcelable(Container.CONTAINER_KEY)
+            }
 
+            fetchedData.itemSeq = container!!.itemSeq; fetchedData.itemName = container.itemName
+            fetchedData.itemEngName = container.itemEngName; fetchedData.entpName = container.entpName
+            fetchedData.entpEngName = container.entpEngName; fetchedData.entpSeq = container.entpSeq
+            fetchedData.entpNo = container.entpNo
+            if(!container.cancelDate.equals("null"))
+                fetchedData.itemPermDate = fetchedData.convertStrToDate(container.itemPermDate)
+            fetchedData.inDuty = container.inDuty; fetchedData.prdlstStrdCode = container.prdlstStrdCode
+            fetchedData.spcltyPblc = container.spcltyPblc; fetchedData.pdtType = container.pdtType
+            fetchedData.pdtPermNo = container.pdtPermNo; fetchedData.itemIngrName = container.itemIngrName
+            fetchedData.itemIngrCnt = container.itemIngrCnt; fetchedData.bigPrdtImgUrl = container.bigPrdtImgUrl
+            fetchedData.permKindCode= container.permKindCode
+            if(!container.cancelDate.equals("null"))
+                fetchedData.cancelDate = fetchedData.convertStrToDate(container.cancelDate)
+            fetchedData.cancelName = container.cancelName; fetchedData.ediCode = container.ediCode; fetchedData.bizrNo = container.bizrNo
+
+            binding.medsNameText.setText(fetchedData.itemName)
+            binding.submit.isEnabled = true
         }
     }
 
@@ -83,10 +105,10 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         snapshotId = intent.getStringExtra("snapshot_id")
         if(snapshotId != null){
             val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(MedsData.COLLECTION_ID).document(snapshotId!!)
+                .collection(MedicineData.COLLECTION_ID).document(snapshotId!!)
 
             medicationRef.get().addOnSuccessListener {
-                originData = it.toObject(MedsData::class.java)
+                originData = it.toObject(MedicineData::class.java)
 
                 // Setting toolbar title
                 binding.toolbar2.setTitle(R.string.dialog_modify_form_title)
@@ -146,12 +168,11 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         adapter?.stopListening()
     }
 
-    private fun setActivity(originData: MedsData?, binding: ActivityDataSettingBinding){
+    private fun setActivity(originData: MedicineData?, binding: ActivityDataSettingBinding){
         var startDate: Long? = null; var endDate: Long? = null
-        val data = MedsData()
         if(originData != null){
-            data.medsID = originData.medsID
-            binding.medsNameText.setText(originData.medsName)
+            fetchedData.medsID = originData.medsID
+            binding.medsNameText.setText(originData.itemName)
             if(originData.dailyAmount > 0){
                 binding.medsDailyAmountText.setText(originData.dailyAmount.toString())
             }
@@ -185,7 +206,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 }
 
             binding.submit.isEnabled = true
-        } else data.medsID = codeGenerator()
+        } else fetchedData.medsID = codeGenerator()
 
         val amountFilter =
             InputFilter{ source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
@@ -198,7 +219,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         // Main Body(Setting Functions for each Components)
         binding.medsNameText.isEnabled = false
         binding.medsNameSearchBtn.setOnClickListener {
-            TODO("Not yet implemented")
+            val intent = Intent(this, SearchActivity::class.java)
+            searchLauncher.launch(intent)
         }
         binding.medsDailyAmountText.filters = arrayOf(amountFilter)
         binding.medsDateText.setOnClickListener {
@@ -226,20 +248,19 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         }
         binding.dialogMedsTimerAddBtn.setOnClickListener { showAlarmSettingActivity() }
         binding.submit.setOnClickListener {
-            data.medsName = binding.medsNameText.text.toString()
-            data.dailyAmount = binding.medsDailyAmountText.text.toString().toInt()
-            data.medsDetail =
+            fetchedData.dailyAmount = binding.medsDailyAmountText.text.toString().toInt()
+            fetchedData.medsDetail =
                 if (binding.medsDetailText.text.toString() == "null") null else binding.medsDetailText.text.toString()
             val medsDateText =
                 if (binding.medsDateText.text.toString() == "null") null else binding.medsDateText.text.toString()
             if (medsDateText!!.isNotEmpty()) {
                 val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                data.medsStartDate = dates[0]
-                data.medsEndDate = dates[1]
+                fetchedData.medsStartDate = dates[0]
+                fetchedData.medsEndDate = dates[1]
             }
 
-            if(snapshotId == null) submitData(null, data)
-            else submitData(snapshotId, data)
+            if(snapshotId == null) submitData(null, fetchedData)
+            else submitData(snapshotId, fetchedData)
 
             setResult(RESULT_OK)
             finish()
@@ -250,9 +271,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         }
     }
 
-    private fun submitData(snapshotID: String?, data: MedsData){
+    private fun submitData(snapshotID: String?, data: MedicineData){
         val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-            .collection(MedsData.COLLECTION_ID)
+            .collection(MedicineData.COLLECTION_ID)
         val alarmRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(Alarm.COLLECTION_ID)
         if(snapshotID == null){

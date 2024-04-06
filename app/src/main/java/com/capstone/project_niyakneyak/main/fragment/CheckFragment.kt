@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
@@ -176,7 +176,7 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         return !viewModel.isSignedIn && firebaseAuth.currentUser == null
     }
 
-    override fun onItemClicked(data: MedsData) {
+    override fun onItemClicked(data: MedicineData) {
         TODO("Not yet Implemented")
     }
 

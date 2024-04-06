@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
@@ -72,8 +72,8 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
 
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(MedsData.COLLECTION_ID)
-                .orderBy(MedsData.FIELD_NAME, Query.Direction.ASCENDING)
+                .collection(MedicineData.COLLECTION_ID)
+                .orderBy(MedicineData.FIELD_ITEM_NAME_FB, Query.Direction.ASCENDING)
         }
 
         // RecyclerAdapter for Medication Info.
@@ -143,7 +143,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
             .collection(Alarm.COLLECTION_ID)
             .whereArrayContains(Alarm.FIELD_MEDICATION_LIST, target.id.toInt())
         val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-            .collection(MedsData.COLLECTION_ID).document(target.id)
+            .collection(MedicineData.COLLECTION_ID).document(target.id)
         val alarmRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(Alarm.COLLECTION_ID)
 
