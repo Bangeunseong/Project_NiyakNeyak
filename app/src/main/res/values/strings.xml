@@ -5,10 +5,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_data_setting">DataSettingActivity</string>
 
-    <string name="arg_add_data_listener">onAddedDataListener</string>
-    <string name="arg_change_data_listener">onChangedDataListener</string>
     <string name="arg_origin_data">Medication_Data</string>
-
 
     <string name="hint_main_id">Type your ID</string>
     <string name="hint_main_password">Type your PW</string>
@@ -32,6 +29,7 @@
     <string name="action_menu_logout">Logout</string>
     <string name="action_menu_login">Login</string>
 
+
     <!-- Main Attributes -->
     <string name="action_main_rcv_addItem">Add Medication Info.</string>
     <string name="action_main_rcv_addIntro.">
@@ -46,16 +44,22 @@
     <string name="action_main_rcv_delete_error">Deletion Failed</string>
     <string name="action_main_rcv_search_error">Search Failed</string>
 
+    <string name="dialog_filter_pos_btn_text">OK</string>
+    <string name="dialog_filter_neg_btn_text">Cancel</string>
+
     <string name="dialog_add_form_title">Insert Information</string>
     <string name="dialog_modify_form_title">Change Information</string>
     <string name="dialog_add_form_submit">Save</string>
     <string name="dialog_add_form_cancel">Cancel</string>
-    <string name="dialog_add_form_meds_name">Type Medication Name</string>
+    <string name="dialog_add_form_meds_name">Click button to search medicine</string>
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
     <string name="dialog_add_form_meds_daily_amount">Type Daily Amount of Pills</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
     <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
     <string name="dialog_add_form_meds_timer">Click here to Add Timer</string>
+
+    <string name="dialog_search_form_meds_name">Type Medicine Name</string>
+
     <string name="dialog_meds_time_title">Medication Cycle</string>
     <string name="dialog_meds_time_sw_morning_title">Morning</string>
     <string name="dialog_meds_time_sw_afternoon_title">Afternoon</string>
@@ -81,6 +85,12 @@
 
     <string name="action_open_check_list">Click to open check list!</string>
 
+    <string name="dialog_filter_start_date_text">Start Date</string>
+    <string name="dialog_filter_end_date_text">End Date</string>
+    <string name="dialog_filter_start_date_btn_desc">Click to select start date.</string>
+    <string name="dialog_filter_end_date_btn_desc">Click to select end date.</string>
+
+
     <!-- Alarm Attributes -->
     <string name="alarm_title">Time to eat pills!</string>
     <string name="arg_alarm_obj">AlarmObject</string>
@@ -93,7 +103,6 @@
     <string name="alarm_clock_png">ic_alarm_purple</string>
 
 
-
     <!-- Check Attributes -->
     <string name="check_rcv_ListIntro">
         Today, there are no medications to consume!&#10;
@@ -102,4 +111,15 @@
 
     <!-- Global Attributes -->
     <string name="dayNightTheme">DayNightTheme</string>
+    <string name="all_medications">All Medications</string>
+    <string name="all_manufacturers">All Manufacturers</string>
+    <string name="sorted_by_medication_name">Sorted by Medication Name</string>
+    <string name="sorted_by_medication_id">Sorted by Medicine ID</string>
+    <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
+    <string name="search">Search</string>
+    <string name="logout">Logout</string>
+    <string name="category">Category :</string>
+    <string name="dialog_search_loading_text">Loading</string>
+    <string name="meds_name_search_btn_text">Search your own medicine</string>
+    <string name="search_result_submit_text">submit</string>
 </resources>

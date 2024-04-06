@@ -3,7 +3,7 @@ package com.capstone.project_niyakneyak.main.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerCheckItemBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
 import com.google.firebase.firestore.DocumentSnapshot
@@ -23,10 +23,10 @@ open class CheckMedicationAdapter(query: Query, private val onCheckedMedicationL
         holder.bind(getSnapshot(position), onCheckedMedicationListener)
     }
 
-    class ViewHolder(val binding: ItemRecyclerCheckItemBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemRecyclerCheckItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(snapshot: DocumentSnapshot, listener: OnCheckedMedicationListener){
-            val medicationData = snapshot.toObject<MedsData>() ?: return
-            binding.medicationName.text = medicationData.medsName
+            val medicationData = snapshot.toObject<MedicineData>() ?: return
+            binding.medicationName.text = medicationData.itemName
             binding.medicationAmount.text = String.format("%d pills",medicationData.dailyAmount)
             binding.medicationDetail.text = medicationData.medsDetail
             binding.medicationCheckbox.setOnClickListener { listener.onItemClicked(medicationData) }

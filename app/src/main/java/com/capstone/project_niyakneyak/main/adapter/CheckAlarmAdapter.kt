@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerCheckBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedAlarmListener
@@ -49,8 +49,8 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
 
         if(firebaseAuth.currentUser != null){
             secondQuery = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(MedsData.COLLECTION_ID)
-                .whereIn(MedsData.FIELD_ID, alarm.medsList)
+                .collection(MedicineData.COLLECTION_ID)
+                .whereIn(MedicineData.FIELD_MEDICINE_ID_FB, alarm.medsList)
         }
 
         holder.bind(snapshot, secondQuery, listener)
@@ -66,7 +66,7 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
         holder.stopListening()
     }
 
-    class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
         private lateinit var adapter: CheckMedicationAdapter
         fun bind(snapshot: DocumentSnapshot, query: Query?, listener: OnCheckedMedicationListener){
             val alarm = snapshot.toObject<Alarm>() ?: return

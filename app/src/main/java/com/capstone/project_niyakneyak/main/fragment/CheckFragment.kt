@@ -11,11 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.adapter.CheckAlarmAdapter
+import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
+import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
 import com.google.android.material.snackbar.Snackbar
@@ -90,13 +92,17 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
 
         binding.contentChecklist.setHasFixedSize(false)
         binding.contentChecklist.layoutManager = LinearLayoutManager(context)
+        binding.contentChecklist.addItemDecoration(HorizontalItemDecorator(10))
+        binding.contentChecklist.addItemDecoration(VerticalItemDecorator(20))
     }
 
     override fun onStart() {
         super.onStart()
         if(shouldStartSignIn()){
             val intent = Intent(activity, LoginActivity::class.java)
+            intent.putExtra("request_token", 0)
             loginProcessLauncher.launch(intent)
+            return
         }
 
         // Start Listening Data changes
@@ -170,7 +176,7 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         return !viewModel.isSignedIn && firebaseAuth.currentUser == null
     }
 
-    override fun onItemClicked(data: MedsData) {
+    override fun onItemClicked(data: MedicineData) {
         TODO("Not yet Implemented")
     }
 
