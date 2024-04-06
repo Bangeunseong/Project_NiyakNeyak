@@ -23,8 +23,9 @@
         android:theme="@style/Theme.Project_NiyakNeyak"
         tools:targetApi="31">
 
-        <service android:name=".alarm.service.AlarmService"/>
-        <service android:name=".alarm.service.RescheduleAlarmService" />
+        <service android:name=".alarm.service.AlarmService" />
+        <service android:name=".alarm.service.RescheduleAlarmService"
+            android:foregroundServiceType="dataSync"/>
         <receiver
             android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"
@@ -39,22 +40,22 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".alarm.activity.RingActivity"
+        <activity android:name=".alarm.activity.RingActivity"
             android:exported="false"
             android:theme="@style/Theme.Design.NoActionBar"/>
+        <activity android:name=".main.activity.SearchActivity"
+            android:exported="false" />
+        <activity android:name=".main.activity.SetProfileActivity"
+            android:exported="false" />
         <activity android:name=".main.activity.AlarmSettingActivity"
             android:exported="false" />
         <activity android:name=".main.activity.DataSettingActivity"
             android:exported="false" />
-        <activity
-            android:name=".login.activity.RegisterActivity"
+        <activity android:name=".login.activity.RegisterActivity"
             android:exported="false" />
-        <activity
-            android:name=".login.activity.LoginActivity"
+        <activity android:name=".login.activity.LoginActivity"
             android:exported="false" />
-        <activity
-            android:name=".main.activity.MainActivity"
+        <activity android:name=".main.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,7 +1,7 @@
 package com.capstone.project_niyakneyak.main.listener
 
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 
 interface OnCheckedMedicationListener {
-    fun onItemClicked(data: MedsData)
+    fun onItemClicked(data: MedicineData)
 }
