@@ -2,6 +2,7 @@ package com.capstone.project_niyakneyak.login.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -35,6 +36,15 @@ class RegisterActivity : AppCompatActivity() {
             val strPwd = binding.etPassword.text ?: null
 
             if(strEmail != null && strPwd != null){
+                val selectedGenderId = binding.genderRadioGroup.checkedRadioButtonId
+
+                // 선택된 RadioButton의 텍스트(성별)를 가져옵니다.
+                val selectedGender = if(selectedGenderId != -1) {
+                    findViewById<RadioButton>(selectedGenderId).text.toString()
+                } else {
+                    // 선택되지 않았을 경우, 기본값이나 오류 메시지를 설정할 수 있습니다.
+                    "성별 선택 안됨"
+                }
                 mFirebaseAuth.createUserWithEmailAndPassword(strEmail.toString(), strPwd.toString())
                     .addOnSuccessListener(this@RegisterActivity) {
                         // 인증객체에서 현재의 유저를 가져옴
@@ -44,8 +54,10 @@ class RegisterActivity : AppCompatActivity() {
                             firebaseUser?.email,
                             strPwd.toString(),
                             binding.etName.text.toString(),
-                            "2000/01/01",
+                            binding.etBirth.text.toString(),
+                            gender = selectedGender,
                             binding.etPhoneNum.text.toString()
+
                         )
 
                         // 가입이 이루어졌을 때, 가입 정보를 데이터베이스에 저장

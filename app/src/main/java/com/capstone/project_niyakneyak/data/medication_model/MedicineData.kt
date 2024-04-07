@@ -1,10 +1,12 @@
 package com.capstone.project_niyakneyak.data.medication_model
 
-import android.os.Parcel
-import android.os.Parcelable
+import android.text.TextUtils
+import com.capstone.project_niyakneyak.main.etc.Converter
 import com.google.firebase.firestore.IgnoreExtraProperties
+import com.google.firebase.firestore.ServerTimestamp
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 @IgnoreExtraProperties
 data class MedicineData(
@@ -15,7 +17,7 @@ data class MedicineData(
     var entpEngName: String? = null,
     var entpSeq: String? = null,
     var entpNo: String? = null,
-    var itemPermDate: String? = null,
+    var itemPermDate: Date? = null,
     var inDuty: String? = null,
     var prdlstStrdCode: String? = null,
     var spcltyPblc: String? = null,
@@ -25,83 +27,41 @@ data class MedicineData(
     var itemIngrCnt: String? = null,
     var bigPrdtImgUrl: String? = null,
     var permKindCode: String? = null,
-    var cancelDate: String? = null,
+    var cancelDate: Date? = null,
     var cancelName: String? = null,
     var ediCode: String? = null,
-    var bizrNo: String? = null) : Parcelable {
-
-    constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString()
-    )
-
-    fun convertDate(date: String): Date? {
-        return SimpleDateFormat("yyyyMMdd").parse(date)
-    }
+    var bizrNo: String? = null,
+    var medsID: Int = -1,
+    var dailyAmount: Int = 0,
+    var medsDetail: String? = null,
+    var medsStartDate: String? = null,
+    var medsEndDate: String? = null,
+    @ServerTimestamp
+    var timeStamp: Date? = null) : Converter {
 
     fun getMedicineDataAsString(): String {
         return "$itemSeq, $itemName, $itemEngName, $entpName, $entpEngName, " +
-                "$entpSeq, $entpNo, $itemPermDate, $inDuty, $prdlstStrdCode, " +
+                "$entpSeq, $entpNo, ${itemPermDate.toString()}, $inDuty, $prdlstStrdCode, " +
                 "$spcltyPblc, $pdtType, $pdtPermNo, $itemIngrName, $itemIngrCnt, " +
-                "$bigPrdtImgUrl, $permKindCode, $cancelDate, $cancelName, $ediCode" +
+                "$bigPrdtImgUrl, $permKindCode, ${cancelDate.toString()}, $cancelName, $ediCode" +
                 "$bizrNo"
     }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(itemSeq)
-        parcel.writeString(itemName)
-        parcel.writeString(itemEngName)
-        parcel.writeString(entpName)
-        parcel.writeString(entpEngName)
-        parcel.writeString(entpSeq)
-        parcel.writeString(entpNo)
-        parcel.writeString(itemPermDate)
-        parcel.writeString(inDuty)
-        parcel.writeString(prdlstStrdCode)
-        parcel.writeString(spcltyPblc)
-        parcel.writeString(pdtType)
-        parcel.writeString(pdtPermNo)
-        parcel.writeString(itemIngrName)
-        parcel.writeString(itemIngrCnt)
-        parcel.writeString(bigPrdtImgUrl)
-        parcel.writeString(permKindCode)
-        parcel.writeString(cancelDate)
-        parcel.writeString(cancelName)
-        parcel.writeString(ediCode)
-        parcel.writeString(bizrNo)
+    override fun convertStrToDate(date: String?): Date? {
+        if(TextUtils.isEmpty(date)) return null
+        return SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(date!!)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    companion object {
+        const val COLLECTION_ID = "medications"
 
-    companion object CREATOR : Parcelable.Creator<MedicineData> {
         const val FIELD_ITEM_SEQ = "ITEM_SEQ"
         const val FIELD_ITEM_NAME = "ITEM_NAME"
         const val FIELD_ITEM_ENG_NAME = "ITEM_ENG_NAME"
         const val FIELD_ENPT_NAME = "ENTP_NAME"
         const val FIELD_ENPT_ENG_NAME = "ENTP_ENG_NAME"
-        const val FILED_ENTP_SEQ = "ENTP_SEQ"
-        const val FILED_ENTP_NO = "ENTP_NO"
+        const val FIELD_ENPT_SEQ = "ENTP_SEQ"
+        const val FIELD_ENPT_NO = "ENTP_NO"
         const val FIELD_ITEM_PERMIT_DATE = "ITEM_PERMIT_DATE"
         const val FIELD_INDUTY = "INDUTY"
         const val FIELD_PRDLST_STDR_CODE = "PRDLST_STDR_CODE"
@@ -117,12 +77,14 @@ data class MedicineData(
         const val FIELD_EDI_CODE = "EDI_CODE"
         const val FIELD_BIZRNO = "BIZRNO"
 
-        override fun createFromParcel(parcel: Parcel): MedicineData {
-            return MedicineData(parcel)
-        }
-
-        override fun newArray(size: Int): Array<MedicineData?> {
-            return arrayOfNulls(size)
-        }
+        const val FIELD_ITEM_SEQ_FB = "itemSeq"
+        const val FIELD_ITEM_NAME_FB = "itemName"
+        const val FIELD_ENPT_NAME_FB = "entpName"
+        const val FIELD_IN_DUTY_FB = "inDuty"
+        const val FIELD_MEDICINE_ID_FB = "medsID"
+        const val FIELD_DAILY_AMOUNT_FB = "dailyAmount"
+        const val FIELD_START_DATE_FB = "medsStartDate"
+        const val FIELD_END_DATE_FB = "medsEndDate"
+        const val FIELD_TIME_STAMP_FB = "timeStamp"
     }
 }

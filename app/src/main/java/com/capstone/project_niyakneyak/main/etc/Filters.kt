@@ -3,7 +3,7 @@ package com.capstone.project_niyakneyak.main.etc
 import android.content.Context
 import android.text.TextUtils
 import com.capstone.project_niyakneyak.R
-import com.capstone.project_niyakneyak.data.medication_model.MedsData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.google.firebase.firestore.Query
 import java.lang.StringBuilder
 
@@ -64,8 +64,8 @@ class Filters {
 
     fun getOrderDescription(context: Context): String {
         return when (sortBy) {
-            MedsData.FIELD_NAME -> context.getString(R.string.sorted_by_medication_name)
-            MedsData.FIELD_ID -> context.getString(R.string.sorted_by_medication_id)
+            MedicineData.FIELD_ITEM_NAME_FB -> context.getString(R.string.sorted_by_medication_name)
+            MedicineData.FIELD_MEDICINE_ID_FB -> context.getString(R.string.sorted_by_medication_id)
             else -> context.getString(R.string.sorted_by_recently_update)
         }
     }
@@ -74,7 +74,7 @@ class Filters {
         val default: Filters
             get(){
                 val filters = Filters()
-                filters.sortBy = MedsData.FIELD_NAME
+                filters.sortBy = MedicineData.FIELD_ITEM_NAME_FB
                 filters.sortDirection = Query.Direction.ASCENDING
 
                 return filters

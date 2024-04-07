@@ -15,7 +15,7 @@ import java.util.Locale
 open class AlarmAdapter(query: Query, private val onAlarmChangedListener: OnAlarmChangedListener) :
     FireStoreAdapter<AlarmAdapter.ViewHolder>(query){
 
-    class ViewHolder(val binding: ItemRecyclerTimeBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemRecyclerTimeBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(snapshot: DocumentSnapshot, listener: OnAlarmChangedListener){
             val alarm = snapshot.toObject<Alarm>() ?: return
 

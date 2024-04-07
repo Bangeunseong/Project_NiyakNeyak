@@ -13,6 +13,7 @@ data class UserAccount(
     var password: String? = null,
     var name: String? = null,
     var birth: String? = null,
+    var gender: String? = null,
     var phoneNum: String? = null){
 
     companion object{

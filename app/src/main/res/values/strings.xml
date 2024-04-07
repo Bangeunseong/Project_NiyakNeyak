@@ -51,12 +51,15 @@
     <string name="dialog_modify_form_title">Change Information</string>
     <string name="dialog_add_form_submit">Save</string>
     <string name="dialog_add_form_cancel">Cancel</string>
-    <string name="dialog_add_form_meds_name">Type Medication Name</string>
+    <string name="dialog_add_form_meds_name">Click button to search medicine</string>
     <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
     <string name="dialog_add_form_meds_daily_amount">Type Daily Amount of Pills</string>
     <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
     <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
     <string name="dialog_add_form_meds_timer">Click here to Add Timer</string>
+
+    <string name="dialog_search_form_meds_name">Type Medicine Name</string>
+
     <string name="dialog_meds_time_title">Medication Cycle</string>
     <string name="dialog_meds_time_sw_morning_title">Morning</string>
     <string name="dialog_meds_time_sw_afternoon_title">Afternoon</string>
@@ -100,7 +103,6 @@
     <string name="alarm_clock_png">ic_alarm_purple</string>
 
 
-
     <!-- Check Attributes -->
     <string name="check_rcv_ListIntro">
         Today, there are no medications to consume!&#10;
@@ -116,4 +118,8 @@
     <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
+    <string name="category">Category :</string>
+    <string name="dialog_search_loading_text">Loading</string>
+    <string name="meds_name_search_btn_text">Search your own medicine</string>
+    <string name="search_result_submit_text">submit</string>
 </resources>

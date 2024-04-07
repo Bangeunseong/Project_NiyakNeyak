@@ -20,7 +20,7 @@ import java.util.Locale
 open class AlarmSelectionAdapter(query: Query, private val medsID: String?, private val onCheckedAlarmListener: OnCheckedAlarmListener) :
     FireStoreAdapter<AlarmSelectionAdapter.ViewHolder>(query) {
 
-    class ViewHolder(val binding: ItemRecyclerMedsTimeSelectionBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemRecyclerMedsTimeSelectionBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(snapshot: DocumentSnapshot, medsID: String?, onCheckedAlarmListener: OnCheckedAlarmListener) {
             val alarm = snapshot.toObject<Alarm>() ?: return
 
