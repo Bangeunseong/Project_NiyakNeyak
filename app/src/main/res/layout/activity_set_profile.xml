@@ -46,7 +46,7 @@
                     android:text="이름" />
 
                 <EditText
-                    android:id="@+id/editTextText"
+                    android:id="@+id/editTextName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -71,7 +71,7 @@
                     android:text="나이" />
 
                 <EditText
-                    android:id="@+id/editTextText2"
+                    android:id="@+id/editTextAge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -119,14 +119,14 @@
                 app:layout_constraintTop_toBottomOf="@id/gender_settings"
                 app:layout_constraintEnd_toEndOf="parent">
                 <Button
-                    android:id="@+id/back_button"
+                    android:id="@+id/cancel_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="30dp"
                     android:text="취소"/>
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/item_modify_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="수정하기"/>

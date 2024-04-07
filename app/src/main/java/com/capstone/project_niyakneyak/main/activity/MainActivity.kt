@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_search -> {
+            R.id.nav_search -> { // 수정사항
                 val alertDialog = AlertDialog.Builder(this)
                     .setTitle("Warning!")
                     .setMessage("Do you really want to sign out?")
