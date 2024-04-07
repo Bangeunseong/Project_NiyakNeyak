@@ -43,7 +43,6 @@ android {
 
 dependencies {
     val workVersion = "2.9.0"
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -55,6 +54,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-service:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
+    // image URL fetch dependencies
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+
     // firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
@@ -62,6 +65,7 @@ dependencies {
 
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // navigation dependencies
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")

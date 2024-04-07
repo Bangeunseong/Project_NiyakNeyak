@@ -5,7 +5,7 @@
     android:id="@+id/check_list_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/item_recycler_bg_trinary">
+    android:background="@drawable/item_recycler_bg_ternary">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/check_title_layout"
