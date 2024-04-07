@@ -24,6 +24,13 @@
             app:exitAnim="@anim/slide_fade_out"
             app:popEnterAnim="@anim/slide_fade_in"
             app:popExitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_mainPageFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_fade_out"
+            app:popEnterAnim="@anim/slide_fade_in"
+            app:popExitAnim="@anim/slide_out_left"/>
     </fragment>
     <fragment
         android:id="@+id/alarmListFragment"
@@ -44,6 +51,13 @@
             app:exitAnim="@anim/slide_fade_out"
             app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_fade_in"/>
+        <action
+            android:id="@+id/action_alarmListFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_fade_out"
+            app:popEnterAnim="@anim/slide_fade_in"
+            app:popExitAnim="@anim/slide_out_left"/>
     </fragment>
     <fragment
         android:id="@+id/checkListFragment"
@@ -60,6 +74,40 @@
         <action
             android:id="@+id/action_checkListFragment_to_mainPageFragment"
             app:destination="@id/mainPageFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_fade_out"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_fade_in"/>
+        <action
+            android:id="@+id/action_checkListFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_fade_out"
+            app:popEnterAnim="@anim/slide_fade_in"
+            app:popExitAnim="@anim/slide_out_left"/>
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.capstone.project_niyakneyak.main.fragment.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_fade_out"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_fade_in"/>
+        <action
+            android:id="@+id/action_settingFragment_to_alarmListFragment"
+            app:destination="@id/alarmListFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_fade_out"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_fade_in"/>
+        <action
+            android:id="@+id/action_settingFragment_to_checkListFragment"
+            app:destination="@id/checkListFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_fade_out"
             app:popEnterAnim="@anim/slide_out_right"
