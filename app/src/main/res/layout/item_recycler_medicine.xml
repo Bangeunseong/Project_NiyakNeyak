@@ -35,9 +35,9 @@
         android:paddingEnd="0dp"
         android:text="Name: "
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/medicine_category"
         app:layout_constraintStart_toEndOf="@id/medicine_img"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/radioButton"
         app:layout_constraintVertical_bias="0.02"/>
 
     <TextView
@@ -47,10 +47,10 @@
         android:paddingStart="10dp"
         android:paddingEnd="0dp"
         android:text="Category: "
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/medicine_name"
+        app:layout_constraintBottom_toTopOf="@id/medicine_entp"
         app:layout_constraintStart_toEndOf="@id/medicine_img"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/radioButton"
         app:layout_constraintVertical_bias="0.34"/>
 
     <TextView
@@ -60,10 +60,10 @@
         android:paddingStart="10dp"
         android:paddingEnd="0dp"
         android:text="Manufacturer: "
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/medicine_category"
+        app:layout_constraintBottom_toTopOf="@id/medicine_mtr"
         app:layout_constraintStart_toEndOf="@id/medicine_img"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/radioButton"
         app:layout_constraintVertical_bias="0.66"/>
 
     <TextView
@@ -73,10 +73,10 @@
         android:paddingStart="10dp"
         android:paddingEnd="0dp"
         android:text="Major Ingredient: "
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/medicine_category"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/medicine_img"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/radioButton"
         app:layout_constraintVertical_bias="0.98"/>
 
     <RadioButton

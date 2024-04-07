@@ -142,6 +142,7 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         _apiFunctions = null
         adapter = null
         if (ioScope.isActive) ioScope.cancel()
+        if(mainScope.isActive) mainScope.cancel()
     }
 
     // Controlling Data flows

@@ -15,6 +15,7 @@
         android:queryHint="@string/dialog_search_form_meds_name"
         android:background="@drawable/item_search_view_bg_primary"
         android:paddingHorizontal="5dp"
+        android:paddingBottom="2dp"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/search_result_layout">

@@ -19,6 +19,7 @@ open class MedicineListAdapter(private var jsonArray: JSONArray, private val onC
             binding.medicineCategory.text = jsonObject.get(MedicineData.FIELD_PRDUCT_TYPE).toString()
             binding.medicineEntp.text = jsonObject.get(MedicineData.FIELD_ENPT_NAME).toString()
             binding.medicineMtr.text = jsonObject.get(MedicineData.FIELD_ITEM_INGR_NAME).toString()
+            binding.medicineImg.contentDescription = jsonObject.get(MedicineData.FIELD_ITEM_NAME).toString()
             Glide.with(itemView).load(jsonObject.get(MedicineData.FIELD_BIG_PRDT_IMG_URL).toString()).into(binding.medicineImg)
         }
     }
