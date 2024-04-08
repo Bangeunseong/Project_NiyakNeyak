@@ -63,6 +63,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".main.fragment.SetProfileFragment">
+        </activity>
 
         <provider
             android:name="androidx.startup.InitializationProvider"

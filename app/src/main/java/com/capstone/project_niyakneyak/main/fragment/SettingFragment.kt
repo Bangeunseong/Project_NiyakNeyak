@@ -52,7 +52,7 @@ class SettingFragment: Fragment() {
                 }
         }
 
-        binding.advancedButton.setOnClickListener {
+        binding.appSettings.setOnClickListener {
             val dialog = DialogFragment()
             dialog.show(parentFragmentManager, "AdvancedSettingsDialog")
         }
@@ -62,7 +62,7 @@ class SettingFragment: Fragment() {
                 if (it.exists()) {
                     val userAccount = it.toObject<UserAccount>()
                     binding.yourCurrentNameTextview.text = userAccount!!.name
-                    binding.yourCurrentGenderTextview.text = userAccount?.gender ?: "성별 미설정"
+                    //binding.yourCurrentGenderTextview.text = userAccount?.gender ?: "성별 미설정"
                     Log.d(TAG, "YourCurrentNameTextView: ${userAccount.name}")
                 } else {
                     Log.d(TAG, "No such document")
