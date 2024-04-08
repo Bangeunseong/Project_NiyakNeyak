@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerMedicineBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedSearchItemListener
@@ -20,7 +21,7 @@ open class MedicineListAdapter(private var jsonArray: JSONArray, private val onC
             binding.medicineEntp.text = jsonObject.get(MedicineData.FIELD_ENPT_NAME).toString()
             binding.medicineMtr.text = jsonObject.get(MedicineData.FIELD_ITEM_INGR_NAME).toString()
             binding.medicineImg.contentDescription = jsonObject.get(MedicineData.FIELD_ITEM_NAME).toString()
-            Glide.with(itemView).load(jsonObject.get(MedicineData.FIELD_BIG_PRDT_IMG_URL).toString()).into(binding.medicineImg)
+            Glide.with(itemView).load(jsonObject.get(MedicineData.FIELD_BIG_PRDT_IMG_URL).toString()).placeholder(R.drawable.baseline_medication_liquid_24).into(binding.medicineImg)
         }
     }
 

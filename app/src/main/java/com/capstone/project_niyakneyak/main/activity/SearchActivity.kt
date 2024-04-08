@@ -53,8 +53,10 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         setContentView(binding.root)
 
         // Observe Data changes of radio button selected position
+        //TODO: Add SearchMore button onClickListener function
         searchQueryObserver.observe(this){
             binding.loadingLayout.visibility = View.VISIBLE
+            binding.searchResultNotFound.visibility = View.GONE
             ioScope.launch{
                 jsonObject = performDataFetchTaskAsync(it!!)
                 Log.w(TAG, jsonObject.toString())
@@ -66,10 +68,23 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
                 if(msg == "Success"){
                     try{
                         val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
+                        binding.searchMoreBtn.text = String.format("Search More(${jsonArray.length() - 10})")
                         adapter!!.setJSONArray(jsonArray)
-                    }catch (exception: JSONException){ Log.w(TAG, "Error Occurred: $it")}
+                    }catch (exception: JSONException){
+                        Log.w(TAG, "Error Occurred: $it")
+                        adapter!!.setJSONArray(JSONArray())
+                    }
                 } else Log.w(TAG, "Item not Found!")
                 binding.loadingLayout.visibility = View.GONE
+
+                if(adapter!!.itemCount < 1) {
+                    binding.searchResultAdapterLayout.visibility = View.GONE
+                    binding.searchResultNotFound.visibility = View.VISIBLE
+                }
+                else {
+                    binding.searchResultAdapterLayout.visibility = View.VISIBLE
+                    binding.searchResultNotFound.visibility = View.GONE
+                }
             }
         }
         selectedPositionObserver.observe(this) {
@@ -141,7 +156,7 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         _binding = null
         _apiFunctions = null
         adapter = null
-        if (ioScope.isActive) ioScope.cancel()
+        if(ioScope.isActive) ioScope.cancel()
         if(mainScope.isActive) mainScope.cancel()
     }
 
