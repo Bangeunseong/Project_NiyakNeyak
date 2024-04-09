@@ -44,17 +44,22 @@
             android:exported="false"
             android:theme="@style/Theme.Design.NoActionBar"/>
         <activity android:name=".main.activity.SearchActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.SetProfileActivity"
             android:exported="false" />
         <activity android:name=".main.activity.AlarmSettingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.DataSettingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".login.activity.RegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".login.activity.LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.MainActivity"
             android:exported="true">
             <intent-filter>
