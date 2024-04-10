@@ -6,11 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.capstone.project_niyakneyak.main.activity.SetProfileActivity
+import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +23,7 @@ class SettingFragment: Fragment() {
     private lateinit var binding: FragmentSettingBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
@@ -53,9 +54,12 @@ class SettingFragment: Fragment() {
         }
 
         binding.appSettings.setOnClickListener {
-            val dialog = DialogFragment()
-            dialog.show(parentFragmentManager, "AdvancedSettingsDialog")
+            val intentSetting = Intent(activity, AppSettingActivity::class.java).apply {
+
+            }
+            startActivity(intentSetting)
         }
+
 
         firestore.collection("users").document(firebaseAuth.currentUser!!.uid).get()
             .addOnSuccessListener {
