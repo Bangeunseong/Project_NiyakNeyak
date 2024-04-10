@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.medication_model.Container
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
@@ -16,6 +16,7 @@ import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.etc.OpenApiFunctions
 import com.capstone.project_niyakneyak.main.listener.OnCheckedSearchItemListener
+import com.capstone.project_niyakneyak.main.viewmodel.SearchActivityViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -32,14 +33,14 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
     private val binding get() = _binding!!
     private var _apiFunctions: OpenApiFunctions? = null
     private val apiFunctions get() = _apiFunctions!!
+    private var _viewModel: SearchActivityViewModel? = null
+    private val viewModel get() = _viewModel!!
     private var adapter: MedicineListAdapter? = null
     private var jsonObject: JSONObject? = null
 
     // Using Coroutine for data fetch process in background thread
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private val mainScope = CoroutineScope(Dispatchers.Main)
-    private val selectedPositionObserver = MutableLiveData<Int>()
-    private val searchQueryObserver = MutableLiveData<String?>()
     private val channel = Channel<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,31 +49,59 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         // Setting View Binding, Api Function class, and Empty Data adapter
         _binding = ActivitySearchBinding.inflate(layoutInflater)
         _apiFunctions = OpenApiFunctions()
+        _viewModel = ViewModelProvider(this)[SearchActivityViewModel::class.java]
         adapter = MedicineListAdapter(JSONArray(), this)
-        selectedPositionObserver.value = -1
         setContentView(binding.root)
 
         // Observe Data changes of radio button selected position
-        searchQueryObserver.observe(this){
+        viewModel.searchQueryObserver.observe(this){
+            // Refresh Position LiveData and Page position
+            viewModel.currentPage = 1
+            viewModel.selectedPositionObserver.value = -1
+
+            // Show Loading Layout and Hide Result Page
             binding.loadingLayout.visibility = View.VISIBLE
+            binding.searchResultNotFound.visibility = View.GONE
+
+            // Start Fetching Data by using API function
             ioScope.launch{
-                jsonObject = performDataFetchTaskAsync(it!!)
+                jsonObject = performDataFetchTaskAsync(it!!, viewModel.currentPage, viewModel.currentNumOfRows)
                 Log.w(TAG, jsonObject.toString())
                 if(jsonObject != null) channel.send("Success")
                 else channel.send("Failed")
             }
+
+            // Start Setting Adapter View and Refresh page count
             mainScope.launch {
                 val msg = channel.receive()
                 if(msg == "Success"){
                     try{
                         val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
+                        viewModel.totalItemCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
+                        binding.searchCurrentPage.text = String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
                         adapter!!.setJSONArray(jsonArray)
-                    }catch (exception: JSONException){ Log.w(TAG, "Error Occurred: $it")}
-                } else Log.w(TAG, "Item not Found!")
+                    }catch (exception: JSONException){
+                        Log.w(TAG, "Error Occurred: $it")
+                        adapter!!.setJSONArray(JSONArray())
+                    }
+                } else Log.w(TAG, "Items not Found!")
+
+                // Change Layout Statement
                 binding.loadingLayout.visibility = View.GONE
+                if(adapter!!.itemCount < 1) {
+                    binding.searchResultAdapterLayout.visibility = View.GONE
+                    binding.searchPageConvertBtnLayout.visibility = View.GONE
+                    binding.searchResultNotFound.visibility = View.VISIBLE
+                }
+                else {
+                    binding.searchResultAdapterLayout.visibility = View.VISIBLE
+                    binding.searchPageConvertBtnLayout.visibility = View.VISIBLE
+                    binding.searchResultNotFound.visibility = View.GONE
+                }
             }
         }
-        selectedPositionObserver.observe(this) {
+
+        viewModel.selectedPositionObserver.observe(this) {
             binding.submit.isEnabled = it != -1
         }
 
@@ -90,10 +119,86 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if(!TextUtils.isEmpty(query))
-                    searchQueryObserver.value = query
+                    viewModel.searchQueryObserver.value = query
                 return true
             }
         })
+        binding.searchPrevPageBtn.setOnClickListener {
+            if(viewModel.currentPage <= 1) return@setOnClickListener
+
+            // Refresh Position LiveData and move page position backwards
+            viewModel.currentPage--
+            viewModel.selectedPositionObserver.value = -1
+
+            // Show Loading Layout and Hide Result Page
+            binding.loadingLayout.visibility = View.VISIBLE
+            binding.searchResultNotFound.visibility = View.GONE
+
+            // Start Fetching Data by using API function
+            ioScope.launch{
+                jsonObject = performDataFetchTaskAsync(viewModel.searchQueryObserver.value!!, viewModel.currentPage, viewModel.currentNumOfRows)
+                Log.w(TAG, jsonObject.toString())
+                if(jsonObject != null) channel.send("Success")
+                else channel.send("Failed")
+            }
+
+            // Start Setting Adapter View and Refresh page count
+            mainScope.launch {
+                val msg = channel.receive()
+                if(msg == "Success"){
+                    try{
+                        val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
+                        binding.searchCurrentPage.text = String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
+                        adapter!!.setJSONArray(jsonArray)
+                    }catch (exception: JSONException){
+                        Log.w(TAG, "Error Occurred: $it")
+                        adapter!!.setJSONArray(JSONArray())
+                    }
+                } else Log.w(TAG, "Items not Found!")
+
+                // Change Layout Statement
+                binding.loadingLayout.visibility = View.GONE
+            }
+        }
+
+        binding.searchNextPageBtn.setOnClickListener {
+            if(viewModel.currentPage >= viewModel.remainPage) return@setOnClickListener
+
+            // Refresh Position LiveData and move page position backwards
+            viewModel.currentPage++
+            viewModel.selectedPositionObserver.value = -1
+
+            // Show Loading Layout and Hide Result Page
+            binding.loadingLayout.visibility = View.VISIBLE
+            binding.searchResultNotFound.visibility = View.GONE
+
+            // Start Fetching Data by using API function
+            ioScope.launch{
+                jsonObject = performDataFetchTaskAsync(viewModel.searchQueryObserver.value!!, viewModel.currentPage, viewModel.currentNumOfRows)
+                Log.w(TAG, jsonObject.toString())
+                if(jsonObject != null) channel.send("Success")
+                else channel.send("Failed")
+            }
+
+            // Start Setting Adapter View and Refresh page count
+            mainScope.launch {
+                val msg = channel.receive()
+                if(msg == "Success"){
+                    try{
+                        val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
+                        binding.searchCurrentPage.text = String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
+                        adapter!!.setJSONArray(jsonArray)
+                    }catch (exception: JSONException){
+                        Log.w(TAG, "Error Occurred: $it")
+                        adapter!!.setJSONArray(JSONArray())
+                    }
+                } else Log.w(TAG, "Items not Found!")
+
+                // Change Layout Statement
+                binding.loadingLayout.visibility = View.GONE
+            }
+        }
+
         binding.submit.setOnClickListener {
             // Exception Handling
             if(jsonObject == null){
@@ -102,7 +207,7 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
             }
 
             val bundle = Bundle()
-            val data = jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(selectedPositionObserver.value!!)
+            val data = jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(viewModel.selectedPositionObserver.value!!)
             val container = Container(
                 data.getString(MedicineData.FIELD_ITEM_SEQ),
                 data.getString(MedicineData.FIELD_ITEM_NAME),
@@ -141,20 +246,22 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         _binding = null
         _apiFunctions = null
         adapter = null
-        if (ioScope.isActive) ioScope.cancel()
+        _viewModel = null
+        if(ioScope.isActive) ioScope.cancel()
+        if(mainScope.isActive) mainScope.cancel()
     }
 
     // Controlling Data flows
-    private suspend fun performDataFetchTaskAsync(query: String): JSONObject? =
+    private suspend fun performDataFetchTaskAsync(query: String, pageNo: Int?, numOfRows: Int?): JSONObject? =
         withContext(Dispatchers.IO) {
-            return@withContext apiFunctions.getPrdtMtrDetails(query, null, null)
+            return@withContext apiFunctions.getPrdtMtrDetails(query, pageNo, numOfRows)
         }
 
     override fun onItemClicked(prevPos: Int, nextPos: Int) {
         if(prevPos != -1)
             adapter!!.notifyItemChanged(prevPos)
         adapter!!.notifyItemChanged(nextPos)
-        selectedPositionObserver.value = nextPos
+        viewModel.selectedPositionObserver.value = nextPos
     }
 
     companion object{

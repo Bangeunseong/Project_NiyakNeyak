@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
@@ -67,6 +68,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    internal inner class DestinationChangedListener : NavController.OnDestinationChangedListener{
+        override fun onDestinationChanged(
+            controller: NavController,
+            destination: NavDestination,
+            arguments: Bundle?
+        ) {
+            when(destination.id){
+                R.id.mainPageFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_main).isChecked = true
+                R.id.alarmListFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_time).isChecked = true
+                R.id.checkListFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_time_check).isChecked = true
+                R.id.settingFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_setting).isChecked = true
+            }
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -80,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
         assert(navHostFragment != null)
         navController = navHostFragment!!.navController
+        navController!!.addOnDestinationChangedListener(DestinationChangedListener())
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
     }
 
@@ -109,5 +127,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController!!.navigateUp()
     }
 }

@@ -122,4 +122,5 @@
     <string name="dialog_search_loading_text">Loading</string>
     <string name="meds_name_search_btn_text">Search your own medicine</string>
     <string name="search_result_submit_text">submit</string>
+    <string name="search_result_not_fount_text">Cannot find certain Medicine!</string>
 </resources>
