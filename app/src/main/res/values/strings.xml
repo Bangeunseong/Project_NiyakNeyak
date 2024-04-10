@@ -111,10 +111,11 @@
 
     <!-- Global Attributes -->
     <string name="dayNightTheme">DayNightTheme</string>
+    <string name="all_category">All Categories</string>
     <string name="all_medications">All Medications</string>
     <string name="all_manufacturers">All Manufacturers</string>
     <string name="sorted_by_medication_name">Sorted by Medication Name</string>
-    <string name="sorted_by_medication_id">Sorted by Medicine ID</string>
+    <string name="sorted_by_medication_entp">Sorted by Medicine Manufacturer</string>
     <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
@@ -123,4 +124,7 @@
     <string name="meds_name_search_btn_text">Search your own medicine</string>
     <string name="search_result_submit_text">submit</string>
     <string name="search_result_not_fount_text">Cannot find certain Medicine!</string>
+    <string name="action_main_filter">filter</string>
+    <string name="action_main_sort">sort</string>
+    <string name="sort_direction">Sort Direction:</string>
 </resources>

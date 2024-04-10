@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_search -> {
+            R.id.nav_setting -> {
                 val alertDialog = AlertDialog.Builder(this)
                     .setTitle("Warning!")
                     .setMessage("Do you really want to sign out?")
@@ -121,9 +121,6 @@ class MainActivity : AppCompatActivity() {
                         startActivity(intent)
                     }.setNegativeButton("Cancel"){ _: DialogInterface?, _: Int -> }
                 alertDialog.create().show()
-            }
-            R.id.nav_setting -> {
-
             }
         }
         return super.onOptionsItemSelected(item)
