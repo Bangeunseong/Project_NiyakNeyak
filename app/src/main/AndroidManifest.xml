@@ -45,7 +45,11 @@
             android:theme="@style/Theme.Design.NoActionBar"/>
         <activity android:name=".main.activity.SearchActivity"
             android:exported="false" />
+        <activity android:name=".main.activity.OpenProfileActivity"
+            android:exported="false" />
         <activity android:name=".main.activity.SetProfileActivity"
+            android:exported="false" />
+        <activity android:name=".main.activity.AppSettingActivity"
             android:exported="false" />
         <activity android:name=".main.activity.AlarmSettingActivity"
             android:exported="false" />
@@ -63,8 +67,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.fragment.SetProfileFragment">
-        </activity>
+
 
         <provider
             android:name="androidx.startup.InitializationProvider"
