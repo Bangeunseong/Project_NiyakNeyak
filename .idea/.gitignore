@@ -7,3 +7,6 @@
 /misc.xml
 # GitHub Copilot persisted chat sessions
 /copilot/chatSessions
+build.gradle.kts
+deploymentTargetDropDown.xml
+migrations.xml
