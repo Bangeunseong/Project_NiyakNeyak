@@ -40,6 +40,12 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".main.activity.AppSettingActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".main.activity.OpenProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".alarm.activity.RingActivity"
             android:exported="false"
             android:theme="@style/Theme.Design.NoActionBar"/>
