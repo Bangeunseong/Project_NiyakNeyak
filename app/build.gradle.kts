@@ -40,8 +40,15 @@ android {
         viewBinding = true
     }
 }
+ksp {
+    arg("ksp.version", "1.9.23-1.0.0") // 이 부분을 새 버전으로 업데이트하세요.
+    
+}
 
 dependencies {
+
+    implementation("androidx.navigation:navigation-fragment:2.7.7")
+    implementation("androidx.navigation:navigation-ui:2.7.7")
     val workVersion = "2.9.0"
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

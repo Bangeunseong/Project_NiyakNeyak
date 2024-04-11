@@ -11,6 +11,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
         <!-- ConstraintLayout을 사용하여 하위 요소 배치 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -31,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:paddingBottom="5sp"
-                    android:text="Account Modification"
+                    android:text="Account Information"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -72,8 +74,8 @@
                     android:text="이름        "
                     android:textSize="20sp" />
 
-                <EditText
-                    android:id="@+id/editTextName"
+                <TextView
+                    android:id="@+id/TextName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -98,7 +100,7 @@
                     android:text="나이        "
                     android:textSize="20sp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/editTextAge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -123,25 +125,15 @@
                     android:paddingRight="10sp"
                     android:text="성별        "
                     android:textSize="20sp" />
-
-                <RadioGroup
-                    android:id="@+id/gender_radio_group"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/GenderTextView"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="남성"
+                    android:textAlignment="center" />
 
-                    <RadioButton
-                        android:id="@+id/male_radio_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="남성        " />
-
-                    <RadioButton
-                        android:id="@+id/female_radio_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="여성" />
-                </RadioGroup>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/ID_settings"
@@ -158,8 +150,8 @@
                     android:paddingRight="10sp"
                     android:text="아이디   "
                     android:textSize="20sp" />
-                <EditText
-                    android:id="@+id/editTextID"
+                <TextView
+                    android:id="@+id/IDTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -185,8 +177,8 @@
                     android:paddingRight="10sp"
                     android:text="비밀번호"
                     android:textSize="20sp" />
-                <EditText
-                    android:id="@+id/editTextPW"
+                <TextView
+                    android:id="@+id/PWTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -211,8 +203,8 @@
                     android:paddingRight="10sp"
                     android:text="전화번호"
                     android:textSize="20sp" />
-                <EditText
-                    android:id="@+id/editTextPN"
+                <TextView
+                    android:id="@+id/PNTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -237,8 +229,8 @@
                     android:paddingRight="10sp"
                     android:text="생년월일"
                     android:textSize="20sp" />
-                <EditText
-                    android:id="@+id/editTextBD"
+                <TextView
+                    android:id="@+id/BDTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -251,7 +243,7 @@
 
 
             <LinearLayout
-                android:id="@+id/profile_settings4"
+                android:id="@+id/logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -261,19 +253,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/BirthDay_settings">
                 <Button
-                    android:id="@+id/cancel_button"
+                    android:id="@+id/logout_button"
                     android:layout_width="120sp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
-                    android:text="취소" />
+                    android:text="로그아웃" />
 
                 <Button
-                    android:id="@+id/item_modify_button"
+                    android:id="@+id/modify_button"
                     android:layout_width="120sp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
                     android:text="수정하기" />
             </LinearLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

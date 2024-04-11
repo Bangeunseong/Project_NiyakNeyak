@@ -105,7 +105,30 @@
             app:layout_constraintEnd_toEndOf="@+id/et_birth"
             app:layout_constraintStart_toStartOf="@+id/et_birth"
             app:layout_constraintTop_toBottomOf="@+id/et_birth"
-            app:layout_constraintBottom_toTopOf="@id/btn_register"/>
+            app:layout_constraintBottom_toTopOf="@id/gender_radio_group"/>
+
+        <RadioGroup
+            android:id="@+id/gender_radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/btn_register"
+            app:layout_constraintEnd_toEndOf="@id/et_phoneNum"
+            app:layout_constraintStart_toStartOf="@id/et_phoneNum"
+            app:layout_constraintTop_toBottomOf="@id/et_phoneNum">
+
+            <RadioButton
+                android:id="@+id/radio_male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="남성" />
+
+            <RadioButton
+                android:id="@+id/radio_female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="여성" />
+        </RadioGroup>
 
         <Button
             android:id="@+id/btn_register"
@@ -114,9 +137,10 @@
             android:layout_marginTop="40dp"
             android:text="등록"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/et_phoneNum"
-            app:layout_constraintStart_toStartOf="@+id/et_phoneNum"
-            app:layout_constraintTop_toBottomOf="@+id/et_phoneNum"/>
+            app:layout_constraintEnd_toEndOf="@+id/gender_radio_group"
+            app:layout_constraintStart_toStartOf="@+id/gender_radio_group"
+            app:layout_constraintTop_toBottomOf="@+id/gender_radio_group"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

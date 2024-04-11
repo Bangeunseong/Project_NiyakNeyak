@@ -5,6 +5,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 /**
  * 사용자 계정 정보 모델 클래스
  */
+// 파이어베이스에서는 빈 생성자를 만들어줘야 한다. 모델클래스를 통해서 가져오는데 빈 생성자 반드시 필요하다.
 @IgnoreExtraProperties
 data class UserAccount(
     var idToken: String? = null,
@@ -12,6 +13,7 @@ data class UserAccount(
     var password: String? = null,
     var name: String? = null,
     var birth: String? = null,
+    var gender: String? = null,
     var phoneNum: String? = null){
 
     companion object{
