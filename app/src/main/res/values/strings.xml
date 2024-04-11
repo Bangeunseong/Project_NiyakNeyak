@@ -119,12 +119,12 @@
     <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
-    <string name="category">Category :</string>
+    <string name="sort_by">Sort By :</string>
     <string name="dialog_search_loading_text">Loading</string>
     <string name="meds_name_search_btn_text">Search your own medicine</string>
     <string name="search_result_submit_text">submit</string>
     <string name="search_result_not_fount_text">Cannot find certain Medicine!</string>
-    <string name="action_main_filter">filter</string>
-    <string name="action_main_sort">sort</string>
+    <string name="action_main_filter_option">Filter Option</string>
+    <string name="action_main_search_option">Search Option</string>
     <string name="sort_direction">Sort Direction:</string>
 </resources>

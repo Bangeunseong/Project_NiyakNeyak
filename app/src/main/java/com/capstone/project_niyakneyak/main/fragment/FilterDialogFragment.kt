@@ -12,6 +12,9 @@ import com.capstone.project_niyakneyak.databinding.DialogFragmentFilterBinding
 import com.capstone.project_niyakneyak.main.etc.Filters
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.firestore.Query
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class FilterDialogFragment: DialogFragment() {
     // Interface for data transfer
@@ -25,7 +28,7 @@ class FilterDialogFragment: DialogFragment() {
     private val binding get() = _binding!!
 
     // Field for filter parameters
-    private val selectedCategory: String? get() {
+    private val selectedSortBy: String? get() {
         val selected = binding.spinner.selectedItem as String
         return if(getString(R.string.all_category) == selected) null else selected
     }
@@ -46,25 +49,41 @@ class FilterDialogFragment: DialogFragment() {
     // Filters object
     private val filters: Filters get() {
         val filters = Filters()
+        filters.sortBy = selectedSortBy
+        filters.sortDirection = selectedSortDirection
+        filters.startDate = selectedStartDate
+        filters.endDate = selectedEndDate
         return filters
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogFragmentFilterBinding.inflate(inflater, container, false)
         binding.ok.setOnClickListener { filterListener?.onFilter(filters) }
         binding.cancel.setOnClickListener { dismiss() }
 
-        //TODO: Not yet Implemented
         binding.changeStartDateBtn.setOnClickListener {
-            val datePickerBuilder = MaterialDatePicker.Builder.datePicker()
+            val datePickerBuilder = MaterialDatePicker.Builder
+                .datePicker()
+                .setTitleText("Select Start Date")
+            val datePicker = datePickerBuilder.build()
+            datePicker.show(parentFragmentManager, "FILTER_DATE_PICKER")
+            datePicker.addOnPositiveButtonClickListener {
+                val date = Date(it)
+                binding.startDateTime.setText(SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(date))
+            }
+            datePicker.addOnNegativeButtonClickListener {  }
         }
-        //TODO: Not yet Implemented
         binding.changeEndDateBtn.setOnClickListener {
-
+            val datePickerBuilder = MaterialDatePicker.Builder
+                .datePicker()
+                .setTitleText("Select End Date")
+            val datePicker = datePickerBuilder.build()
+            datePicker.show(parentFragmentManager, "FILTER_DATE_PICKER")
+            datePicker.addOnPositiveButtonClickListener {
+                val date = Date(it)
+                binding.endDateTime.setText(SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(date))
+            }
+            datePicker.addOnNegativeButtonClickListener {  }
         }
 
         return binding.root

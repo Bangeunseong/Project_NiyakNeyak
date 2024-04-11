@@ -9,23 +9,17 @@ import java.lang.StringBuilder
 
 //TODO: Need Modification When data model changed!
 class Filters {
-    private var _category: String? = null
     private var _startDate: String? = null
     private var _endDate: String? = null
     private var _sortBy: String? = null
     private var _searchBy: String? = null
     private var _sortDirection: Query.Direction = Query.Direction.ASCENDING
 
-    var category set(value) {_category = value} get() = _category
     var startDate set(value) {_startDate = value} get() = _startDate
     var endDate set(value) {_endDate = value} get() = _endDate
     var searchBy set(value) {_searchBy = value} get() = _searchBy
     var sortBy set(value) {_sortBy = value} get() = _sortBy
     var sortDirection set(value) {_sortDirection = value} get() = _sortDirection
-
-    fun hasCategory(): Boolean{
-        return !TextUtils.isEmpty(category)
-    }
 
     fun hasStartDate(): Boolean{
         return !TextUtils.isEmpty(startDate)
@@ -46,15 +40,15 @@ class Filters {
     fun getSearchDescription(context: Context): String{
         val builder = StringBuilder()
 
-        if(category == null){
+        if(sortBy == null){
             builder.append("<b>")
             builder.append(context.getString(R.string.all_medications))
             builder.append("</b>")
         }
 
-        if(category != null) {
+        if(sortBy != null) {
             builder.append("<b>")
-            builder.append(category)
+            builder.append(sortBy)
             builder.append("</b>")
         }
 

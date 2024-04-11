@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -20,6 +22,7 @@ import com.capstone.project_niyakneyak.main.activity.DataSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.MedicationAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
+import com.capstone.project_niyakneyak.main.etc.Filters
 import com.capstone.project_niyakneyak.main.viewmodel.DataViewModel
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
 import com.google.android.material.snackbar.Snackbar
@@ -32,13 +35,16 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.firestore
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * This Fragment is used for showing Medication info. by using [DataFragment.adapter].
  * [DataFragment.adapter] will be set by using [MedicationAdapter]
  */
-class DataFragment : Fragment(), OnMedicationChangedListener {
+class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragment.FilterListener {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private var query: Query? = null
@@ -106,6 +112,12 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
             val intent = Intent(context, DataSettingActivity::class.java)
             startActivity(intent)
         }
+
+        binding.contentFilterOption.setOnClickListener {
+            val dialogFragment = FilterDialogFragment()
+            dialogFragment.setStyle(STYLE_NORMAL, R.style.DialogFragmentStyle)
+            dialogFragment.show(parentFragmentManager, "FILTER_DIALOG_FRAGMENT")
+        }
     }
 
     override fun onStart() {
@@ -171,7 +183,31 @@ class DataFragment : Fragment(), OnMedicationChangedListener {
         }
     }
 
+    override fun onFilter(filters: Filters) {
+        val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(MedicineData.COLLECTION_ID)
+        if(filters.hasSortBy()){
+            when(filters.sortBy){
+                MedicineData.FIELD_ITEM_NAME_FB->query.orderBy(MedicineData.FIELD_ITEM_NAME_FB, filters.sortDirection)
+                MedicineData.FIELD_ENPT_NAME_FB->query.orderBy(MedicineData.FIELD_ENPT_NAME_FB, filters.sortDirection)
+                MedicineData.FIELD_TIME_STAMP_FB->query.orderBy(MedicineData.FIELD_TIME_STAMP_FB)
+            }
+        }
+        if(filters.hasStartDate() && filters.hasEndDate()){
+            query.where(Filter.and(Filter.greaterThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.startDate)),
+                Filter.lessThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.endDate))))
+        }else if(filters.hasStartDate()){
+            query.where(Filter.greaterThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.startDate)))
+        }else if(filters.hasEndDate()){
+            Filter.lessThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.endDate))
+        }
+
+        adapter?.setQuery(query)
+    }
+
     companion object {
         private const val TAG = "DATA_FRAGMENT"
     }
+
+
 }

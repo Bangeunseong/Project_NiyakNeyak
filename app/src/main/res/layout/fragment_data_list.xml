@@ -20,14 +20,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/content_filter_option"/>
+            app:layout_constraintEnd_toStartOf="@id/content_search_option"/>
 
         <ImageButton
             android:id="@+id/content_filter_option"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@color/transparent"
-            android:contentDescription="@string/action_main_filter"
+            android:contentDescription="@string/action_main_filter_option"
             android:src="@drawable/baseline_filter_list_24"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -38,7 +38,7 @@
             android:id="@+id/content_search_option"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:contentDescription="@string/action_main_sort"
+            android:contentDescription="@string/action_main_search_option"
             android:src="@drawable/baseline_manage_search_24"
             android:background="@color/transparent"
             app:layout_constraintTop_toTopOf="parent"
