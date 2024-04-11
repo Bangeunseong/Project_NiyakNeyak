@@ -14,6 +14,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import com.capstone.project_niyakneyak.login.activity.LoginActivity
 
 class OpenProfileActivity : AppCompatActivity() {
 
@@ -29,6 +30,14 @@ class OpenProfileActivity : AppCompatActivity() {
                 putExtra(UserAccount.REPRESENT_KEY, idToken)
             }
             startActivity(intent)
+        }
+
+        val logoutButton = findViewById<Button>(R.id.logout_button)
+        logoutButton.setOnClickListener {
+            Firebase.auth.signOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
