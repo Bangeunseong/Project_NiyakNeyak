@@ -260,11 +260,11 @@
                     android:text="로그아웃" />
 
                 <Button
-                    android:id="@+id/deleteAccount_button"
+                    android:id="@+id/modify_button"
                     android:layout_width="120sp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
-                    android:text="회원탈퇴" />
+                    android:text="수정하기" />
             </LinearLayout>
 
 
