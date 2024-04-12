@@ -7,16 +7,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.databinding.ActivityAppSettingsBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
 class AppSettingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAppSettingsBinding
     private var auth: FirebaseAuth? = null
     private var user: FirebaseUser? = null
-    private lateinit var firestore: FirebaseFirestore // Firestore 인스턴스
+    private lateinit var firestore: FirebaseFirestore
 
     companion object {
         const val TAG = "AppSettingActivity"
@@ -28,8 +31,8 @@ class AppSettingActivity : AppCompatActivity() {
         binding = ActivityAppSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance() // Firebase Auth 인스턴스 초기화
-        firestore = FirebaseFirestore.getInstance() // Firestore 인스턴스 초기화
+        auth = Firebase.auth // Firebase Auth 초기화
+        firestore = Firebase.firestore // Firestore 초기화
         user = auth?.currentUser // 현재 사용자 가져오기
 
         binding.buttonWithdrawal.setOnClickListener {
@@ -41,6 +44,11 @@ class AppSettingActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("아니오", null)
                 .show()
+
+        }
+
+        binding.backButton.setOnClickListener {
+            finish()
         }
     }
 
@@ -61,6 +69,7 @@ class AppSettingActivity : AppCompatActivity() {
         user.delete().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.d(TAG, "FirebaseAuth user account deleted.")
+                auth?.signOut() // 사용자 삭제 후 로그아웃
                 // 회원 탈퇴 후 처리, 예를 들어 로그인 화면으로 이동
                 val intent = Intent(this, LoginActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
