@@ -13,7 +13,7 @@
         android:icon="@drawable/baseline_checklist_rtl_24"
         android:title="@string/toolbar_main_checklist"/>
     <item
-        android:id="@+id/menu_setting"
-        android:icon="@drawable/baseline_settings_24"
+        android:id="@+id/menu_account"
+        android:icon="@drawable/baseline_account_circle_24"
         android:title="@string/toolbar_main_settings"/>
 </menu>
