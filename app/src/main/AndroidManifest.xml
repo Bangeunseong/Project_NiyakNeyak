@@ -40,6 +40,9 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".login.activity.GoogleRegisterActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.AppSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
