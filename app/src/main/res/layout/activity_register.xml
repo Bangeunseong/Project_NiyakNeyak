@@ -96,7 +96,23 @@
             app:layout_constraintEnd_toEndOf="@+id/et_name"
             app:layout_constraintStart_toStartOf="@+id/et_name"
             app:layout_constraintTop_toBottomOf="@+id/et_name"
-            app:layout_constraintBottom_toTopOf="@id/et_phoneNum"/>
+            app:layout_constraintBottom_toTopOf="@id/tv_age"/>
+
+        <TextView
+            android:id="@+id/tv_age"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:drawablePadding="8dp"
+            android:ems="10"
+            android:gravity="center_vertical"
+            android:hint="나이"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:layout_constraintBottom_toTopOf="@id/et_phoneNum"
+            app:layout_constraintEnd_toEndOf="@+id/tv_birth"
+            app:layout_constraintStart_toStartOf="@+id/tv_birth"
+            app:layout_constraintTop_toBottomOf="@id/tv_birth" />
 
         <EditText
             android:id="@+id/et_phoneNum"
@@ -105,9 +121,9 @@
             android:ems="10"
             android:hint="전화번호"
             android:inputType="phone"
-            app:layout_constraintEnd_toEndOf="@+id/tv_birth"
-            app:layout_constraintStart_toStartOf="@+id/tv_birth"
-            app:layout_constraintTop_toBottomOf="@+id/tv_birth"
+            app:layout_constraintEnd_toEndOf="@+id/tv_age"
+            app:layout_constraintStart_toStartOf="@+id/tv_age"
+            app:layout_constraintTop_toBottomOf="@+id/tv_age"
             app:layout_constraintBottom_toTopOf="@id/gender_radio_group"/>
 
         <RadioGroup

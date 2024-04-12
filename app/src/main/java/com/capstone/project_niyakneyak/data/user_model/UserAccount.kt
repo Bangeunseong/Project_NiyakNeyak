@@ -14,7 +14,9 @@ data class UserAccount(
     var name: String? = null,
     var birth: String? = null,
     var gender: String? = null,
-    var phoneNum: String? = null){
+    var phoneNum: String? = null,
+    var age: Int? = null
+){
 
     companion object{
         const val REPRESENT_KEY = "USER"
