@@ -102,13 +102,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menu.add(0, 0, 0, R.string.action_menu_logout)
+        menuInflater.inflate(R.menu.menu_tool, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_search -> { // 수정사항
+
+            R.id.nav_setting -> {
                 val alertDialog = AlertDialog.Builder(this)
                     .setTitle("Warning!")
                     .setMessage("Do you really want to sign out?")
@@ -121,8 +122,6 @@ class MainActivity : AppCompatActivity() {
                         startActivity(intent)
                     }.setNegativeButton("Cancel"){ _: DialogInterface?, _: Int -> }
                 alertDialog.create().show()
-            }
-            R.id.nav_setting -> {
 
             }
         }
