@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.login.activity
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.widget.RadioButton
@@ -9,58 +10,60 @@ import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import java.util.Calendar
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var mFirebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
-    companion object{
+    companion object {
         private const val TAG = "REGISTER_ACTIVITY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Bind RegisterActivity Component
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        mFirebaseAuth = Firebase.auth
-        firestore = Firebase.firestore
+        // Initialize Firebase Auth and Firestore
+        mFirebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        // Set up click listener for the birth date TextView
+        binding.tvBirth.setOnClickListener {
+            showDatePickerDialog()
+        }
 
         binding.btnRegister.setOnClickListener {
-            val strEmail = binding.etEmail.text ?: null
-            val strPwd = binding.etPassword.text ?: null
+            val strEmail = binding.etEmail.text.toString().trim()
+            val strPwd = binding.etPassword.text.toString().trim()
 
-            if(strEmail != null && strPwd != null){
+            if (strEmail.isNotEmpty() && strPwd.isNotEmpty()) {
                 val selectedGenderId = binding.genderRadioGroup.checkedRadioButtonId
 
-                // 선택된 RadioButton의 텍스트(성별)를 가져옵니다.
-                val selectedGender = if(selectedGenderId != -1) {
+                val selectedGender = if (selectedGenderId != -1) {
                     findViewById<RadioButton>(selectedGenderId).text.toString()
                 } else {
-                    // 선택되지 않았을 경우, 기본값이나 오류 메시지를 설정할 수 있습니다.
                     "성별 선택 안됨"
                 }
-                mFirebaseAuth.createUserWithEmailAndPassword(strEmail.toString(), strPwd.toString())
+
+                // The birthDate value is directly taken from the TextView
+                val birthDate = binding.tvBirth.text.toString()
+
+                mFirebaseAuth.createUserWithEmailAndPassword(strEmail, strPwd)
                     .addOnSuccessListener(this@RegisterActivity) {
-                        // 인증객체에서 현재의 유저를 가져옴
                         val firebaseUser = mFirebaseAuth.currentUser
                         val account = UserAccount(
                             firebaseUser?.uid,
                             firebaseUser?.email,
-                            strPwd.toString(),
+                            strPwd,
                             binding.etName.text.toString(),
-                            binding.etBirth.text.toString(),
-                            gender = selectedGender,
+                            birthDate,
+                            selectedGender,
                             binding.etPhoneNum.text.toString()
-
                         )
 
-                        // 가입이 이루어졌을 때, 가입 정보를 데이터베이스에 저장
                         firestore.collection(UserAccount.COLLECTION_ID).document(account.idToken!!).set(account)
                             .addOnSuccessListener {
                                 setResult(RESULT_OK)
@@ -70,12 +73,28 @@ class RegisterActivity : AppCompatActivity() {
                                 Toast.makeText(this@RegisterActivity, "회원가입에 실패하셨습니다.", Toast.LENGTH_SHORT).show()
                                 Log.w(TAG, "Terrible Error Occurred!: $it")
                             }
-
                     }.addOnFailureListener {
                         Toast.makeText(this@RegisterActivity, "회원가입에 실패하셨습니다.", Toast.LENGTH_SHORT).show()
                         Log.w(TAG, "Terrible Error Occurred!: $it")
                     }
+            } else {
+                Toast.makeText(this@RegisterActivity, "이메일과 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun showDatePickerDialog() {
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+
+        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, selectedYear, selectedMonth, selectedDay ->
+            // Format and display the date in the TextView
+            val dateStr = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+            binding.tvBirth.text = dateStr
+        }, year, month, day)
+
+        dpd.show()
     }
 }
