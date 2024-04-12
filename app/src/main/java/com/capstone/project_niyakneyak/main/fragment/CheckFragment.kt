@@ -37,12 +37,17 @@ import java.util.Calendar
  */
 
 class CheckFragment : Fragment(), OnCheckedMedicationListener {
-    private lateinit var binding: FragmentCheckListBinding
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var viewModel: CheckViewModel
+    private var _binding: FragmentCheckListBinding? = null
+    private val binding get() = _binding!!
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
+    private var _viewModel: CheckViewModel? = null
+    private val viewModel get() = _viewModel!!
 
-    private var adapter: CheckAlarmAdapter? = null
+    private var _adapter: CheckAlarmAdapter? = null
+    private val adapter get() = _adapter!!
     private var query: Query? = null
 
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -52,26 +57,26 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentCheckListBinding.inflate(layoutInflater)
+        _binding = FragmentCheckListBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[CheckViewModel::class.java]
+        _viewModel = ViewModelProvider(this)[CheckViewModel::class.java]
 
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
 
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
             query = getCurrentDateQuery(calendar)
         }
 
         query?.let {
-            adapter = object: CheckAlarmAdapter(it, this@CheckFragment){
+            _adapter = object: CheckAlarmAdapter(it, this@CheckFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentChecklistDescriptionText.visibility = View.VISIBLE
@@ -106,14 +111,23 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         }
 
         // Start Listening Data changes
-        adapter?.startListening()
+        adapter.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes
-        adapter?.stopListening()
+        adapter.stopListening()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        _firebaseAuth = null
+        _firestore = null
+        _viewModel = null
+        _adapter = null
     }
 
     private fun getCurrentDateQuery(calendar: Calendar): Query? {

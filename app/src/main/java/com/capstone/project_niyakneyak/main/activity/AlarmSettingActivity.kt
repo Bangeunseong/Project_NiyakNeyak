@@ -34,10 +34,13 @@ import java.util.Random
  * by user interaction.
  */
 class AlarmSettingActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAlarmSettingBinding
+    private var _binding: ActivityAlarmSettingBinding? = null
+    private val binding get() = _binding!!
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
     private lateinit var tone: String
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
 
     private var snapshotId: String? = null
     private val actionResult = MutableLiveData<ActionResult?>()
@@ -68,11 +71,11 @@ class AlarmSettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Setting firestore and firebaseAuth
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
 
         // Set View Binding
-        binding = ActivityAlarmSettingBinding.inflate(layoutInflater)
+        _binding = ActivityAlarmSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Get Accessible data if needed
@@ -89,6 +92,13 @@ class AlarmSettingActivity : AppCompatActivity() {
                     setActivity(alarm)
                 }
         } else setActivity(null)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+        _firestore = null
+        _firebaseAuth = null
     }
 
     private fun setActivity(alarm: Alarm?){

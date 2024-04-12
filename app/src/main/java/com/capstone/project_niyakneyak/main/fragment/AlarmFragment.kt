@@ -43,12 +43,17 @@ import java.util.Calendar
  */
 class AlarmFragment : Fragment(), OnAlarmChangedListener {
     // Field
-    private lateinit var binding: FragmentAlarmListBinding
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var viewModel: AlarmViewModel
+    private var _binding: FragmentAlarmListBinding? = null
+    private val binding get() = _binding!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _viewModel: AlarmViewModel? = null
+    private val viewModel get() = _viewModel!!
 
-    private var adapter: AlarmAdapter? = null
+    private var _adapter: AlarmAdapter? = null
+    private val adapter get() = _adapter!!
     private var query: Query? = null
 
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -59,18 +64,18 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        binding = FragmentAlarmListBinding.inflate(inflater, container, false)
+        _binding = FragmentAlarmListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[AlarmViewModel::class.java]
+        _viewModel = ViewModelProvider(this)[AlarmViewModel::class.java]
 
         FirebaseFirestore.setLoggingEnabled(true)
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
@@ -80,7 +85,7 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         }
 
         query?.let {
-            adapter = object: AlarmAdapter(it, this@AlarmFragment){
+            _adapter = object: AlarmAdapter(it, this@AlarmFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentTimeLeftBeforeAlarm.setText(R.string.dialog_meds_time_timer_error)
@@ -114,14 +119,23 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         }
 
         // Start Listening Data changes from firebase when activity starts
-        adapter?.startListening()
+        adapter.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes from firebase when activity stops
-        adapter?.stopListening()
+        adapter.stopListening()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        _viewModel = null
+        _firestore = null
+        _firebaseAuth = null
+        _adapter = null
     }
 
     override fun onDelete(snapshot: DocumentSnapshot) {

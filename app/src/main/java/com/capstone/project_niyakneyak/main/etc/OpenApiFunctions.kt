@@ -208,5 +208,12 @@ open class OpenApiFunctions {
         private const val DUR_SPECIFY_AGE_GRADE_TABOO_LIST = "/getSpcifyAgrdeTabooInfoList03"
         private const val DUR_MEDICINE_CONSUME_DATE_ATTENTION_PRODUCT_LIST = "/getMdctnPdAtentInfoList03"
         private const val DUR_PREGNANT_WOMAN_TABOO_LIST = "/getPwnmTabooList03"
+
+        // REPRESENT KEYWORD
+        const val GET_ELDERLY_ATTENTION_PRODUCT_LIST = "노인주의 약물확인"
+        const val GET_USAGE_JOINT_TABOO_LIST = "병용금기 약물확인"
+        const val GET_SPECIFIC_AGE_GRADE_TABOO_LIST = "특정 연령대 주의 약물확인"
+        const val GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST = "약물 복용기간 주의 약물확인"
+        const val GET_PREGNANT_WOMAN_TABOO_LIST = "임신부 금지 약물확인"
     }
 }

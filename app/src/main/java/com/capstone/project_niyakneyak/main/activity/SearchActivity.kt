@@ -39,8 +39,10 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
     private var jsonObject: JSONObject? = null
 
     // Using Coroutine for data fetch process in background thread
-    private val ioScope = CoroutineScope(Dispatchers.IO)
-    private val mainScope = CoroutineScope(Dispatchers.Main)
+    private var _ioScope: CoroutineScope? = null
+    private val ioScope get() = _ioScope!!
+    private var _mainScope: CoroutineScope? = null
+    private val mainScope get() = _mainScope!!
     private val channel = Channel<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +52,8 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         _binding = ActivitySearchBinding.inflate(layoutInflater)
         _apiFunctions = OpenApiFunctions()
         _viewModel = ViewModelProvider(this)[SearchActivityViewModel::class.java]
+        _ioScope = CoroutineScope(Dispatchers.IO)
+        _mainScope = CoroutineScope(Dispatchers.Main)
         adapter = MedicineListAdapter(JSONArray(), this)
         setContentView(binding.root)
 
@@ -243,12 +247,14 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        if(ioScope.isActive) ioScope.cancel()
+        if(mainScope.isActive) mainScope.cancel()
         _binding = null
         _apiFunctions = null
         adapter = null
         _viewModel = null
-        if(ioScope.isActive) ioScope.cancel()
-        if(mainScope.isActive) mainScope.cancel()
+        _ioScope = null
+        _mainScope = null
     }
 
     // Controlling Data flows

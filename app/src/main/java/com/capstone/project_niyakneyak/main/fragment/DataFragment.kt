@@ -45,13 +45,18 @@ import java.util.Locale
  * [DataFragment.adapter] will be set by using [MedicationAdapter]
  */
 class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragment.FilterListener {
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
     private var query: Query? = null
 
-    private lateinit var binding: FragmentDataListBinding
-    private lateinit var viewModel: DataViewModel
-    private var adapter: MedicationAdapter? = null
+    private var _binding: FragmentDataListBinding? = null
+    private val binding get() = _binding!!
+    private var _viewModel: DataViewModel? = null
+    private val viewModel get() = _viewModel!!
+    private var _adapter: MedicationAdapter? = null
+    private val adapter get() = _adapter!!
 
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
@@ -61,7 +66,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        binding = FragmentDataListBinding.inflate(inflater, container, false)
+        _binding = FragmentDataListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -69,12 +74,12 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         super.onViewCreated(view, savedInstanceState)
 
         // ViewModel
-        viewModel = ViewModelProvider(this)[DataViewModel::class.java]
+        _viewModel = ViewModelProvider(this)[DataViewModel::class.java]
 
         // Firebase Stuffs
         FirebaseFirestore.setLoggingEnabled(true)
-        firebaseAuth = Firebase.auth
-        firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
+        _firestore = Firebase.firestore
 
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
@@ -84,7 +89,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
 
         // RecyclerAdapter for Medication Info.
         query?.let {
-            adapter = object: MedicationAdapter(it, this@DataFragment){
+            _adapter = object: MedicationAdapter(it, this@DataFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentMainGuide.visibility = View.VISIBLE
@@ -113,6 +118,10 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             startActivity(intent)
         }
 
+        binding.contentMainInspect.setOnClickListener {
+
+        }
+
         binding.contentFilterOption.setOnClickListener {
             val dialogFragment = FilterDialogFragment()
             dialogFragment.setStyle(STYLE_NORMAL, R.style.DialogFragmentStyle)
@@ -130,14 +139,23 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         }
 
         // Start Listening Data changes from firebase when activity starts
-        adapter?.startListening()
+        adapter.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes from firebase when activity stops
-        adapter?.stopListening()
+        adapter.stopListening()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _firestore = null
+        _firebaseAuth = null
+        _viewModel = null
+        _binding = null
+        _adapter = null
     }
 
     private fun shouldStartSignIn(): Boolean {
@@ -202,7 +220,8 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             Filter.lessThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.endDate))
         }
 
-        adapter?.setQuery(query)
+        viewModel.filters = filters
+        adapter.setQuery(query)
     }
 
     companion object {

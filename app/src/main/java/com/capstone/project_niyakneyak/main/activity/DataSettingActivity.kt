@@ -44,8 +44,10 @@ import java.util.Random
  * This DialogFragment is used for setting [MedsData](which is Medication Info.).
  */
 class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
-    private lateinit var binding: ActivityDataSettingBinding
-    private var adapter: AlarmSelectionAdapter? = null
+    private var _binding: ActivityDataSettingBinding? = null
+    private val binding get() = _binding!!
+    private var _adapter: AlarmSelectionAdapter? = null
+    private val adapter get() = _adapter!!
 
     private var snapshotId: String? = null
     private var originData: MedicineData? = null
@@ -54,8 +56,10 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var originAlarmID = mutableListOf<String>()
     private var includedAlarmID = mutableListOf<String>()
 
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
 
     private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
@@ -95,12 +99,12 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Set Activity View
-        binding = ActivityDataSettingBinding.inflate(layoutInflater)
+        _binding = ActivityDataSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Accessible Data
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
 
         snapshotId = intent.getStringExtra("snapshot_id")
         if(snapshotId != null){
@@ -131,7 +135,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             .collection(Alarm.COLLECTION_ID)
 
         query?.let {
-            adapter = object: AlarmSelectionAdapter(it, snapshotId, this@DataSettingActivity){
+            _adapter = object: AlarmSelectionAdapter(it, snapshotId, this@DataSettingActivity){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.dialogMedsTimerList.visibility = View.GONE
@@ -158,14 +162,21 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         super.onStart()
 
         // Start Listening Data changes from firebase when activity starts
-        adapter?.startListening()
+        adapter.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes from firebase when activity stops
-        adapter?.stopListening()
+        adapter.stopListening()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+        _firebaseAuth = null
+        _firestore = null
     }
 
     private fun setActivity(originData: MedicineData?, binding: ActivityDataSettingBinding){

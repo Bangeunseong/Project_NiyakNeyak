@@ -127,4 +127,7 @@
     <string name="action_main_filter_option">Filter Option</string>
     <string name="action_main_search_option">Search Option</string>
     <string name="sort_direction">Sort Direction:</string>
+    <string name="action_main_inspect_medicine">Inspect Medicine</string>
+    <string name="action_inspect_current_medicines_text">Current Medicines</string>
+    <string name="current_meds_recycler_state_text">Cannot find Medicines!\n(Refresh App, if can\'t see your own medicines)</string>
 </resources>
