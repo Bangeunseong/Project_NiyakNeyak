@@ -72,6 +72,40 @@ open class OptionAdapter(private val options: List<String>?, private val medsDat
                         }
                     }
                 }
+                OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST->{
+                    ioScope.launch {
+                        for(data in medsData){
+                            try{
+                                jsonObject = openApiFunctions.getElderlyAttentionPrdtList(data.itemSeq, null, 1, 25)
+                                resultObject.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items"))
+                                val totalCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
+                                for(i in 1 until (totalCount / 25 + 1)){
+                                    jsonObject = openApiFunctions.getElderlyAttentionPrdtList(data.itemSeq, null, i + 1, 25)
+                                    resultObject.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items"))
+                                }
+                            } catch (exception: JSONException){
+                                Log.w("OptionAdapter", "Error Occurred: $exception")
+                            }
+                        }
+
+                        if(!resultObject.isNull("items")) channel.send("Success")
+                        else channel.send("Failed")
+                    }
+                    mainScope.launch {
+                        val msg = channel.receive()
+                        binding.progressBar2.visibility = View.GONE
+                        binding.contentResultDirectionImg.visibility = View.VISIBLE
+                        if(msg == "Success"){
+                            if(resultObject.isNull("items")) binding.contentResultDirectionImg.setImageResource(R.drawable.baseline_check_circle_24)
+                            else {
+                                Log.w("OptionAdapter", resultObject.toString())
+                                binding.contentResultDirectionImg.setImageResource(R.drawable.baseline_error_24)
+                            }
+                        }else{
+                            binding.contentResultDirectionImg.setImageResource(R.drawable.baseline_running_with_errors_24)
+                        }
+                    }
+                }
             }
 
         }
