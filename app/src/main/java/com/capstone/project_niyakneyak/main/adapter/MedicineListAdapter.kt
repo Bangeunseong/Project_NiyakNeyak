@@ -11,6 +11,13 @@ import com.capstone.project_niyakneyak.main.listener.OnCheckedSearchItemListener
 import org.json.JSONArray
 import org.json.JSONObject
 
+/**
+ * This [MedicineListAdapter] used for showing results of API Function([com.capstone.project_niyakneyak.main.etc.OpenApiFunctions.getPrdtMtrDetails])
+ * By using this function, this adapter will show API results using [RecyclerView]
+ * This adapter needs [JSONArray] and [OnCheckedSearchItemListener] as parameters, [JSONArray] will be used as data input
+ * and [OnCheckedSearchItemListener] will be used for transferring selected [MedicineData]
+ */
+
 open class MedicineListAdapter(private var jsonArray: JSONArray, private val onCheckedSearchItemListener: OnCheckedSearchItemListener): RecyclerView.Adapter<MedicineListAdapter.ViewHolder>() {
     private var positionList = Array(jsonArray.length()) { false }
     private var selectedPos = -1
