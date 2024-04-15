@@ -46,8 +46,7 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
     private var _viewModel: CheckViewModel? = null
     private val viewModel get() = _viewModel!!
 
-    private var _adapter: CheckAlarmAdapter? = null
-    private val adapter get() = _adapter!!
+    private var adapter: CheckAlarmAdapter? = null
     private var query: Query? = null
 
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -76,7 +75,7 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         }
 
         query?.let {
-            _adapter = object: CheckAlarmAdapter(it, this@CheckFragment){
+            adapter = object: CheckAlarmAdapter(it, this@CheckFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentChecklistDescriptionText.visibility = View.VISIBLE
@@ -111,14 +110,14 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         }
 
         // Start Listening Data changes
-        adapter.startListening()
+        adapter?.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes
-        adapter.stopListening()
+        adapter?.stopListening()
     }
 
     override fun onDestroyView() {
@@ -127,7 +126,7 @@ class CheckFragment : Fragment(), OnCheckedMedicationListener {
         _firebaseAuth = null
         _firestore = null
         _viewModel = null
-        _adapter = null
+        adapter = null
     }
 
     private fun getCurrentDateQuery(calendar: Calendar): Query? {

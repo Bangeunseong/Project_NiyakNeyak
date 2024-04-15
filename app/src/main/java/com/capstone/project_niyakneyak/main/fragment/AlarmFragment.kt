@@ -52,8 +52,7 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     private var _viewModel: AlarmViewModel? = null
     private val viewModel get() = _viewModel!!
 
-    private var _adapter: AlarmAdapter? = null
-    private val adapter get() = _adapter!!
+    private var adapter: AlarmAdapter? = null
     private var query: Query? = null
 
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -85,7 +84,7 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         }
 
         query?.let {
-            _adapter = object: AlarmAdapter(it, this@AlarmFragment){
+            adapter = object: AlarmAdapter(it, this@AlarmFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentTimeLeftBeforeAlarm.setText(R.string.dialog_meds_time_timer_error)
@@ -119,14 +118,14 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         }
 
         // Start Listening Data changes from firebase when activity starts
-        adapter.startListening()
+        adapter?.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes from firebase when activity stops
-        adapter.stopListening()
+        adapter?.stopListening()
     }
 
     override fun onDestroyView() {
@@ -135,7 +134,7 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         _viewModel = null
         _firestore = null
         _firebaseAuth = null
-        _adapter = null
+        adapter = null
     }
 
     override fun onDelete(snapshot: DocumentSnapshot) {

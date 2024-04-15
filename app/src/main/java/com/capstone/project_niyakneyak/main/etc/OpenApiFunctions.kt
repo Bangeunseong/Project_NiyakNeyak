@@ -202,7 +202,7 @@ open class OpenApiFunctions {
         // REPRESENT URL
         private const val PRODUCT_INFO_BASE_URL = "https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService05"
         private const val PRODUCT_MATERIAL_DETAILS = "/getDrugPrdtPrmsnInq05"
-        private const val DUR_PRODUCT_LIST_BASE_URL = "http://apis.data.go.kr/1471000/DURPrdlstInfoService03"
+        private const val DUR_PRODUCT_LIST_BASE_URL = "https://apis.data.go.kr/1471000/DURPrdlstInfoService03"
         private const val DUR_ELDERLY_ATTENTION_PRODUCT_LIST = "/getOdsnAtentInfoList03"
         private const val DUR_USAGE_JOINT_TABOO_LIST = "/getUsjntTabooInfoList03"
         private const val DUR_SPECIFY_AGE_GRADE_TABOO_LIST = "/getSpcifyAgrdeTabooInfoList03"

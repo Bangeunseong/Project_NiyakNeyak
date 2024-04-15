@@ -52,6 +52,9 @@
         <activity android:name=".main.activity.SearchActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".main.activity.InspectActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.SetProfileActivity"
             android:exported="false" />
         <activity android:name=".main.activity.AlarmSettingActivity"
@@ -67,7 +70,8 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

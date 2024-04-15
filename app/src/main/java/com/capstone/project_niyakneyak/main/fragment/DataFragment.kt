@@ -19,6 +19,7 @@ import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.DataSettingActivity
+import com.capstone.project_niyakneyak.main.activity.InspectActivity
 import com.capstone.project_niyakneyak.main.adapter.MedicationAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
@@ -55,9 +56,9 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     private val binding get() = _binding!!
     private var _viewModel: DataViewModel? = null
     private val viewModel get() = _viewModel!!
-    private var _adapter: MedicationAdapter? = null
-    private val adapter get() = _adapter!!
+    private var adapter: MedicationAdapter? = null
 
+    // Intent Launchers for Login Process
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
@@ -89,7 +90,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
 
         // RecyclerAdapter for Medication Info.
         query?.let {
-            _adapter = object: MedicationAdapter(it, this@DataFragment){
+            adapter = object: MedicationAdapter(it, this@DataFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentMainGuide.visibility = View.VISIBLE
@@ -119,7 +120,8 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         }
 
         binding.contentMainInspect.setOnClickListener {
-
+            val intent = Intent(context, InspectActivity::class.java)
+            startActivity(intent)
         }
 
         binding.contentFilterOption.setOnClickListener {
@@ -139,14 +141,14 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         }
 
         // Start Listening Data changes from firebase when activity starts
-        adapter.startListening()
+        adapter?.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes from firebase when activity stops
-        adapter.stopListening()
+        adapter?.stopListening()
     }
 
     override fun onDestroyView() {
@@ -155,7 +157,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         _firebaseAuth = null
         _viewModel = null
         _binding = null
-        _adapter = null
+        adapter = null
     }
 
     private fun shouldStartSignIn(): Boolean {
@@ -212,16 +214,16 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             }
         }
         if(filters.hasStartDate() && filters.hasEndDate()){
-            query.where(Filter.and(Filter.greaterThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.startDate)),
-                Filter.lessThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.endDate))))
+            query.where(Filter.and(Filter.greaterThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.startDate!!)),
+                Filter.lessThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.endDate!!))))
         }else if(filters.hasStartDate()){
-            query.where(Filter.greaterThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.startDate)))
+            query.where(Filter.greaterThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.startDate!!)))
         }else if(filters.hasEndDate()){
-            Filter.lessThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.endDate))
+            Filter.lessThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, SimpleDateFormat("yyyyMMdd", Locale.KOREAN).parse(filters.endDate!!))
         }
 
         viewModel.filters = filters
-        adapter.setQuery(query)
+        adapter?.setQuery(query)
     }
 
     companion object {

@@ -46,8 +46,7 @@ import java.util.Random
 class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var _binding: ActivityDataSettingBinding? = null
     private val binding get() = _binding!!
-    private var _adapter: AlarmSelectionAdapter? = null
-    private val adapter get() = _adapter!!
+    private var adapter: AlarmSelectionAdapter? = null
 
     private var snapshotId: String? = null
     private var originData: MedicineData? = null
@@ -135,7 +134,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             .collection(Alarm.COLLECTION_ID)
 
         query?.let {
-            _adapter = object: AlarmSelectionAdapter(it, snapshotId, this@DataSettingActivity){
+            adapter = object: AlarmSelectionAdapter(it, snapshotId, this@DataSettingActivity){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.dialogMedsTimerList.visibility = View.GONE
@@ -162,14 +161,14 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         super.onStart()
 
         // Start Listening Data changes from firebase when activity starts
-        adapter.startListening()
+        adapter?.startListening()
     }
 
     override fun onStop() {
         super.onStop()
 
         // Stop Listening Data changes from firebase when activity stops
-        adapter.stopListening()
+        adapter?.stopListening()
     }
 
     override fun onDestroy() {

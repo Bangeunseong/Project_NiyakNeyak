@@ -21,51 +21,37 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.coroutineContext
+import com.google.firebase.firestore.toObject
 
-class InspectActivity: AppCompatActivity() {
+class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     // Params for View binding and adapters
     private var _binding: ActivityInspectBinding? = null
     private val binding get() = _binding!!
-    private var _medicineAdapter: CurrentMedicineAdapter? = null
-    private val medicineAdapter get() = _medicineAdapter!!
-    private var _optionAdapter: OptionAdapter? = null
-    private val optionAdapter get() = _optionAdapter!!
+    private var medicineAdapter: CurrentMedicineAdapter? = null
+    private var optionAdapter: OptionAdapter? = null
 
     // Params for firebase
-    private var _firestore: FirebaseFirestore? = null
-    private val firestore get() = _firestore!!
-    private var _firebaseAuth: FirebaseAuth? = null
-    private val firebaseAuth get() = _firebaseAuth!!
+    private var firestore: FirebaseFirestore? = null
+    private var firebaseAuth: FirebaseAuth? = null
 
     // Query
     private var query: Query? = null
-
-    // Coroutines
-    private var _ioScope: CoroutineScope? = null
-    private val ioScope get() = _ioScope!!
-    private var _mainScope: CoroutineScope? = null
-    private val mainScope get() = _mainScope!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityInspectBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        _firestore = Firebase.firestore
-        _firebaseAuth = Firebase.auth
-        _ioScope = CoroutineScope(Dispatchers.IO)
-        _mainScope = CoroutineScope(Dispatchers.Main)
+        firestore = Firebase.firestore
+        firebaseAuth = Firebase.auth
 
-        if(firebaseAuth.currentUser != null){
-            query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+        if(firebaseAuth!!.currentUser != null){
+            query = firestore!!.collection(UserAccount.COLLECTION_ID).document(firebaseAuth!!.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
         }
 
-        query?.let {
-            _medicineAdapter = object: CurrentMedicineAdapter(it){
+        query?.let { query ->
+            medicineAdapter = object: CurrentMedicineAdapter(query){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentRecyclerMedicine.visibility = View.INVISIBLE
@@ -74,7 +60,6 @@ class InspectActivity: AppCompatActivity() {
                     else {
                         binding.contentRecyclerMedicine.visibility = View.VISIBLE
                         binding.contentRecyclerStateText.visibility = View.INVISIBLE
-
                     }
                 }
 
@@ -90,9 +75,37 @@ class InspectActivity: AppCompatActivity() {
         binding.contentRecyclerMedicine.addItemDecoration(HorizontalItemDecorator(10))
 
         listOf(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST, OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST, OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST,
-            OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST, OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST).let {
-                _optionAdapter = object: OptionAdapter(it){}
+            OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST, OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST).let { options ->
+            query?.let { queryForData ->
+                queryForData.get().addOnSuccessListener {
+                    val data = mutableListOf<MedicineData>()
+                    for(document in it.documents){
+                        val medsData = document.toObject<MedicineData>() ?: continue
+                        data.add(medsData)
+                    }
+                    optionAdapter = object: OptionAdapter(options, data,this){}
+                    binding.contentRecyclerInspectOption.adapter = optionAdapter
+                }.addOnFailureListener {
+
+                }
+            }
         }
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        medicineAdapter?.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        medicineAdapter?.stopListening()
+    }
+
+    override fun onOptionClicked(option: String) {
+        TODO("Not yet Implemented")
     }
 }

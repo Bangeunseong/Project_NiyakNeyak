@@ -30,10 +30,11 @@ open class MedicationAdapter(query: Query, private val listener: OnMedicationCha
             if (medsData.medsDetail != null) binding.itemDetail.text =
                 String.format("Detail: %s", medsData.medsDetail)
             else binding.itemDetail.text = String.format("Detail: %s", "None")
-            if (medsData.medsStartDate != null && medsData.medsEndDate != null)
+            if (medsData.medsStartDate != null && medsData.medsEndDate != null){
                 binding.itemDuration.text = String.format("Duration: %s~%s",
-                    SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medsData.medsStartDate),
-                    SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medsData.medsEndDate))
+                    SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medsData.medsStartDate!!),
+                    SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medsData.medsEndDate!!))
+            }
             else binding.itemDuration.text = String.format("Duration: %s", "None")
             binding.itemModifyButton.setOnClickListener { listener?.onModifyBtnClicked(snapshot) }
             binding.itemDeleteButton.setOnClickListener { listener?.onDeleteBtnClicked(snapshot) }

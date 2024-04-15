@@ -7,7 +7,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/content_active_api_function_btn"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         style="@style/customInspectBtnStyle"
         android:paddingStart="15dp"
         android:paddingEnd="0dp"
@@ -29,8 +29,8 @@
     <ProgressBar
         android:id="@+id/progressBar2"
         style="?android:attr/progressBarStyle"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginEnd="4dp"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
