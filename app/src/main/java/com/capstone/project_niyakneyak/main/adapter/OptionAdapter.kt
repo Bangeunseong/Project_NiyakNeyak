@@ -78,8 +78,20 @@ open class OptionAdapter(
 
                         if(resultObject == null) channel.send("Success_NotFound")
                         else if(!resultObject!!.isNull("items")){
-
-                            channel.send("Success")
+                            val mixedMeds = mutableMapOf<String, JSONObject>()
+                            for(data in medsData){
+                                val mixedList = JSONObject()
+                                for(pos in 0 until resultObject!!.getJSONArray("items").length()){
+                                    if(data.itemSeq == resultObject!!.getJSONArray("items").getJSONObject(pos).getString("MIXTURE_ITEM_SEQ")){
+                                        mixedList.accumulate("items", resultObject!!.getJSONArray("items").getJSONObject(pos))
+                                    }
+                                }
+                                if(!mixedList.isNull("items"))
+                                    mixedMeds[data.itemSeq!!] = mixedList
+                            }
+                            if(mixedMeds.isEmpty())
+                                channel.send("Success_NotFound")
+                            else channel.send("Success")
                         }
                         else if(resultObject!!.isNull("items")) channel.send("Success_NotFound")
                         else channel.send("Failed")
