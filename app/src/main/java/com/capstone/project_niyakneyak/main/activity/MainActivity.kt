@@ -72,10 +72,22 @@ class MainActivity : AppCompatActivity() {
             arguments: Bundle?
         ) {
             when(destination.id){
-                R.id.mainPageFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_main).isChecked = true
-                R.id.alarmListFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_time).isChecked = true
-                R.id.checkListFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_time_check).isChecked = true
-                R.id.settingFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_account).isChecked = true
+                R.id.mainPageFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_title)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_main).isChecked = true
+                }
+                R.id.alarmListFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_timer)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_time).isChecked = true
+                }
+                R.id.checkListFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_checklist)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_time_check).isChecked = true
+                }
+                R.id.settingFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_settings)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_account).isChecked = true
+                }
             }
         }
 

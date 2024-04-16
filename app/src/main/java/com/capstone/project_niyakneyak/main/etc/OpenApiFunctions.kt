@@ -207,7 +207,7 @@ open class OpenApiFunctions {
         private const val DUR_USAGE_JOINT_TABOO_LIST = "/getUsjntTabooInfoList03"
         private const val DUR_SPECIFY_AGE_GRADE_TABOO_LIST = "/getSpcifyAgrdeTabooInfoList03"
         private const val DUR_MEDICINE_CONSUME_DATE_ATTENTION_PRODUCT_LIST = "/getMdctnPdAtentInfoList03"
-        private const val DUR_PREGNANT_WOMAN_TABOO_LIST = "/getPwnmTabooList03"
+        private const val DUR_PREGNANT_WOMAN_TABOO_LIST = "/getPwnmTabooInfoList03"
 
         // REPRESENT KEYWORD
         const val GET_ELDERLY_ATTENTION_PRODUCT_LIST = "노인주의 약물확인"

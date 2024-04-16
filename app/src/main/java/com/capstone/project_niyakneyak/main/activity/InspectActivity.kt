@@ -2,8 +2,10 @@ package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityInspectBinding
@@ -42,13 +44,16 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         _binding = ActivityInspectBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.toolbar3.setTitle(R.string.action_main_inspect_medicine)
+        setSupportActionBar(binding.toolbar3)
+
         firestore = Firebase.firestore
         firebaseAuth = Firebase.auth
 
         if(firebaseAuth!!.currentUser != null){
             query = firestore!!.collection(UserAccount.COLLECTION_ID).document(firebaseAuth!!.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
-        }
+        } else finish()
 
         query?.let { query ->
             medicineAdapter = object: CurrentMedicineAdapter(query){
@@ -86,7 +91,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                     optionAdapter = object: OptionAdapter(options, data,this){}
                     binding.contentRecyclerInspectOption.adapter = optionAdapter
                 }.addOnFailureListener {
-
+                    Toast.makeText(this, "Data Fetching Failed!", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -21,7 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Project_NiyakNeyak"
-        tools:targetApi="31">
+        android:enableOnBackInvokedCallback="true"
+        tools:targetApi="34">
 
         <service android:name=".alarm.service.AlarmService" />
         <service android:name=".alarm.service.RescheduleAlarmService"
