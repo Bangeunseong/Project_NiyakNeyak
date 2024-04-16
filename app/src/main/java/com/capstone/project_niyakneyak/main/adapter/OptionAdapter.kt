@@ -71,6 +71,8 @@ open class OptionAdapter(
                                 }
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
+                                channel.send("Failed")
+                                return@launch
                             }
                         }
 
@@ -102,6 +104,8 @@ open class OptionAdapter(
                                 }
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
+                                channel.send("Failed")
+                                return@launch
                             }
                         }
 
@@ -133,6 +137,8 @@ open class OptionAdapter(
                                 }
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
+                                channel.send("Failed")
+                                return@launch
                             }
                         }
 
@@ -163,6 +169,8 @@ open class OptionAdapter(
                                 }
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
+                                channel.send("Failed")
+                                return@launch
                             }
                         }
 
@@ -193,6 +201,8 @@ open class OptionAdapter(
                                 }
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
+                                channel.send("Failed")
+                                return@launch
                             }
                         }
 
