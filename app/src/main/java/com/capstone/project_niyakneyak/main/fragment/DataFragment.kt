@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.fragment.app.Fragment
@@ -64,6 +65,13 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             viewModel.isSignedIn = true
         }
     }
+    private val dataProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            Toast.makeText(context, "Data Saved!", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "Data Save Canceled!", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -116,7 +124,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         // Add button about Medication Info.
         binding.contentMainAdd.setOnClickListener {
             val intent = Intent(context, DataSettingActivity::class.java)
-            startActivity(intent)
+            dataProcessLauncher.launch(intent)
         }
 
         binding.contentMainInspect.setOnClickListener {
@@ -168,7 +176,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     override fun onModifyBtnClicked(target: DocumentSnapshot) {
         val intent = Intent(context, DataSettingActivity::class.java)
         intent.putExtra("snapshot_id", target.id)
-        startActivity(intent)
+        dataProcessLauncher.launch(intent)
     }
     override fun onDeleteBtnClicked(target: DocumentSnapshot) {
         val alarmList = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)

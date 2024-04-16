@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.text.InputFilter
 import android.text.Spanned
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
@@ -34,7 +37,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import java.text.DateFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -75,7 +77,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             fetchedData.itemEngName = container.itemEngName; fetchedData.entpName = container.entpName
             fetchedData.entpEngName = container.entpEngName; fetchedData.entpSeq = container.entpSeq
             fetchedData.entpNo = container.entpNo
-            if(!container.cancelDate.equals("null"))
+            if(!container.itemPermDate.equals("null"))
                 fetchedData.itemPermDate = fetchedData.convertStrToDate(container.itemPermDate)
             fetchedData.inDuty = container.inDuty; fetchedData.prdlstStrdCode = container.prdlstStrdCode
             fetchedData.spcltyPblc = container.spcltyPblc; fetchedData.pdtType = container.pdtType
@@ -87,7 +89,14 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             fetchedData.cancelName = container.cancelName; fetchedData.ediCode = container.ediCode; fetchedData.bizrNo = container.bizrNo
 
             binding.medsNameText.setText(fetchedData.itemName)
-            binding.submit.isEnabled = true
+            invalidateMenu()
+        }
+    }
+    private val alarmSettingLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            Toast.makeText(this, "Timer Successfully Added!", Toast.LENGTH_SHORT).show()
+        } else{
+            Toast.makeText(this, "Timer Addition Canceled!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -115,6 +124,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
                 // Setting toolbar title
                 binding.toolbar2.setTitle(R.string.dialog_modify_form_title)
+                setSupportActionBar(binding.toolbar2)
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
                 // Setting Activity Components
                 setActivity(originData, binding)
@@ -126,6 +137,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         }
         else {
             binding.toolbar2.setTitle(R.string.dialog_add_form_title)
+            setSupportActionBar(binding.toolbar2)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
             setActivity(null, binding)
         }
 
@@ -179,29 +192,32 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     }
 
     private fun setActivity(originData: MedicineData?, binding: ActivityDataSettingBinding){
-        var startDate: Long? = null; var endDate: Long? = null
         if(originData != null){
             fetchedData.medsID = originData.medsID
+            fetchedData.itemSeq = originData.itemSeq; fetchedData.itemName = originData.itemName
+            fetchedData.itemEngName = originData.itemEngName; fetchedData.entpName = originData.entpName
+            fetchedData.entpEngName = originData.entpEngName; fetchedData.entpSeq = originData.entpSeq
+            fetchedData.entpNo = originData.entpNo
+            if(originData.cancelDate != null)
+                fetchedData.itemPermDate = originData.itemPermDate
+            fetchedData.inDuty = originData.inDuty; fetchedData.prdlstStrdCode = originData.prdlstStrdCode
+            fetchedData.spcltyPblc = originData.spcltyPblc; fetchedData.pdtType = originData.pdtType
+            fetchedData.pdtPermNo = originData.pdtPermNo; fetchedData.itemIngrName = originData.itemIngrName
+            fetchedData.itemIngrCnt = originData.itemIngrCnt; fetchedData.bigPrdtImgUrl = originData.bigPrdtImgUrl
+            fetchedData.permKindCode= originData.permKindCode
+            if(originData.cancelDate != null)
+                fetchedData.cancelDate = originData.cancelDate
+            fetchedData.cancelName = originData.cancelName; fetchedData.ediCode = originData.ediCode; fetchedData.bizrNo = originData.bizrNo
             binding.medsNameText.setText(originData.itemName)
             if(originData.dailyAmount > 0){
                 binding.medsDailyAmountText.setText(originData.dailyAmount.toString())
             }
             if (originData.medsDetail != null) binding.medsDetailText.setText(originData.medsDetail)
             if (originData.medsStartDate != null && originData.medsEndDate != null) {
-                binding.medsDateText.setText(String.format("%s~%s", originData.medsStartDate, originData.medsEndDate))
-            }
-            val parser: DateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN)
-            try {
-                if (originData.medsStartDate != null && originData.medsEndDate != null) {
-                    startDate = parser.parse(originData.medsStartDate.toString())?.time
-                    endDate = parser.parse(originData.medsEndDate.toString())?.time
-                } else {
-                    endDate = null
-                    startDate = endDate
-                }
-            } catch (e: ParseException) {
-                Log.d("DataSettingDialog", "Meds_date parsing error")
-                throw RuntimeException()
+                binding.medsDateText.setText(
+                    String.format("%s~%s",
+                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsStartDate!!),
+                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsEndDate!!)))
             }
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(Alarm.COLLECTION_ID).whereArrayContains(Alarm.FIELD_MEDICATION_LIST, originData.medsID).get()
@@ -214,8 +230,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 .addOnFailureListener {
                     Log.w(TAG, "Terrible Error Occurred: $it")
                 }
-
-            binding.submit.isEnabled = true
         } else fetchedData.medsID = codeGenerator()
 
         val amountFilter =
@@ -228,7 +242,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
         // Main Body(Setting Functions for each Components)
         binding.medsNameText.isFocusable = false
-        binding.medsNameSearchBtn.setOnClickListener {
+        binding.medsNameText.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             searchLauncher.launch(intent)
         }
@@ -242,7 +256,10 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 .dateRangePicker()
                 .setTitleText("Select Medication End Date")
                 .setCalendarConstraints(constraints)
-            if (startDate != null) datePickerBuilder.setSelection(Pair(startDate + 1000 * 60 * 60 * 24, endDate))
+            if (originData != null) {
+                if(originData.medsStartDate != null)
+                    datePickerBuilder.setSelection(Pair(originData.medsStartDate!!.time, originData.medsEndDate!!.time))
+            }
 
             val datePicker = datePickerBuilder.build()
             datePicker.show(supportFragmentManager, "DATE_PICKER_RANGE")
@@ -257,28 +274,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             datePicker.addOnNegativeButtonClickListener { }
         }
         binding.dialogMedsTimerAddBtn.setOnClickListener { showAlarmSettingActivity() }
-        binding.submit.setOnClickListener {
-            fetchedData.dailyAmount = binding.medsDailyAmountText.text.toString().toInt()
-            fetchedData.medsDetail =
-                if (binding.medsDetailText.text.toString() == "null") null else binding.medsDetailText.text.toString()
-            val medsDateText =
-                if (binding.medsDateText.text.toString() == "null") null else binding.medsDateText.text.toString()
-            if (medsDateText!!.isNotEmpty()) {
-                val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[0])
-                fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[1])
-            }
-
-            if(snapshotId == null) submitData(null, fetchedData)
-            else submitData(snapshotId, fetchedData)
-
-            setResult(RESULT_OK)
-            finish()
-        }
-        binding.cancel.setOnClickListener {
-            setResult(RESULT_OK)
-            finish()
-        }
     }
 
     private fun submitData(snapshotID: String?, data: MedicineData){
@@ -353,7 +348,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     private fun showAlarmSettingActivity() {
         val intent = Intent(this, AlarmSettingActivity::class.java)
-        startActivity(intent)
+        alarmSettingLauncher.launch(intent)
     }
 
     override fun onItemClicked(alarm: Alarm) {
@@ -365,5 +360,45 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private fun codeGenerator(): Int {
         val random = Random(System.currentTimeMillis())
         return random.nextInt(Int.MAX_VALUE)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_data_process, menu)
+        menu!!.findItem(R.id.menu_save_data).isVisible = !binding.medsNameText.text.isNullOrEmpty()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                setResult(RESULT_CANCELED)
+                finish()
+                true
+            }
+            R.id.menu_save_data -> {
+                // Exception Handling -> last resort
+                if(fetchedData.itemName.isNullOrEmpty()) return true
+
+                fetchedData.dailyAmount = binding.medsDailyAmountText.text.toString().toInt()
+                fetchedData.medsDetail =
+                    if (binding.medsDetailText.text.isNullOrEmpty()) null else binding.medsDetailText.text.toString()
+                val medsDateText =
+                    if (binding.medsDateText.text.isNullOrEmpty()) null else binding.medsDateText.text.toString()
+                if (medsDateText!!.isNotEmpty()) {
+                    val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[0])
+                    fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[1])
+                }
+
+                if(snapshotId == null) submitData(null, fetchedData)
+                else submitData(snapshotId, fetchedData)
+
+                setResult(RESULT_OK)
+                finish()
+                true
+            }
+            // 다른 메뉴 아이템 처리
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

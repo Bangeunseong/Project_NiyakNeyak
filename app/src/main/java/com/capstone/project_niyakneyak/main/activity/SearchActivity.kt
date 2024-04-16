@@ -3,6 +3,7 @@ package com.capstone.project_niyakneyak.main.activity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -56,6 +57,10 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         _mainScope = CoroutineScope(Dispatchers.Main)
         adapter = MedicineListAdapter(JSONArray(), this)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar4)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.toolbar4.title = "Search Medicine"
 
         // Observe Data changes of radio button selected position
         viewModel.searchQueryObserver.observe(this){
@@ -268,6 +273,18 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
             adapter!!.notifyItemChanged(prevPos)
         adapter!!.notifyItemChanged(nextPos)
         viewModel.selectedPositionObserver.value = nextPos
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                setResult(RESULT_CANCELED)
+                finish()
+                true
+            }
+            // 다른 메뉴 아이템 처리
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object{

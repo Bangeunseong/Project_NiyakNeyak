@@ -107,13 +107,6 @@ open class OptionAdapter(
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
-                                val totalCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
-                                for (i in 1 until (totalCount / 25 + 1)) {
-                                    jsonObject = openApiFunctions.getElderlyAttentionPrdtList(data.itemSeq, null, i + 1, 25)
-                                    for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
-                                    }
-                                }
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
                                 channel.send("Failed")
@@ -136,14 +129,6 @@ open class OptionAdapter(
                                 if(!jsonObject!!.getJSONObject("body").isNull("items")){
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
                                         if(resultObject == null) resultObject = JSONObject()
-                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
-                                    }
-                                }
-                                val totalCount =
-                                    jsonObject!!.getJSONObject("body").getInt("totalCount")
-                                for (i in 1 until (totalCount / 25 + 1)) {
-                                    jsonObject = openApiFunctions.getMdcCnsDatePrdtList(data.itemSeq, null, i + 1, 25)
-                                    for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
@@ -172,13 +157,6 @@ open class OptionAdapter(
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
-                                val totalCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
-                                for (i in 1 until (totalCount / 25 + 1)) {
-                                    jsonObject = openApiFunctions.getSpecificAgeRangePrdtList(data.itemSeq, null, i + 1, 25)
-                                    for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
-                                    }
-                                }
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
                                 channel.send("Failed")
@@ -201,13 +179,6 @@ open class OptionAdapter(
                                 if(jsonObject != null && !jsonObject!!.getJSONObject("body").isNull("items")) {
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
                                         if(resultObject == null) resultObject = JSONObject()
-                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
-                                    }
-                                }
-                                val totalCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
-                                for (i in 1 until (totalCount / 25 + 1)) {
-                                    jsonObject = openApiFunctions.getPregWomPrdtList(data.itemSeq, null, i + 1, 25)
-                                    for(pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()){
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }

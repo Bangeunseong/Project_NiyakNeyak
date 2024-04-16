@@ -32,7 +32,7 @@
         android:layout_height="0dp"
         android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/dialog_button_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_toolbar_layout"
@@ -43,7 +43,6 @@
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             app:layout_constraintBottom_toTopOf="@+id/dialog_meds_daily_amount_layout"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
@@ -53,19 +52,20 @@
                 android:id="@+id/meds_name_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="none"
                 android:hint="@string/dialog_add_form_meds_name" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/meds_name_search_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/baseline_search_24"
             android:background="@color/transparent"
             android:contentDescription="@string/meds_name_search_btn_text"
-            app:layout_constraintHorizontal_bias="0.99"
-            app:layout_constraintVertical_bias="0.75"
+            app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintVertical_bias="0.6"
             app:layout_constraintStart_toStartOf="@id/dialog_meds_name_layout"
             app:layout_constraintEnd_toEndOf="@id/dialog_meds_name_layout"
             app:layout_constraintBottom_toTopOf="@+id/dialog_meds_daily_amount_layout"
@@ -155,42 +155,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dialog_meds_timer_list" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/dialog_button_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/white_500"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_meds_data_layout"
-        app:layout_constraintStart_toStartOf="@id/dialog_meds_data_layout"
-        app:layout_constraintEnd_toEndOf="@id/dialog_meds_data_layout">
-
-        <Button
-            android:id="@+id/submit"
-            style="@style/customSubmitBtnStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="12dp"
-            android:text="@string/dialog_add_form_submit"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/cancel"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/cancel"
-            style="@style/customSubmitBtnStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="12dp"
-            android:text="@string/dialog_add_form_cancel"
-            app:layout_constraintEnd_toStartOf="@id/submit"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
 import android.widget.Toast
@@ -77,6 +79,9 @@ class AlarmSettingActivity : AppCompatActivity() {
         // Set View Binding
         _binding = ActivityAlarmSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar5)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         // Get Accessible data if needed
         snapshotId = intent.getStringExtra("snapshot_id")
@@ -88,7 +93,6 @@ class AlarmSettingActivity : AppCompatActivity() {
                     alarm = it.toObject(Alarm::class.java)
                     setActivity(alarm)
                 }.addOnFailureListener {
-                    alarm = null
                     setActivity(alarm)
                 }
         } else setActivity(null)
@@ -280,16 +284,6 @@ class AlarmSettingActivity : AppCompatActivity() {
             if (actionResult.alarmDateView != null)
                 binding.weeklyDate.text = String.format("Weekly: %s", actionResult.alarmDateView!!.displayData)
         }
-        binding.alarmSubmit.setOnClickListener {
-            if (alarm != null) {
-                if(alarm.isStarted)
-                    alarm.cancelAlarm(applicationContext)
-                updateAlarm()
-            } else scheduleAlarm()
-        }
-        binding.alarmCancel.setOnClickListener {
-            finish()
-        }
     }
 
     private fun scheduleAlarm() {
@@ -446,13 +440,39 @@ class AlarmSettingActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 flag = !it.isEmpty
             }.addOnFailureListener {
-
+                Log.w(TAG, "Error Occurred!: $it")
             }
         return flag
     }
 
     private fun codeGenerator(): Int {
         return Random().nextInt(Int.MAX_VALUE)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_data_process, menu)
+        menu!!.findItem(R.id.menu_save_data).isVisible = true
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                setResult(RESULT_CANCELED)
+                finish()
+                true
+            }
+            R.id.menu_save_data -> {
+                if (alarm != null) {
+                    if(alarm!!.isStarted)
+                        alarm!!.cancelAlarm(applicationContext)
+                    updateAlarm()
+                } else scheduleAlarm()
+                true
+            }
+            // 다른 메뉴 아이템 처리
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object{

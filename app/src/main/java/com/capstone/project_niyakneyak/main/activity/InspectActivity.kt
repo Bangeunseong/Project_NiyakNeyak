@@ -1,6 +1,8 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +48,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
         binding.toolbar3.setTitle(R.string.action_main_inspect_medicine)
         setSupportActionBar(binding.toolbar3)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         firestore = Firebase.firestore
         firebaseAuth = Firebase.auth
@@ -112,5 +115,26 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
     override fun onOptionClicked(option: String) {
         TODO("Not yet Implemented")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_inspect,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                setResult(RESULT_CANCELED)
+                finish()
+                true
+            }
+
+            R.id.menu_documents -> {
+                TODO("Not yet Implemented")
+            }
+            // 다른 메뉴 아이템 처리
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

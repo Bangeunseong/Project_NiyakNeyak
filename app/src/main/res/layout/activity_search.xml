@@ -10,6 +10,22 @@
     tools:context=".main.activity.SearchActivity">
 
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/search_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/search_bar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme" />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_bar"
         android:layout_width="0dp"
@@ -17,10 +33,11 @@
         android:iconifiedByDefault="false"
         android:queryHint="@string/dialog_search_form_meds_name"
         android:background="@drawable/item_search_view_bg_primary"
+        android:layout_marginVertical="5dp"
         android:paddingHorizontal="5dp"
         android:paddingBottom="2dp"
         app:layout_constraintVertical_bias="0"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_toolbar"
         app:layout_constraintBottom_toTopOf="@id/search_result_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

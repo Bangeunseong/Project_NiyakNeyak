@@ -51,9 +51,11 @@
             android:exported="false"
             android:theme="@style/Theme.Design.NoActionBar"/>
         <activity android:name=".main.activity.SearchActivity"
+            android:parentActivityName=".main.activity.DataSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.InspectActivity"
+            android:parentActivityName=".main.activity.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.SetProfileActivity"
@@ -62,6 +64,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.DataSettingActivity"
+            android:parentActivityName=".main.activity.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".login.activity.RegisterActivity"
