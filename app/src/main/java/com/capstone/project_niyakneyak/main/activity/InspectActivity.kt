@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
+import com.capstone.project_niyakneyak.data.inspect_model.InspectData
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityInspectBinding
@@ -109,7 +110,11 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
-            TODO("Not yet Implemented")
+            val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document()
+            firestore.runTransaction { transaction ->
+                transaction.set(query, InspectData(JSONObject(resultMap.toMap())))
+            }
         }
         binding.contentCreateTotalResultDocumentBtn.setOnClickListener {
             TODO("Not yet Implemented")

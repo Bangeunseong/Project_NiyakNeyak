@@ -7,7 +7,6 @@ import java.util.Date
 
 @IgnoreExtraProperties
 data class InspectData(
-    var typeName: String? = null,
     var jsonObject: JSONObject? = null,
     @ServerTimestamp
     var timestamp: Date? = null) {
