@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
+import com.capstone.project_niyakneyak.data.inspect_model.InspectData
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityInspectBinding
@@ -26,6 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     // Params for View binding and adapters
@@ -35,11 +39,16 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     private var optionAdapter: OptionAdapter? = null
 
     // Params for firebase
-    private var firestore: FirebaseFirestore? = null
-    private var firebaseAuth: FirebaseAuth? = null
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
 
     // Query
     private var query: Query? = null
+
+    // Inspection Results
+    private val resultMap = mutableMapOf<String, JSONObject>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +59,11 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         setSupportActionBar(binding.toolbar3)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
 
-        if(firebaseAuth!!.currentUser != null){
-            query = firestore!!.collection(UserAccount.COLLECTION_ID).document(firebaseAuth!!.currentUser!!.uid)
+        if(firebaseAuth.currentUser != null){
+            query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
         } else finish()
 
@@ -78,6 +87,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
             binding.contentRecyclerMedicine.adapter = medicineAdapter
         }
 
+        binding.contentRecyclerMedicine.setHasFixedSize(false)
         binding.contentRecyclerMedicine.layoutManager = LinearLayoutManager(this)
         binding.contentRecyclerMedicine.addItemDecoration(VerticalItemDecorator(10))
         binding.contentRecyclerMedicine.addItemDecoration(HorizontalItemDecorator(10))
@@ -98,6 +108,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 }
             }
         }
+        binding.contentRecyclerInspectOption.setHasFixedSize(true)
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
     }
 
@@ -113,8 +124,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         medicineAdapter?.stopListening()
     }
 
-    override fun onOptionClicked(option: String) {
-        TODO("Not yet Implemented")
+    override fun onOptionClicked(option: String, jsonObject: JSONObject?) {
+        if(jsonObject != null)
+            resultMap[option] = jsonObject
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

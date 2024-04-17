@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -35,7 +36,7 @@ open class OptionAdapter(
                 binding.contentResultDirectionImg.visibility = View.GONE
                 binding.progressBar2.visibility = View.VISIBLE
                 checkMedicineIsValid(option)
-                changeIo()
+                changeIo(onClickedOptionListener)
             }
         }
 
@@ -52,23 +53,28 @@ open class OptionAdapter(
         private fun activateAPIFunction(type: Int) {
             when (type) {
                 0 -> ioScope.launch {
+                    var result: JSONObject? = null
+                    //TODO: Need Modification in data processing
                         for (data in medsData) {
                             try {
+                                val mixedItem = JSONObject().put("itemSeq", data.itemSeq)
                                 jsonObject = openApiFunctions.getUsageJointPrdtList(data.itemSeq, null, 1, 25)
                                 Log.w("OptionAdapter", jsonObject.toString())
                                 if(!jsonObject!!.getJSONObject("body").isNull("items")){
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        if(resultObject == null) resultObject = JSONObject()
-                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
+                                        mixedItem.accumulate("mixedItems", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
                                 val totalCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
                                 for (i in 1 until (totalCount / 25 + 1)) {
                                     jsonObject = openApiFunctions.getUsageJointPrdtList(data.itemSeq, null, i + 1, 25)
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
+                                        mixedItem.accumulate("mixedItems", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
+                                if(result == null) result = JSONObject().put("typeName",OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)
+                                result!!.accumulate("items", mixedItem)
+
                             } catch (exception: JSONException) {
                                 Log.w("OptionAdapter", "Error Occurred: $exception")
                                 channel.send("Failed")
@@ -76,24 +82,29 @@ open class OptionAdapter(
                             }
                         }
 
-                        if(resultObject == null) channel.send("Success_NotFound")
-                        else if(!resultObject!!.isNull("items")){
-                            val mixedMeds = mutableMapOf<String, JSONObject>()
-                            for(data in medsData){
-                                val mixedList = JSONObject()
-                                for(pos in 0 until resultObject!!.getJSONArray("items").length()){
-                                    if(data.itemSeq == resultObject!!.getJSONArray("items").getJSONObject(pos).getString("MIXTURE_ITEM_SEQ")){
-                                        mixedList.accumulate("items", resultObject!!.getJSONArray("items").getJSONObject(pos))
+                        if(result == null) channel.send("Success_NotFound")
+                        else if(!result.isNull("items")){
+                            Log.w("Option Adapter", result.toString())
+                            var flag = false
+                            for(pos in 0 until result.getJSONArray("items").length()){
+                                if(result.getJSONArray("items").getJSONObject(pos).isNull("mixedItems")) continue
+                                for(data in medsData){
+                                    for(mixedPos in 0 until result.getJSONArray("items").getJSONObject(pos).getJSONArray("mixedItems").length()){
+                                        if(result.getJSONArray("items").getJSONObject(pos).getJSONArray("mixedItems").getJSONObject(mixedPos).getString("MIXTURE_ITEM_SEQ") == data.itemSeq){
+                                            if(resultObject == null) resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)
+                                            val mixedObject = result.getJSONArray("items").getJSONObject(pos).getJSONArray("mixedItems").getJSONObject(mixedPos)
+                                            val inputObject = JSONObject().put("itemSeq", data.itemSeq).put("mixedItem", mixedObject)
+                                            resultObject!!.accumulate("items", inputObject)
+                                            flag = true
+                                        }
                                     }
                                 }
-                                if(!mixedList.isNull("items"))
-                                    mixedMeds[data.itemSeq!!] = mixedList
                             }
-                            if(mixedMeds.isEmpty())
+                            if(!flag)
                                 channel.send("Success_NotFound")
                             else channel.send("Success")
                         }
-                        else if(resultObject!!.isNull("items")) channel.send("Success_NotFound")
+                        else if(result.isNull("items")) channel.send("Success_NotFound")
                         else channel.send("Failed")
                     }
                 1 -> ioScope.launch {
@@ -103,7 +114,7 @@ open class OptionAdapter(
                                 Log.w("OptionAdapter", jsonObject.toString())
                                 if(!jsonObject!!.getJSONObject("body").isNull("items")){
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        if(resultObject == null) resultObject = JSONObject()
+                                        if(resultObject == null) resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
@@ -128,7 +139,7 @@ open class OptionAdapter(
                                 Log.w("OptionAdapter", jsonObject.toString())
                                 if(!jsonObject!!.getJSONObject("body").isNull("items")){
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        if(resultObject == null) resultObject = JSONObject()
+                                        if(resultObject == null) resultObject = JSONObject().put("typeName",OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
@@ -153,7 +164,7 @@ open class OptionAdapter(
                                 Log.w("OptionAdapter", jsonObject.toString())
                                 if(!jsonObject!!.getJSONObject("body").isNull("items")){
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        if(resultObject == null) resultObject = JSONObject()
+                                        if(resultObject == null) resultObject = JSONObject().put("typeName",OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
@@ -178,7 +189,7 @@ open class OptionAdapter(
                                 Log.w("OptionAdapter", jsonObject.toString())
                                 if(jsonObject != null && !jsonObject!!.getJSONObject("body").isNull("items")) {
                                     for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
-                                        if(resultObject == null) resultObject = JSONObject()
+                                        if(resultObject == null) resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)
                                         resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
@@ -199,7 +210,7 @@ open class OptionAdapter(
             }
         }
 
-        private fun changeIo(){
+        private fun changeIo(onClickedOptionListener: OnClickedOptionListener){
             mainScope.launch {
                 val msg = channel.receive()
                 binding.progressBar2.visibility = View.GONE
@@ -208,6 +219,7 @@ open class OptionAdapter(
                     "Success"->{
                         Log.w("OptionAdapter", resultObject.toString())
                         binding.contentResultDirectionImg.setImageResource(R.drawable.baseline_error_24)
+                        onClickedOptionListener.onOptionClicked(resultObject!!.getString("typeName"), resultObject)
                     }
                     "Success_NotFound"->{
                         binding.contentResultDirectionImg.setImageResource(R.drawable.baseline_check_circle_24)

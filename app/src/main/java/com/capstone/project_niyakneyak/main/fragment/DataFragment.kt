@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.inspect_model.InspectData
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentDataListBinding
@@ -67,9 +68,25 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     }
     private val dataProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
+            viewModel.isChanged = true
+            val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID)
+            firestore.runTransaction { transaction ->
+                transaction.set(query, true)
+            }
             Toast.makeText(context, "Data Saved!", Toast.LENGTH_SHORT).show()
         }else{
             Toast.makeText(context, "Data Save Canceled!", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private val inspectProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            viewModel.isChanged = false
+            val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID)
+            firestore.runTransaction { transaction ->
+                transaction.set(query, false)
+            }
         }
     }
 
@@ -129,7 +146,8 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
 
         binding.contentMainInspect.setOnClickListener {
             val intent = Intent(context, InspectActivity::class.java)
-            startActivity(intent)
+            intent.putExtra("isChanged", viewModel.isChanged)
+            inspectProcessLauncher.launch(intent)
         }
 
         binding.contentFilterOption.setOnClickListener {
