@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
-import com.capstone.project_niyakneyak.data.inspect_model.InspectData
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityInspectBinding
@@ -28,8 +27,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     // Params for View binding and adapters
@@ -110,6 +107,13 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         }
         binding.contentRecyclerInspectOption.setHasFixedSize(true)
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
+
+        binding.contentCreateResultDocumentBtn.setOnClickListener {
+            TODO("Not yet Implemented")
+        }
+        binding.contentCreateTotalResultDocumentBtn.setOnClickListener {
+            TODO("Not yet Implemented")
+        }
     }
 
     override fun onStart() {
