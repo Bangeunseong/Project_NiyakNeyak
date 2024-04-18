@@ -23,6 +23,9 @@ open class OptionAdapter(
     private val medsData: List<MedicineData>,
     private val onClickedOptionListener: OnClickedOptionListener) :
     RecyclerView.Adapter<OptionAdapter.ViewHolder>() {
+
+    private var allClicked = false
+
     inner class ViewHolder(val binding: ItemRecyclerOptionBinding): RecyclerView.ViewHolder(binding.root){
         private val ioScope = CoroutineScope(Dispatchers.IO)
         private val mainScope = CoroutineScope(Dispatchers.Main)
@@ -38,6 +41,7 @@ open class OptionAdapter(
                 checkMedicineIsValid(option)
                 changeIo(onClickedOptionListener)
             }
+            if(allClicked) binding.contentActiveApiFunctionBtn.performClick()
         }
 
         private fun checkMedicineIsValid(option: String){
@@ -54,7 +58,6 @@ open class OptionAdapter(
             when (type) {
                 0 -> ioScope.launch {
                     var result: JSONObject? = null
-                    //TODO: Need Modification in data processing
                         for (data in medsData) {
                             try {
                                 val mixedItem = JSONObject().put("itemSeq", data.itemSeq)
@@ -126,9 +129,7 @@ open class OptionAdapter(
                         }
 
                         if(resultObject == null) channel.send("Success_NotFound")
-                        else if(!resultObject!!.isNull("items")) {
-                            channel.send("Success")
-                        }
+                        else if(!resultObject!!.isNull("items")) channel.send("Success")
                         else if(resultObject!!.isNull("items")) channel.send("Success_NotFound")
                         else channel.send("Failed")
                     }
@@ -151,9 +152,7 @@ open class OptionAdapter(
                         }
 
                         if(resultObject == null) channel.send("Success_NotFound")
-                        else if(!resultObject!!.isNull("items")) {
-                            channel.send("Success")
-                        }
+                        else if(!resultObject!!.isNull("items")) channel.send("Success")
                         else if(resultObject!!.isNull("items")) channel.send("Success_NotFound")
                         else channel.send("Failed")
                     }
@@ -176,9 +175,7 @@ open class OptionAdapter(
                         }
 
                         if(resultObject == null) channel.send("Success_NotFound")
-                        else if(!resultObject!!.isNull("items")) {
-                            channel.send("Success")
-                        }
+                        else if(!resultObject!!.isNull("items")) channel.send("Success")
                         else if(resultObject!!.isNull("items")) channel.send("Success_NotFound")
                         else channel.send("Failed")
                     }
@@ -201,9 +198,7 @@ open class OptionAdapter(
                         }
 
                         if(resultObject == null) channel.send("Success_NotFound")
-                        else if(!resultObject!!.isNull("items")){
-                            channel.send("Success")
-                        }
+                        else if(!resultObject!!.isNull("items"))channel.send("Success")
                         else if(resultObject!!.isNull("items")) channel.send("Success_NotFound")
                         else channel.send("Failed")
                     }
@@ -215,6 +210,7 @@ open class OptionAdapter(
                 val msg = channel.receive()
                 binding.progressBar2.visibility = View.GONE
                 binding.contentResultDirectionImg.visibility = View.VISIBLE
+                if(allClicked) allClicked = false
                 when (msg){
                     "Success"->{
                         Log.w("OptionAdapter", resultObject.toString())
@@ -232,8 +228,6 @@ open class OptionAdapter(
         }
     }
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemRecyclerOptionBinding.inflate(LayoutInflater.from(parent.context),parent,false))
     }
@@ -247,5 +241,10 @@ open class OptionAdapter(
         if (option != null)
             holder.bind(option)
         else return
+    }
+
+    fun onClickAllButtons(){
+        this.allClicked = true
+        notifyItemRangeChanged(0, itemCount)
     }
 }

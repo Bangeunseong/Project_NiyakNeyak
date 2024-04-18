@@ -150,20 +150,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="보고서 만들기"
-            app:layout_constraintBottom_toTopOf="@id/content_create_total_result_document_btn"
-            app:layout_constraintTop_toBottomOf="@id/content_recycler_inspect_option"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintVertical_chainStyle="packed"/>
+            android:text="검사 항목 보고서 만들기"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_inspect_all_btn"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/content_create_total_result_document_btn"
+            android:id="@+id/content_inspect_all_btn"
             style="@style/customAddBtnStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="전체 검사 후 보고서 만들기"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/content_create_result_document_btn"  />
+            android:text="전체 항목 검사하기"
+            app:layout_constraintBottom_toTopOf="@id/content_create_result_document_btn"
+            app:layout_constraintTop_toBottomOf="@id/content_recycler_inspect_option"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_chainStyle="packed" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

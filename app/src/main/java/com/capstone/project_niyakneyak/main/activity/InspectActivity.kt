@@ -1,6 +1,7 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -57,8 +58,10 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         setSupportActionBar(binding.toolbar3)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        FirebaseFirestore.setLoggingEnabled(true)
         _firestore = Firebase.firestore
         _firebaseAuth = Firebase.auth
+
 
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
@@ -110,14 +113,10 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
-            val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(InspectData.COLLECTION_ID).document()
-            firestore.runTransaction { transaction ->
-                transaction.set(query, InspectData(JSONObject(resultMap.toMap())))
-            }
+            Log.w(TAG, resultMap.toMap().toString())
         }
-        binding.contentCreateTotalResultDocumentBtn.setOnClickListener {
-            TODO("Not yet Implemented")
+        binding.contentInspectAllBtn.setOnClickListener {
+            optionAdapter!!.onClickAllButtons()
         }
     }
 
@@ -157,5 +156,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
             // 다른 메뉴 아이템 처리
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    companion object{
+        private const val TAG = "Inspect_Activity"
     }
 }
