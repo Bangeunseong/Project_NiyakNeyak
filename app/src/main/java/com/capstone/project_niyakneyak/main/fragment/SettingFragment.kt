@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.capstone.project_niyakneyak.main.activity.SetProfileActivity
@@ -19,6 +20,10 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class SettingFragment: Fragment() {
     private lateinit var binding: FragmentSettingBinding
@@ -77,9 +82,27 @@ class SettingFragment: Fragment() {
                 Log.d(TAG, "Terrible Error Occurred: $it")
             }
     }
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            try {
+                val documentSnapshot = withContext(Dispatchers.IO) {
+                    firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get().await()
+                }
+
+                val userAccount = documentSnapshot.toObject<UserAccount>()
+                userAccount?.let {
+                    binding.yourCurrentNameTextview.text = it.name
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "Error updating name: $e")
+            }
+        }
+    }
 
     companion object { // 이 메소드로 외부에서 이 프래그먼트에 접근할 수 있음
-        private const val TAG = "SettingFragment"
+        const val TAG = "SettingFragment"
         fun newInstance(): SettingFragment {
             return SettingFragment()
         }

@@ -52,6 +52,7 @@ class AppSettingActivity : AppCompatActivity() {
         }
     }
 
+
     private fun deleteUserAccount() {
         user?.let { user ->
             // Firestore에서 사용자 데이터 삭제
