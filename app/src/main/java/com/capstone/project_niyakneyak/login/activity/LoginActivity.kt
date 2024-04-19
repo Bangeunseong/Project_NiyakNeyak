@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.capstone.project_niyakneyak.alarm.service.AlarmService
 import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -22,19 +21,21 @@ import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding
 import com.capstone.project_niyakneyak.login.etc.LoggedInUserView
 import com.capstone.project_niyakneyak.login.etc.LoginResult
 import com.capstone.project_niyakneyak.login.viewmodel.LoginViewModel
+import com.capstone.project_niyakneyak.main.activity.AppSettingActivity.Companion.TAG
+import com.capstone.project_niyakneyak.main.activity.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
@@ -186,19 +187,66 @@ class LoginActivity : AppCompatActivity() {
         val signInIntent = mGoogleSignInClient!!.signInIntent
         googleSignInLauncher.launch(signInIntent)
     }
+
     private fun firebaseAuthWithGoogle(idToken: String?) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Change LiveData about LoginResult as Success
-                    loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseAuth.currentUser!!.uid))
+                    val isNewUser = task.result?.additionalUserInfo?.isNewUser == true  // 새 사용자 여부 확인
+                    firebaseAuth.currentUser?.let { firebaseUser ->
+                        if (isNewUser) {
+                            // 새 사용자인 경우 Firestore에 사용자 정보 저장 및 GoogleRegisterActivity로 이동
+                            saveUserToFirestore(firebaseUser)
+                        } else {
+                            // 새 사용자가 아닌 경우 다른 처리 (예: 메인 활동으로 이동)
+                            navigateToMainActivity()
+                        }
+                    } ?: run {
+                        Log.w(TAG, "Firebase User is null after sign-in success.")
+                        showLoginFailed(Exception("Authentication succeeded but user is null"))
+                    }
                 } else {
-                    // Change LiveData about LoginResult as Failed
-                    loginViewModel.loginResult.value = LoginResult(task.exception)
+                    // 로그인 실패 처리
+                    task.exception?.let {
+                        loginViewModel.loginResult.value = LoginResult(it)
+                        showLoginFailed(it)
+                    }
                 }
             }
     }
+
+    private fun saveUserToFirestore(user: FirebaseUser) {
+        val userMap = hashMapOf("email" to (user.email ?: ""))
+        firestore.collection("users").document(user.uid).set(userMap)
+            .addOnSuccessListener {
+                Log.d("Firestore", "User successfully written!")
+                Toast.makeText(this, "사용자 정보가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                navigateToGoogleRegisterActivity(user)
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error writing document", e)
+                Toast.makeText(this, "사용자 정보 등록 실패: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun navigateToGoogleRegisterActivity(firebaseUser: FirebaseUser) {
+        Intent(this, GoogleRegisterActivity::class.java).apply {
+            putExtra("uid", firebaseUser.uid)
+            putExtra("email", firebaseUser.email ?: "")
+            putExtra("name", firebaseUser.displayName ?: "")
+            startActivity(this)
+        }
+        finish()
+    }
+
+    private fun navigateToMainActivity() {
+        Intent(this, MainActivity::class.java).apply {
+            startActivity(this)
+        }
+        finish()
+    }
+
     private fun handleGoogleSignInResult(data: Intent?) {
         if (data != null) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
