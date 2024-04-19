@@ -9,15 +9,17 @@ import java.lang.StringBuilder
 
 //TODO: Need Modification When data model changed!
 class Filters {
-    var category: String? = null
-    var startDate: String? = null
-    var endDate: String? = null
-    var sortBy: String? = null
-    var sortDirection: Query.Direction = Query.Direction.ASCENDING
+    private var _startDate: String? = null
+    private var _endDate: String? = null
+    private var _sortBy: String? = null
+    private var _searchBy: String? = null
+    private var _sortDirection: Query.Direction = Query.Direction.ASCENDING
 
-    fun hasCategory(): Boolean{
-        return !TextUtils.isEmpty(category)
-    }
+    var startDate set(value) {_startDate = value} get() = _startDate
+    var endDate set(value) {_endDate = value} get() = _endDate
+    var searchBy set(value) {_searchBy = value} get() = _searchBy
+    var sortBy set(value) {_sortBy = value} get() = _sortBy
+    var sortDirection set(value) {_sortDirection = value} get() = _sortDirection
 
     fun hasStartDate(): Boolean{
         return !TextUtils.isEmpty(startDate)
@@ -31,18 +33,22 @@ class Filters {
         return !TextUtils.isEmpty(sortBy)
     }
 
+    fun hasSearchBy() : Boolean{
+        return !TextUtils.isEmpty(searchBy)
+    }
+
     fun getSearchDescription(context: Context): String{
         val builder = StringBuilder()
 
-        if(category == null){
+        if(sortBy == null){
             builder.append("<b>")
             builder.append(context.getString(R.string.all_medications))
             builder.append("</b>")
         }
 
-        if(category != null) {
+        if(sortBy != null) {
             builder.append("<b>")
-            builder.append(category)
+            builder.append(sortBy)
             builder.append("</b>")
         }
 
@@ -59,13 +65,21 @@ class Filters {
             else builder.append(" ~ _")
         }
 
+        if(searchBy == null){
+            builder.append(" search by Medicine Name")
+        }
+
+        if(searchBy != null){
+            builder.append(" search by ").append(searchBy)
+        }
+
         return builder.toString()
     }
 
     fun getOrderDescription(context: Context): String {
         return when (sortBy) {
             MedicineData.FIELD_ITEM_NAME_FB -> context.getString(R.string.sorted_by_medication_name)
-            MedicineData.FIELD_MEDICINE_ID_FB -> context.getString(R.string.sorted_by_medication_id)
+            MedicineData.FIELD_ENPT_NAME_FB -> context.getString(R.string.sorted_by_medication_entp)
             else -> context.getString(R.string.sorted_by_recently_update)
         }
     }
@@ -74,7 +88,8 @@ class Filters {
         val default: Filters
             get(){
                 val filters = Filters()
-                filters.sortBy = MedicineData.FIELD_ITEM_NAME_FB
+                filters.searchBy = MedicineData.FIELD_ITEM_NAME
+                filters.sortBy = MedicineData.FIELD_TIME_STAMP_FB
                 filters.sortDirection = Query.Direction.ASCENDING
 
                 return filters

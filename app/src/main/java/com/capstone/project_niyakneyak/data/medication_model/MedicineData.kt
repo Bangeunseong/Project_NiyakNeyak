@@ -34,8 +34,8 @@ data class MedicineData(
     var medsID: Int = -1,
     var dailyAmount: Int = 0,
     var medsDetail: String? = null,
-    var medsStartDate: String? = null,
-    var medsEndDate: String? = null,
+    var medsStartDate: Date? = null,
+    var medsEndDate: Date? = null,
     @ServerTimestamp
     var timeStamp: Date? = null) : Converter {
 
