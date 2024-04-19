@@ -9,9 +9,50 @@
     tools:context=".main.fragment.DataFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/content_search_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/content_main_layout">
+
+        <SearchView
+            android:id="@+id/content_search_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/content_search_option"/>
+
+        <ImageButton
+            android:id="@+id/content_filter_option"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@color/transparent"
+            android:contentDescription="@string/action_main_filter_option"
+            android:src="@drawable/baseline_filter_list_24"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/content_search_option"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/content_search_option"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/action_main_search_option"
+            android:src="@drawable/baseline_manage_search_24"
+            android:background="@color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/content_search_view"
+            app:layout_constraintEnd_toStartOf="@id/content_filter_option"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/content_search_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/content_main_meds"
@@ -47,8 +88,8 @@
         android:textColor="@color/gray_500"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="@+id/content_main_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toTopOf="@+id/content_main_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

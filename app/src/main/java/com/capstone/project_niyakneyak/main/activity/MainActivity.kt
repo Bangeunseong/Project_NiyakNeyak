@@ -1,18 +1,13 @@
 package com.capstone.project_niyakneyak.main.activity
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
-import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -56,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.alarmListFragment -> navController!!.navigate(R.id.action_alarmListFragment_to_checkListFragment)
                     R.id.settingFragment -> navController!!.navigate(R.id.action_settingFragment_to_checkListFragment)
                 }
-            } else if (item.itemId == R.id.menu_setting) {
+            } else if (item.itemId == R.id.menu_account) {
                 binding.toolbar.setTitle(R.string.toolbar_main_settings)
                 when (currentFragmentId){
                     R.id.mainPageFragment -> navController!!.navigate(R.id.action_mainPageFragment_to_settingFragment)
@@ -99,33 +94,6 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment!!.navController
         navController!!.addOnDestinationChangedListener(DestinationChangedListener())
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_tool, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-
-            R.id.nav_setting -> {
-                val alertDialog = AlertDialog.Builder(this)
-                    .setTitle("Warning!")
-                    .setMessage("Do you really want to sign out?")
-                    .setPositiveButton("OK") { _: DialogInterface?, _: Int ->
-                        // When SignOut option clicked signs out
-                        firebaseAuth.signOut()
-
-                        // Return to SignIn Activity
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
-                    }.setNegativeButton("Cancel"){ _: DialogInterface?, _: Int -> }
-                alertDialog.create().show()
-
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onSupportNavigateUp(): Boolean {

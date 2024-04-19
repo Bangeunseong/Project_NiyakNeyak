@@ -217,7 +217,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             }
 
         // Main Body(Setting Functions for each Components)
-        binding.medsNameText.isEnabled = false
+        binding.medsNameText.isFocusable = false
         binding.medsNameSearchBtn.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             searchLauncher.launch(intent)
@@ -255,8 +255,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 if (binding.medsDateText.text.toString() == "null") null else binding.medsDateText.text.toString()
             if (medsDateText!!.isNotEmpty()) {
                 val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                fetchedData.medsStartDate = dates[0]
-                fetchedData.medsEndDate = dates[1]
+                fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[0])
+                fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[1])
             }
 
             if(snapshotId == null) submitData(null, fetchedData)
