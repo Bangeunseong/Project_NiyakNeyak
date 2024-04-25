@@ -113,6 +113,8 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
+            //TODO: Add Data Setting Procedure using custom class and add data to firestore database
+
             Log.w(TAG, resultMap.toMap().toString())
         }
         binding.contentInspectAllBtn.setOnClickListener {
