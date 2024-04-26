@@ -45,6 +45,7 @@ open class OptionAdapter(
         }
 
         private fun checkMedicineIsValid(option: String){
+            binding.contentActiveApiFunctionBtn.isClickable = false
             when(option){
                 OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST-> activateAPIFunction(0)
                 OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST-> activateAPIFunction(1)
@@ -210,6 +211,7 @@ open class OptionAdapter(
                 val msg = channel.receive()
                 binding.progressBar2.visibility = View.GONE
                 binding.contentResultDirectionImg.visibility = View.VISIBLE
+                binding.contentActiveApiFunctionBtn.isClickable = true
                 if(allClicked) allClicked = false
                 when (msg){
                     "Success"->{

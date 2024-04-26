@@ -23,12 +23,21 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     // Params for View binding and adapters
@@ -49,9 +58,14 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     // Inspection Results
     private val resultMap = mutableMapOf<String, JSONObject>()
 
+    // Coroutine Scope
+    private var _defaultScope: CoroutineScope? = null
+    private val defaultScope get() = _defaultScope!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityInspectBinding.inflate(layoutInflater)
+        _defaultScope = CoroutineScope(Dispatchers.Default)
         setContentView(binding.root)
 
         binding.toolbar3.setTitle(R.string.action_main_inspect_medicine)
@@ -114,8 +128,26 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
             //TODO: Add Data Setting Procedure using custom class and add data to firestore database
+            defaultScope.launch {
+                val result1 = createDocumentAsync(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)
+                val result2 = createDocumentAsync(OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
+                val result3 = createDocumentAsync(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
+                val result4 = createDocumentAsync(OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)
+                val result5 = createDocumentAsync(OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)
 
-            Log.w(TAG, resultMap.toMap().toString())
+                result2.await()?.forEach { data ->
+                    Log.w(TAG, data.itemName.toString())
+                }
+                result3.await()?.forEach { data ->
+                    Log.w(TAG, data.itemName.toString())
+                }
+                result4.await()?.forEach { data ->
+                    Log.w(TAG, data.itemName.toString())
+                }
+                result5.await()?.forEach { data ->
+                    Log.w(TAG, data.itemName.toString())
+                }
+            }
         }
         binding.contentInspectAllBtn.setOnClickListener {
             optionAdapter!!.onClickAllButtons()
@@ -159,6 +191,70 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun createDocumentAsync(option: String): Deferred<List<InspectData>?> =
+        defaultScope.async {
+            var result: List<InspectData>? = null
+            when (option){
+                OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST->{
+                    if(resultMap.containsKey(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)){
+                        val jsonObject = resultMap[OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST]
+                        if(jsonObject != null && !jsonObject.isNull("items")){
+                            val jsonArray = jsonObject.getJSONArray("items")
+                            for(pos in 0 until jsonArray.length()){
+                                if(result == null) result = mutableListOf()
+                            }
+                        }
+                    }
+                }
+                OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST ->{
+                    if(resultMap.containsKey(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)){
+                        val jsonObject = resultMap[OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST]
+                        if(jsonObject != null && !jsonObject.isNull("items")){
+                            val jsonArray = jsonObject.getJSONArray("items")
+                            for(pos in 0 until jsonArray.length()){
+                                if(result == null) result = mutableListOf()
+                            }
+                        }
+                    }
+                }
+                OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST -> {
+                    if(resultMap.containsKey(OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)){
+                        val jsonObject = resultMap[OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST]
+                        if(jsonObject != null && !jsonObject.isNull("items")){
+                            val jsonArray = jsonObject.getJSONArray("items")
+                            for(pos in 0 until jsonArray.length()){
+                                if(result == null) result = mutableListOf()
+                            }
+                        }
+                    }
+                }
+                OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST -> {
+                    if(resultMap.containsKey(OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)){
+                        val jsonObject = resultMap[OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST]
+                        if(jsonObject != null && !jsonObject.isNull("items")){
+                            val jsonArray = jsonObject.getJSONArray("items")
+                            for(pos in 0 until jsonArray.length()){
+                                if(result == null) result = mutableListOf()
+                            }
+                        }
+                    }
+                }
+                OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST ->{
+                    if(resultMap.containsKey(OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)){
+                        val jsonObject = resultMap[OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST]
+                        if(jsonObject != null && !jsonObject.isNull("items")){
+                            val jsonArray = jsonObject.getJSONArray("items")
+                            for(pos in 0 until jsonArray.length()){
+                                if(result == null) result = mutableListOf()
+                            }
+                        }
+                    }
+                }
+            }
+            return@async result
+        }
+
 
     companion object{
         private const val TAG = "Inspect_Activity"
