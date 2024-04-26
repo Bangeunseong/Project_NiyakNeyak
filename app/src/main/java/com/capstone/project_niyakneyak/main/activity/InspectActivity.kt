@@ -129,23 +129,22 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentCreateResultDocumentBtn.setOnClickListener {
             //TODO: Add Data Setting Procedure using custom class and add data to firestore database
             defaultScope.launch {
-                val result1 = createDocumentAsync(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)
+                val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                    .collection(InspectData.COLLECTION_ID).document(SimpleDateFormat("yyyyMMdd", Locale.KOREAN).format(System.currentTimeMillis()))
+                val result1 = createDocumentAsyncForUsageJoint()
                 val result2 = createDocumentAsync(OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
                 val result3 = createDocumentAsync(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
                 val result4 = createDocumentAsync(OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)
                 val result5 = createDocumentAsync(OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)
+                result1.await()?.forEach { data ->
 
-                result2.await()?.forEach { data ->
-                    Log.w(TAG, data.itemName.toString())
                 }
-                result3.await()?.forEach { data ->
-                    Log.w(TAG, data.itemName.toString())
-                }
-                result4.await()?.forEach { data ->
-                    Log.w(TAG, data.itemName.toString())
-                }
-                result5.await()?.forEach { data ->
-                    Log.w(TAG, data.itemName.toString())
+                awaitAll(result2, result3, result4, result5).stream().forEach {
+                    if(it != null){
+                        for(data in it){
+                            firestore.runTransaction { transaction -> transaction.set(documentSnapshot.collection(data.typeName!!).document(), data) }
+                        }
+                    }
                 }
             }
         }
@@ -172,7 +171,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_inspect,menu)
+        menuInflater.inflate(R.menu.menu_inspect, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -183,30 +182,32 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 finish()
                 true
             }
-
             R.id.menu_documents -> {
                 TODO("Not yet Implemented")
             }
-            // 다른 메뉴 아이템 처리
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun createDocumentAsync(option: String): Deferred<List<InspectData>?> =
+    private fun createDocumentAsyncForUsageJoint(): Deferred<List<InspectData>?> =
         defaultScope.async {
             var result: List<InspectData>? = null
-            when (option){
-                OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST->{
-                    if(resultMap.containsKey(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)){
-                        val jsonObject = resultMap[OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST]
-                        if(jsonObject != null && !jsonObject.isNull("items")){
-                            val jsonArray = jsonObject.getJSONArray("items")
-                            for(pos in 0 until jsonArray.length()){
-                                if(result == null) result = mutableListOf()
-                            }
-                        }
+            if (resultMap.containsKey(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)) {
+                val jsonObject = resultMap[OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST]
+                if (jsonObject != null && !jsonObject.isNull("items")) {
+                    val jsonArray = jsonObject.getJSONArray("items")
+                    for (pos in 0 until jsonArray.length()) {
+                        if (result == null) result = mutableListOf()
                     }
                 }
+            }
+            return@async result
+        }
+
+    private fun createDocumentAsync(option: String): Deferred<List<InspectData>?> =
+        defaultScope.async {
+            var result: MutableList<InspectData>? = null
+            when (option){
                 OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST ->{
                     if(resultMap.containsKey(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)){
                         val jsonObject = resultMap[OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST]
@@ -214,6 +215,28 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                             val jsonArray = jsonObject.getJSONArray("items")
                             for(pos in 0 until jsonArray.length()){
                                 if(result == null) result = mutableListOf()
+                                result.add(InspectData(
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_TYPE_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_TYPE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME_FULL),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_FORM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_SEQ),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_PERMIT_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ENTP_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHART),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ETC_OTC_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_MAIN_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_NOTIFICATION_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_PROHIBIT_CONTENT),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_REMARK),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHANGE_DATE)))
                             }
                         }
                     }
@@ -225,6 +248,28 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                             val jsonArray = jsonObject.getJSONArray("items")
                             for(pos in 0 until jsonArray.length()){
                                 if(result == null) result = mutableListOf()
+                                result.add(InspectData(
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_TYPE_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_TYPE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME_FULL),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_FORM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_SEQ),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_PERMIT_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ENTP_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHART),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ETC_OTC_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_MAIN_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_NOTIFICATION_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_PROHIBIT_CONTENT),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_REMARK),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHANGE_DATE)))
                             }
                         }
                     }
@@ -236,6 +281,28 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                             val jsonArray = jsonObject.getJSONArray("items")
                             for(pos in 0 until jsonArray.length()){
                                 if(result == null) result = mutableListOf()
+                                result.add(InspectData(
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_TYPE_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_TYPE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME_FULL),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_FORM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_SEQ),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_PERMIT_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ENTP_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHART),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ETC_OTC_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_MAIN_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_NOTIFICATION_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_PROHIBIT_CONTENT),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_REMARK),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHANGE_DATE)))
                             }
                         }
                     }
@@ -247,6 +314,28 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                             val jsonArray = jsonObject.getJSONArray("items")
                             for(pos in 0 until jsonArray.length()){
                                 if(result == null) result = mutableListOf()
+                                result.add(InspectData(
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_TYPE_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_TYPE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_CODE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_INGR_ENG_NAME_FULL),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_MIX_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_FORM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_SEQ),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ITEM_PERMIT_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ENTP_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHART),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CLASS_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_ETC_OTC_NAME),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_MAIN_INGR),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_NOTIFICATION_DATE),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_PROHIBIT_CONTENT),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FILED_REMARK),
+                                    jsonArray.getJSONObject(pos).getString(InspectData.FIELD_CHANGE_DATE)))
                             }
                         }
                     }

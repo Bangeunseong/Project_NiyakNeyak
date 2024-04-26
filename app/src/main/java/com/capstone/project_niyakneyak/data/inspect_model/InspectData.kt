@@ -1,5 +1,7 @@
 package com.capstone.project_niyakneyak.data.inspect_model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.firebase.firestore.IgnoreExtraProperties
 import com.google.firebase.firestore.ServerTimestamp
 import org.json.JSONObject
@@ -18,20 +20,70 @@ data class InspectData(
     var formName: String? = null,
     var itemSeq: String? = null,
     var itemName: String? = null,
-    var itemPermitDate: Date? = null,
+    var itemPermitDate: String? = null,
     var entpName: String? = null,
     var chart: String? = null,
     var className: String? = null,
     var etcOtcName: String? = null,
     var mainIngr: String? = null,
-    var notificationDate: Date? = null,
+    var notificationDate: String? = null,
     var prohbtContent: String? = null,
     var remark: String? = null,
-    var changeDate: Date? = null,
-    @ServerTimestamp
-    var timestamp: Date? = null) {
+    var changeDate: String? = null): Parcelable {
 
-    companion object {
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString()
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(classCode)
+        parcel.writeString(typeName)
+        parcel.writeString(mixType)
+        parcel.writeString(ingrCode)
+        parcel.writeString(ingrName)
+        parcel.writeString(ingrEngName)
+        parcel.writeString(ingrEngNameFull)
+        parcel.writeString(mixIngr)
+        parcel.writeString(formName)
+        parcel.writeString(itemSeq)
+        parcel.writeString(itemName)
+        parcel.writeString(itemPermitDate)
+        parcel.writeString(entpName)
+        parcel.writeString(chart)
+        parcel.writeString(className)
+        parcel.writeString(etcOtcName)
+        parcel.writeString(mainIngr)
+        parcel.writeString(notificationDate)
+        parcel.writeString(prohbtContent)
+        parcel.writeString(remark)
+        parcel.writeString(changeDate)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<InspectData> {
         const val FIELD_TYPE_NAME = "TYPE_NAME"
         const val FIELD_CLASS_CODE = "CLASS_CODE"
         const val FIELD_MIX_TYPE = "MIX_TYPE"
@@ -55,5 +107,13 @@ data class InspectData(
         const val FIELD_CHANGE_DATE = "CHANGE_DATE"
         const val COLLECTION_ID = "inspect_documents"
         const val PARAM_CHANGE_DOCUMENT_ID = "param_changed"
+
+        override fun createFromParcel(parcel: Parcel): InspectData {
+            return InspectData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<InspectData?> {
+            return arrayOfNulls(size)
+        }
     }
 }

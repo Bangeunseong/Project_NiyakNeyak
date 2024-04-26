@@ -111,6 +111,15 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
                 .orderBy(MedicineData.FIELD_ITEM_NAME_FB, Query.Direction.ASCENDING)
+
+            // TODO: Add Notification mark to inspect button(condition: when isChanged is true, show notification mark)
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).get()
+                .addOnSuccessListener {
+                    viewModel.isChanged = it.toObject<Boolean>() ?: false
+                }.addOnFailureListener {
+                    viewModel.isChanged = false
+                }
         }
 
         // RecyclerAdapter for Medication Info.
