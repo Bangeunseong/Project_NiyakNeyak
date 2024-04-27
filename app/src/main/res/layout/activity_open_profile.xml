@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_setting_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.capstone.project_niyakneyak.main.fragment.SettingFragment">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:toolbarId="@+id/toolbar_open_profile"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:contentScrim="?attr/colorPrimary">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_open_profile"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_width="match_parent"/>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
 
     <!-- NestedScrollView를 사용하여 스크롤 가능한 영역 생성 -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
         <!-- ConstraintLayout을 사용하여 하위 요소 배치 -->
@@ -23,19 +45,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16sp"
+                android:padding="5sp"
 
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/account_information_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:paddingBottom="5sp"
-                    android:text="Account Information"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
 
 
                 <ImageView
@@ -93,6 +106,7 @@
                     app:layout_constraintHorizontal_bias="0.6"
                     app:layout_constraintStart_toEndOf="@id/name_title"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <EditText
                     android:id="@+id/name_text_edit"
                     android:layout_width="wrap_content"
@@ -182,6 +196,7 @@
                     app:layout_constraintHorizontal_bias="0.6"
                     app:layout_constraintStart_toEndOf="@id/birthday_title"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/birthday_text_edit"
                     android:layout_width="wrap_content"
@@ -271,6 +286,7 @@
                     app:layout_constraintHorizontal_bias="0.6"
                     app:layout_constraintStart_toEndOf="@id/password_title"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <EditText
                     android:id="@+id/password_text_edit"
                     android:layout_width="wrap_content"
@@ -322,6 +338,7 @@
                     app:layout_constraintHorizontal_bias="0.6"
                     app:layout_constraintStart_toEndOf="@id/phonenumber_title"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <EditText
                     android:id="@+id/phonenumber_text_edit"
                     android:layout_width="wrap_content"
@@ -374,20 +391,9 @@
                     app:layout_constraintHorizontal_bias="0.6"
                     app:layout_constraintStart_toEndOf="@id/gender_title"
                     app:layout_constraintTop_toTopOf="parent" />
-                <EditText
-                    android:id="@+id/gender_text_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text="-"
-                    android:textAlignment="center"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.6"
-                    app:layout_constraintStart_toEndOf="@id/gender_title"
-                    app:layout_constraintTop_toTopOf="parent" />
+
+
+
                 <RadioGroup
                     android:id="@+id/gender_radio_group"
                     android:layout_width="wrap_content"
@@ -404,7 +410,7 @@
                         android:id="@+id/male_radio_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="남성        " />
+                        android:text="남성" />
 
                     <RadioButton
                         android:id="@+id/female_radio_button"
@@ -413,8 +419,6 @@
                         android:text="여성" />
                 </RadioGroup>
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -435,7 +439,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/modify_button"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/modify_button"
@@ -446,43 +450,57 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/back_button"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
+                <ProgressBar
+                    android:id="@+id/progressBar_modify"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/back_button"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/modify_back_button"
                     android:layout_width="120sp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
+                    android:backgroundTint="#9756FF"
                     android:text="수정취소"
                     android:visibility="invisible"
-                    android:backgroundTint="#9756FF"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/modify_finish_button"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/modify_finish_button"
                     android:layout_width="120sp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
+                    android:backgroundTint="#9756FF"
                     android:text="수정완료"
                     android:visibility="invisible"
-                    android:backgroundTint="#9756FF"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/modify_back_button"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <LinearLayout
                 android:id="@+id/logout_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="10sp"
-                android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/modify_layout">
+
                 <Button
                     android:id="@+id/logout_button"
                     android:layout_width="120sp"
@@ -495,4 +513,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

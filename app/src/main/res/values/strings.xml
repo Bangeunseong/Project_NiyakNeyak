@@ -24,6 +24,7 @@
     <string name="toolbar_main_timer">Timer</string>
     <string name="toolbar_main_checklist">CheckList</string>
     <string name="toolbar_main_settings">Settings</string>
+    <string name="toolbar_modification">Profile Modification</string>
 
     <string name="action_menu_settings">Settings</string>
     <string name="action_menu_logout">Logout</string>

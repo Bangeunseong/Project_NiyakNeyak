@@ -4,6 +4,8 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.RadioButton
@@ -25,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import androidx.appcompat.app.AlertDialog
 
 class OpenProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOpenProfileBinding
@@ -42,9 +45,18 @@ class OpenProfileActivity : AppCompatActivity() {
         binding = ActivityOpenProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbarOpenProfile)
+        supportActionBar?.title = getString(R.string.toolbar_modification)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
         auth = Firebase.auth // Firebase Auth 초기화
         firestore = Firebase.firestore // Firestore 초기화
         user = auth?.currentUser // 현재 사용자 가져오기
+
+        binding.progressBarModify.visibility = View.VISIBLE
+        binding.modifyButton.isEnabled = false
+        //binding.modifyButton.setBackgroundColor(getColor(R.color.gray))
 
         val userId = auth.currentUser?.uid
         if (userId != null) {
@@ -52,6 +64,9 @@ class OpenProfileActivity : AppCompatActivity() {
                 val user = documentSnapshot.toObject<UserAccount>()
                 val age = user?.age.toString()
                 if (user != null) {
+                    binding.progressBarModify.visibility = View.GONE
+                    binding.modifyButton.isEnabled = true
+
                     binding.yourCurrentNameTextview.text = user.name
                     binding.nameText.text = user.name
                     binding.ageText.text = "만 $age 세"
@@ -79,6 +94,12 @@ class OpenProfileActivity : AppCompatActivity() {
                 }
             }.addOnFailureListener { exception ->
                 Log.e("Firestore", "Error getting user data: ", exception)
+
+                binding.progressBarModify.visibility = View.GONE
+                binding.modifyButton.isEnabled = false
+
+                // 사용자에게 오류 메시지를 표시합니다.
+                Toast.makeText(this@OpenProfileActivity, "프로필 정보를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
         }
         binding.backButton.setOnClickListener {
@@ -102,6 +123,8 @@ class OpenProfileActivity : AppCompatActivity() {
             binding.backButton.visibility = View.INVISIBLE
             binding.modifyButton.visibility = View.INVISIBLE
 
+
+            binding.birthdayTextEdit.text = binding.birthdayText.text
 
         }
         binding.modifyBackButton.setOnClickListener {
@@ -225,9 +248,17 @@ class OpenProfileActivity : AppCompatActivity() {
 
 
         binding.logoutButton.setOnClickListener {
-            auth?.signOut()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            AlertDialog.Builder(this@OpenProfileActivity).apply {
+                setTitle("로그아웃")
+                setMessage("로그아웃 하시겠습니까?")
+                setPositiveButton("예") { _, _ ->
+                    auth?.signOut()
+                    startActivity(Intent(this@OpenProfileActivity, LoginActivity::class.java))
+                    finish()
+                }
+                setNegativeButton("아니오", null)
+                show()
+            }
         }
 
     }
@@ -278,5 +309,23 @@ class OpenProfileActivity : AppCompatActivity() {
         }
 
         return age
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return super.onCreateOptionsMenu(menu)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            android.R.id.home -> {
+                setResult(RESULT_CANCELED)
+                finish()
+                true
+            }
+
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+
+        }
+
     }
 }
