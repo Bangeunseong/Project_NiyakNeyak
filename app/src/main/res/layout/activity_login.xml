@@ -93,21 +93,10 @@
                 android:layout_height="wrap_content"
                 android:minWidth="250dp"
                 android:text="@string/main_login_google_text"
-                app:layout_constraintBottom_toTopOf="@id/main_login_naver"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/main_login_plain" />
-
-            <Button
-                android:id="@+id/main_login_naver"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="250dp"
-                android:text="@string/main_login_naver_text"
                 app:layout_constraintBottom_toTopOf="@id/main_register_btn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/main_login_google" />
+                app:layout_constraintTop_toBottomOf="@id/main_login_plain" />
 
             <Button
                 android:id="@+id/main_register_btn"
@@ -119,7 +108,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/main_login_naver" />
+                app:layout_constraintTop_toBottomOf="@+id/main_login_plain" />
 
             <ProgressBar
                 android:id="@+id/loadingBar_Plain"
@@ -142,17 +131,6 @@
                 app:layout_constraintEnd_toEndOf="@id/main_login_google"
                 app:layout_constraintStart_toStartOf="@id/main_login_google"
                 app:layout_constraintTop_toTopOf="@id/main_login_google" />
-
-            <ProgressBar
-                android:id="@+id/loadingBar_Naver"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/main_login_naver"
-                app:layout_constraintEnd_toEndOf="@id/main_login_naver"
-                app:layout_constraintStart_toStartOf="@id/main_login_naver"
-                app:layout_constraintTop_toTopOf="@id/main_login_naver" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

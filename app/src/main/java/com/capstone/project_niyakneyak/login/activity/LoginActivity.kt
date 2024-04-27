@@ -107,7 +107,6 @@ class LoginActivity : AppCompatActivity() {
 
             binding.loadingBarPlain.visibility = View.GONE
             binding.loadingBarGoogle.visibility = View.GONE
-            binding.loadingBarNaver.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error!!)
             }
@@ -182,6 +181,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
     // Handle Google SignIn Process
     private fun googleSignIn() {
         val signInIntent = mGoogleSignInClient!!.signInIntent
@@ -193,14 +193,17 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    //view모델을 통해서 바꿔서 loginResult를 바꿔줘야함
+                    //observe해서 실시간으로 변화를 보면서 값이 변하면 그에 따라서, 절차를 수행
+
                     val isNewUser = task.result?.additionalUserInfo?.isNewUser == true  // 새 사용자 여부 확인
                     firebaseAuth.currentUser?.let { firebaseUser ->
                         if (isNewUser) {
                             // 새 사용자인 경우 Firestore에 사용자 정보 저장 및 GoogleRegisterActivity로 이동
                             saveUserToFirestore(firebaseUser)
                         } else {
-                            // 새 사용자가 아닌 경우 다른 처리 (예: 메인 활동으로 이동)
-                            navigateToMainActivity()
+                            // 기존 사용자인 경우 MainActivity로 이동
+                            loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseUser.uid))
                         }
                     } ?: run {
                         Log.w(TAG, "Firebase User is null after sign-in success.")
@@ -235,13 +238,6 @@ class LoginActivity : AppCompatActivity() {
             putExtra("uid", firebaseUser.uid)
             putExtra("email", firebaseUser.email ?: "")
             putExtra("name", firebaseUser.displayName ?: "")
-            startActivity(this)
-        }
-        finish()
-    }
-
-    private fun navigateToMainActivity() {
-        Intent(this, MainActivity::class.java).apply {
             startActivity(this)
         }
         finish()
