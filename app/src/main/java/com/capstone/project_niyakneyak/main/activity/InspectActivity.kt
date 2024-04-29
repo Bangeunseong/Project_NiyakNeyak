@@ -160,9 +160,6 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 }
             }
         }
-        binding.contentInspectAllBtn.setOnClickListener {
-            optionAdapter!!.onClickAllButtons()
-        }
     }
 
     override fun onAttachedToWindow() {
@@ -170,6 +167,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
         callback = object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
+                optionAdapter!!.cancelAllActiveCoroutines()
                 if(isInspected) setResult(RESULT_OK)
                 else setResult(RESULT_CANCELED)
                 finish()
@@ -206,6 +204,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
+                optionAdapter!!.cancelAllActiveCoroutines()
                 if(isInspected) setResult(RESULT_OK)
                 else setResult(RESULT_CANCELED)
                 finish()

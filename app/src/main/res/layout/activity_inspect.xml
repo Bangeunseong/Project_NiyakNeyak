@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -150,20 +151,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="검사 항목 보고서 만들기"
+            android:text="검사 결과 보고서 확인하기"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/content_inspect_all_btn"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/content_inspect_all_btn"
-            style="@style/customAddBtnStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="전체 항목 검사하기"
-            app:layout_constraintBottom_toTopOf="@id/content_create_result_document_btn"
             app:layout_constraintTop_toBottomOf="@id/content_recycler_inspect_option"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

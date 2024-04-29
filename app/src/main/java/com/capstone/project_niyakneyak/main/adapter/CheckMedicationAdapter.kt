@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerCheckItemBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedMedicationListener
@@ -28,7 +29,7 @@ open class CheckMedicationAdapter(query: Query, private val onCheckedMedicationL
         fun bind(snapshot: DocumentSnapshot, listener: OnCheckedMedicationListener){
             val medicationData = snapshot.toObject<MedicineData>() ?: return
             binding.medicineImg.contentDescription = medicationData.itemName
-            Glide.with(itemView).load(medicationData.bigPrdtImgUrl).into(binding.medicineImg)
+            Glide.with(itemView).load(medicationData.bigPrdtImgUrl).placeholder(R.drawable.baseline_medication_liquid_24).into(binding.medicineImg)
             binding.medicationName.text = medicationData.itemName
             binding.medicationAmount.text = String.format("%d pills",medicationData.dailyAmount)
             binding.medicationDetail.text = medicationData.medsDetail
