@@ -88,18 +88,18 @@ class AlarmSettingActivity : AppCompatActivity() {
                 .collection(Alarm.COLLECTION_ID).document(snapshotId!!).get()
                 .addOnSuccessListener {
                     alarm = it.toObject(Alarm::class.java)
-                    binding.toolbar5.setTitle("Change Timer")
+                    binding.toolbar5.title = "Change Timer"
                     setSupportActionBar(binding.toolbar5)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     setActivity(alarm)
                 }.addOnFailureListener {
-                    binding.toolbar5.setTitle("Add Timer")
+                    binding.toolbar5.title = "Add Timer"
                     setSupportActionBar(binding.toolbar5)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     setActivity(alarm)
                 }
         } else {
-            binding.toolbar5.setTitle("Add Timer")
+            binding.toolbar5.title = "Add Timer"
             setSupportActionBar(binding.toolbar5)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             setActivity(null)
