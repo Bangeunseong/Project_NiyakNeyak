@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.capstone.project_niyakneyak.App"
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,51 +22,66 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project_NiyakNeyak"
         tools:targetApi="31">
+        <activity
+            android:name=".main.activity.ProfileChangeActivity"
+            android:exported="false" />
 
         <service android:name=".alarm.service.AlarmService" />
-        <service android:name=".alarm.service.RescheduleAlarmService"
-            android:foregroundServiceType="dataSync"/>
+        <service
+            android:name=".alarm.service.RescheduleAlarmService"
+            android:foregroundServiceType="dataSync" />
+
         <receiver
             android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="false" />
         <receiver
             android:name=".alarm.receiver.RescheduleAlarmReceiver"
+            android:directBootAware="true"
             android:enabled="true"
-            android:exported="false"
-            android:directBootAware="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".main.activity.AppSettingActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".main.activity.OpenProfileActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".alarm.activity.RingActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Design.NoActionBar"/>
-        <activity android:name=".main.activity.SearchActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".main.activity.SetProfileActivity"
-            android:exported="false" />
-        <activity android:name=".main.activity.AlarmSettingActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".main.activity.DataSettingActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".login.activity.RegisterActivity"
+        <activity
+            android:name=".main.activity.AppSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".login.activity.LoginActivity"
+        <activity
+            android:name=".main.activity.OpenProfileActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".main.activity.MainActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".alarm.activity.RingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Design.NoActionBar" />
+        <activity
+            android:name=".main.activity.SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".main.activity.SetProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".main.activity.AlarmSettingActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".main.activity.DataSettingActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".login.activity.RegisterActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".login.activity.LoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".main.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,9 +95,11 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
-            <meta-data android:name="com.capstone.project_niyakneyak.util.FireStoreInitializer"
+            <meta-data
+                android:name="com.capstone.project_niyakneyak.util.FireStoreInitializer"
                 android:value="androidx.startup" />
-            <meta-data android:name="com.capstone.project_niyakneyak.util.AuthInitializer"
+            <meta-data
+                android:name="com.capstone.project_niyakneyak.util.AuthInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>

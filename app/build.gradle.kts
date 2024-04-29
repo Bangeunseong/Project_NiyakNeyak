@@ -49,6 +49,7 @@ dependencies {
 
     implementation("androidx.navigation:navigation-fragment:2.7.7")
     implementation("androidx.navigation:navigation-ui:2.7.7")
+    implementation("androidx.activity:activity:1.8.0")
     val workVersion = "2.9.0"
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
