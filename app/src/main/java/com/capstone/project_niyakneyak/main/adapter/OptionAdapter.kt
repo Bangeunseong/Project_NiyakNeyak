@@ -12,7 +12,9 @@ import com.capstone.project_niyakneyak.main.etc.OpenApiFunctions
 import com.capstone.project_niyakneyak.main.listener.OnClickedOptionListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
@@ -33,13 +35,28 @@ open class OptionAdapter(
         private var jsonObject: JSONObject? = null
         private var resultObject: JSONObject? = null
         private val channel = Channel<String>()
+        private var isActivated = false
         fun bind(option: String){
             binding.contentActiveApiFunctionBtn.text = option
             binding.contentActiveApiFunctionBtn.setOnClickListener {
                 binding.contentResultDirectionImg.visibility = View.GONE
                 binding.progressBar2.visibility = View.VISIBLE
-                checkMedicineIsValid(option)
-                changeIo(onClickedOptionListener)
+                if(!isActivated){
+                    isActivated = true
+                    checkMedicineIsValid(option)
+                    changeIo(onClickedOptionListener)
+                }else{
+                    if(allClicked) allClicked = false
+                    isActivated = false
+                    if(ioScope.isActive) ioScope.cancel()
+                    else{
+                        if(mainScope.isActive) {
+                            mainScope.cancel()
+                            binding.progressBar2.visibility = View.GONE
+                            binding.contentResultDirectionImg.visibility = View.VISIBLE
+                        }
+                    }
+                }
             }
             if(allClicked) binding.contentActiveApiFunctionBtn.performClick()
         }
@@ -212,7 +229,6 @@ open class OptionAdapter(
                 binding.progressBar2.visibility = View.GONE
                 binding.contentResultDirectionImg.visibility = View.VISIBLE
                 binding.contentActiveApiFunctionBtn.isClickable = true
-                if(allClicked) allClicked = false
                 when (msg){
                     "Success"->{
                         Log.w("OptionAdapter", resultObject.toString())
@@ -226,6 +242,8 @@ open class OptionAdapter(
                         binding.contentResultDirectionImg.setImageResource(R.drawable.baseline_running_with_errors_24)
                     }
                 }
+                if(allClicked) allClicked = false
+                isActivated = false
             }
         }
     }

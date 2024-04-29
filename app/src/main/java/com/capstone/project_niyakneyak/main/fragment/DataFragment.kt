@@ -69,6 +69,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     private val dataProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             viewModel.isChanged = true
+            binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
             val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID)
             firestore.runTransaction { transaction ->
@@ -82,6 +83,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     private val inspectProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             viewModel.isChanged = false
+            binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
             val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID)
             firestore.runTransaction { transaction ->
@@ -117,8 +119,11 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
                 .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).get()
                 .addOnSuccessListener {
                     viewModel.isChanged = it.toObject<Boolean>() ?: false
+                    if(viewModel.isChanged) binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
+                    else binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
                 }.addOnFailureListener {
                     viewModel.isChanged = false
+                    binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
                 }
         }
 

@@ -66,6 +66,7 @@
             app:layout_constraintVertical_chainStyle="packed">
 
         </androidx.recyclerview.widget.RecyclerView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -86,7 +87,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="20dp"
         android:clickable="true"
-        android:src="@android:drawable/ic_menu_search"
+        android:src="@drawable/ic_search_icon"
         android:contentDescription="@string/action_main_inspect_medicine"
         app:layout_constraintBottom_toTopOf="@id/content_main_add"
         app:layout_constraintEnd_toEndOf="parent"/>

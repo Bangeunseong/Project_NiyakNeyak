@@ -6,10 +6,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.inspect_model.InspectData
+import com.capstone.project_niyakneyak.data.inspect_model.UsageJointData
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityInspectBinding
@@ -34,6 +37,8 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -57,10 +62,14 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
     // Inspection Results
     private val resultMap = mutableMapOf<String, JSONObject>()
+    private var isInspected = false
 
     // Coroutine Scope
     private var _defaultScope: CoroutineScope? = null
     private val defaultScope get() = _defaultScope!!
+
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +89,10 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
-        } else finish()
+        } else {
+            setResult(RESULT_CANCELED)
+            finish()
+        }
 
         query?.let { query ->
             medicineAdapter = object: CurrentMedicineAdapter(query){
@@ -130,7 +142,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
             //TODO: Add Data Setting Procedure using custom class and add data to firestore database
             defaultScope.launch {
                 val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(InspectData.COLLECTION_ID).document(SimpleDateFormat("yyyyMMdd", Locale.KOREAN).format(System.currentTimeMillis()))
+                    .collection(InspectData.COLLECTION_ID).document()
                 val result1 = createDocumentAsyncForUsageJoint()
                 val result2 = createDocumentAsync(OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
                 val result3 = createDocumentAsync(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
@@ -153,6 +165,20 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         }
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                if(isInspected) setResult(RESULT_OK)
+                else setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
+    }
+
     override fun onStart() {
         super.onStart()
 
@@ -166,8 +192,10 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     }
 
     override fun onOptionClicked(option: String, jsonObject: JSONObject?) {
-        if(jsonObject != null)
+        if(jsonObject != null){
             resultMap[option] = jsonObject
+            isInspected = true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -178,7 +206,8 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                setResult(RESULT_CANCELED)
+                if(isInspected) setResult(RESULT_OK)
+                else setResult(RESULT_CANCELED)
                 finish()
                 true
             }
@@ -189,9 +218,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         }
     }
 
-    private fun createDocumentAsyncForUsageJoint(): Deferred<List<InspectData>?> =
+    private fun createDocumentAsyncForUsageJoint(): Deferred<List<UsageJointData>?> =
         defaultScope.async {
-            var result: List<InspectData>? = null
+            var result: List<UsageJointData>? = null
             if (resultMap.containsKey(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)) {
                 val jsonObject = resultMap[OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST]
                 if (jsonObject != null && !jsonObject.isNull("items")) {

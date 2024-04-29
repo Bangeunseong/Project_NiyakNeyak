@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -58,6 +59,13 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == Activity.RESULT_OK){
             viewModel.isSignedIn = true
+        }
+    }
+    private val alarmSettingProcessLauncher =registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == Activity.RESULT_OK){
+            Toast.makeText(context, "Modified Timer!", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "Modifying Canceled", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -163,7 +171,7 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     private fun showAlarmSettingDialog(snapshot: DocumentSnapshot) {
         val intent = Intent(context, AlarmSettingActivity::class.java)
         intent.putExtra("snapshot_id",snapshot.id)
-        startActivity(intent)
+        alarmSettingProcessLauncher.launch(intent)
     }
 
     private fun shouldStartSignIn(): Boolean {
