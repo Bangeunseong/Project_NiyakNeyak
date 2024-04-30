@@ -1,13 +1,11 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
@@ -26,7 +24,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
@@ -37,12 +34,8 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     // Params for View binding and adapters
@@ -139,7 +132,6 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
-            //TODO: Add Data Setting Procedure using custom class and add data to firestore database
             defaultScope.launch {
                 val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(InspectData.COLLECTION_ID).document()
@@ -149,7 +141,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 val result4 = createDocumentAsync(OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)
                 val result5 = createDocumentAsync(OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)
                 result1.await()?.forEach { data ->
-
+                    firestore.runTransaction { transaction -> transaction.set(documentSnapshot.collection(data.typeName!!).document(), data) }
                 }
                 awaitAll(result2, result3, result4, result5).stream().forEach {
                     if(it != null){
@@ -219,13 +211,15 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
     private fun createDocumentAsyncForUsageJoint(): Deferred<List<UsageJointData>?> =
         defaultScope.async {
-            var result: List<UsageJointData>? = null
+            var result: MutableList<UsageJointData>? = null
             if (resultMap.containsKey(OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)) {
                 val jsonObject = resultMap[OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST]
                 if (jsonObject != null && !jsonObject.isNull("items")) {
                     val jsonArray = jsonObject.getJSONArray("items")
                     for (pos in 0 until jsonArray.length()) {
+                        //TODO: Implement data
                         if (result == null) result = mutableListOf()
+                        //result.add(UsageJointData(jsonArray.getJSONObject(pos).getString()))
                     }
                 }
             }
