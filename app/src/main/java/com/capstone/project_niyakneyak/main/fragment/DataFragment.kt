@@ -2,6 +2,7 @@ package com.capstone.project_niyakneyak.main.fragment
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,6 +29,10 @@ import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.etc.Filters
 import com.capstone.project_niyakneyak.main.viewmodel.DataViewModel
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeDrawable.BadgeGravity
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -43,7 +48,7 @@ import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-/**
+@ExperimentalBadgeUtils /**
  * This Fragment is used for showing Medication info. by using [DataFragment.adapter].
  * [DataFragment.adapter] will be set by using [MedicationAdapter]
  */
@@ -70,11 +75,8 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         if(it.resultCode == RESULT_OK){
             viewModel.isChanged = true
             binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
-            val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID)
-            firestore.runTransaction { transaction ->
-                transaction.set(query, true)
-            }
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).set(hashMapOf("changed" to false))
             Toast.makeText(context, "Data Saved!", Toast.LENGTH_SHORT).show()
         }else{
             Toast.makeText(context, "Data Save Canceled!", Toast.LENGTH_SHORT).show()
@@ -84,11 +86,8 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         if(it.resultCode == RESULT_OK){
             viewModel.isChanged = false
             binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
-            val query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID)
-            firestore.runTransaction { transaction ->
-                transaction.set(query, false)
-            }
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).set(hashMapOf("changed" to false))
         }
     }
 
@@ -114,11 +113,10 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
                 .collection(MedicineData.COLLECTION_ID)
                 .orderBy(MedicineData.FIELD_ITEM_NAME_FB, Query.Direction.ASCENDING)
 
-            // TODO: Add Notification mark to inspect button(condition: when isChanged is true, show notification mark)
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).get()
                 .addOnSuccessListener {
-                    viewModel.isChanged = it.toObject<Boolean>() ?: false
+                    viewModel.isChanged = it.data!!["changed"] as Boolean
                     if(viewModel.isChanged) binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
                     else binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
                 }.addOnFailureListener {

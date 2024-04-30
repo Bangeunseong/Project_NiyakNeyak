@@ -1,6 +1,7 @@
 package com.capstone.project_niyakneyak.main.fragment
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -57,15 +58,22 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     private var query: Query? = null
 
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == Activity.RESULT_OK){
+        if(it.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
         }
     }
-    private val alarmSettingProcessLauncher =registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == Activity.RESULT_OK){
-            Toast.makeText(context, "Modified Timer!", Toast.LENGTH_SHORT).show()
+    private val alarmSettingProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            Toast.makeText(context, "Modified Alarm!", Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(context, "Modifying Canceled", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Modification Canceled", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private val alarmAddingProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            Toast.makeText(context, "Added Alarm!", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "Addition Canceled!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -114,6 +122,11 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
         binding.contentTimeTable.layoutManager = LinearLayoutManager(activity)
         binding.contentTimeTable.addItemDecoration(HorizontalItemDecorator(10))
         binding.contentTimeTable.addItemDecoration(VerticalItemDecorator(20))
+
+        binding.contentAlarmAdd.setOnClickListener {
+            val intent = Intent(context, AlarmSettingActivity::class.java)
+            alarmAddingProcessLauncher.launch(intent)
+        }
     }
 
     override fun onStart() {

@@ -21,6 +21,7 @@ import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.etc.OpenApiFunctions
 import com.capstone.project_niyakneyak.main.listener.OnClickedOptionListener
 import com.google.android.material.snackbar.Snackbar
+import com.google.api.Usage
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -134,7 +135,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentCreateResultDocumentBtn.setOnClickListener {
             defaultScope.launch {
                 val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                    .collection(InspectData.COLLECTION_ID).document()
+                    .collection(InspectData.COLLECTION_ID).document(InspectData.DOCUMENT_ID)
                 val result1 = createDocumentAsyncForUsageJoint()
                 val result2 = createDocumentAsync(OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
                 val result3 = createDocumentAsync(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
@@ -219,7 +220,28 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                     for (pos in 0 until jsonArray.length()) {
                         //TODO: Implement data
                         if (result == null) result = mutableListOf()
-                        //result.add(UsageJointData(jsonArray.getJSONObject(pos).getString()))
+                        result.add(UsageJointData(
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_INGR_CODE),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_INGR_KOR_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_INGR_ENG_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_TYPE_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIX_INGR),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ITEM_SEQ),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ITEM_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ENTP_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MAIN_INGR),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_INGR_CODE),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_INGR_KOR_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_INGR_ENG_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ITEM_SEQ),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ITEM_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ENTP_NAME),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_MAIN_INGR),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_NOTIFICATION_DATE),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_PROHBT_CONTENT),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_REMARK),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ITEM_PERMIT_DATE),
+                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ITEM_PERMIT_DATE)))
                     }
                 }
             }

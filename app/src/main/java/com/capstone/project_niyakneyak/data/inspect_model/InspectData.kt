@@ -105,7 +105,8 @@ data class InspectData(
         const val FIELD_PROHIBIT_CONTENT = "PROHBT_CONTENT"
         const val FILED_REMARK = "REMARK"
         const val FIELD_CHANGE_DATE = "CHANGE_DATE"
-        const val COLLECTION_ID = "inspect_documents"
+        const val COLLECTION_ID = "inspect_collection"
+        const val DOCUMENT_ID = "inspect_document"
         const val PARAM_CHANGE_DOCUMENT_ID = "param_changed"
 
         override fun createFromParcel(parcel: Parcel): InspectData {
