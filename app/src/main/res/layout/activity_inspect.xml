@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -155,5 +154,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/content_recycler_inspect_option"
             app:layout_constraintVertical_bias="0.0" />
+
+        <ProgressBar
+            android:id="@+id/content_document_progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/content_create_result_document_btn"
+            app:layout_constraintStart_toStartOf="@id/content_create_result_document_btn"
+            app:layout_constraintEnd_toEndOf="@id/content_create_result_document_btn"
+            app:layout_constraintBottom_toBottomOf="@id/content_create_result_document_btn"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

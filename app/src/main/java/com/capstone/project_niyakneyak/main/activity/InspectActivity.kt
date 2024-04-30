@@ -1,12 +1,14 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.inspect_model.InspectData
@@ -20,8 +22,8 @@ import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.etc.OpenApiFunctions
 import com.capstone.project_niyakneyak.main.listener.OnClickedOptionListener
+import com.capstone.project_niyakneyak.main.viewmodel.InspectActivityViewModel
 import com.google.android.material.snackbar.Snackbar
-import com.google.api.Usage
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -33,15 +35,18 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
-    // Params for View binding and adapters
+    // Params for ViewModel, binding and adapters
     private var _binding: ActivityInspectBinding? = null
     private val binding get() = _binding!!
+    private var _viewModel: InspectActivityViewModel? = null
+    private val viewModel get() = _viewModel!!
     private var medicineAdapter: CurrentMedicineAdapter? = null
     private var optionAdapter: OptionAdapter? = null
 
@@ -56,11 +61,11 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
     // Inspection Results
     private val resultMap = mutableMapOf<String, JSONObject>()
-    private var isInspected = false
 
     // Coroutine Scope
     private var _defaultScope: CoroutineScope? = null
     private val defaultScope get() = _defaultScope!!
+    private val job = Job()
 
     // BackPressed Callback
     private var callback: OnBackPressedCallback? = null
@@ -68,7 +73,8 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityInspectBinding.inflate(layoutInflater)
-        _defaultScope = CoroutineScope(Dispatchers.Default)
+        _viewModel = ViewModelProvider(this)[InspectActivityViewModel::class.java]
+        _defaultScope = CoroutineScope(Dispatchers.Default + job)
         setContentView(binding.root)
 
         binding.toolbar3.setTitle(R.string.action_main_inspect_medicine)
@@ -78,7 +84,6 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         FirebaseFirestore.setLoggingEnabled(true)
         _firestore = Firebase.firestore
         _firebaseAuth = Firebase.auth
-
 
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
@@ -103,6 +108,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
                 override fun onError(e: FirebaseFirestoreException) {
                     Snackbar.make(binding.root, "Error: check logs for info.", Snackbar.LENGTH_LONG).show()
+                    Log.w(TAG, "Error Occurred!: $e")
                 }
             }
             binding.contentRecyclerMedicine.adapter = medicineAdapter
@@ -134,6 +140,8 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
             defaultScope.launch {
+                binding.contentCreateResultDocumentBtn.isClickable = false
+                binding.contentDocumentProgressBar.visibility = View.VISIBLE
                 val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(InspectData.COLLECTION_ID).document(InspectData.DOCUMENT_ID)
                 val result1 = createDocumentAsyncForUsageJoint()
@@ -151,6 +159,10 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                         }
                     }
                 }
+            }.invokeOnCompletion {
+                binding.contentCreateResultDocumentBtn.isClickable = true
+                binding.contentDocumentProgressBar.visibility = View.GONE
+                viewModel.isInspected = true
             }
         }
     }
@@ -161,9 +173,13 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         callback = object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
                 optionAdapter!!.cancelAllActiveCoroutines()
-                if(isInspected) setResult(RESULT_OK)
-                else setResult(RESULT_CANCELED)
-                finish()
+                if(!job.isActive){
+                    if(viewModel.isInspected) setResult(RESULT_OK)
+                    else setResult(RESULT_CANCELED)
+                    finish()
+                } else{
+                    Toast.makeText(baseContext, "저장 중에는 뒤로가기를 할 수 없습니다!", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -185,7 +201,6 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     override fun onOptionClicked(option: String, jsonObject: JSONObject?) {
         if(jsonObject != null){
             resultMap[option] = jsonObject
-            isInspected = true
         }
     }
 
@@ -198,7 +213,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         return when (item.itemId) {
             android.R.id.home -> {
                 optionAdapter!!.cancelAllActiveCoroutines()
-                if(isInspected) setResult(RESULT_OK)
+                if(viewModel.isInspected) setResult(RESULT_OK)
                 else setResult(RESULT_CANCELED)
                 finish()
                 true
@@ -218,7 +233,6 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 if (jsonObject != null && !jsonObject.isNull("items")) {
                     val jsonArray = jsonObject.getJSONArray("items")
                     for (pos in 0 until jsonArray.length()) {
-                        //TODO: Implement data
                         if (result == null) result = mutableListOf()
                         result.add(UsageJointData(
                             jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_INGR_CODE),
