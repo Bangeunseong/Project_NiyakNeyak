@@ -1,6 +1,7 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -27,6 +28,15 @@ class ProfileChangeActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        val selectButton = findViewById<Button>(R.id.select_from_gallery_button)
+        selectButton.setOnClickListener {
+            val selectedImage = avatarImages[avatarAdapter.selectedPosition]
+            // Set selectedImage as profile image
+        }
+        val backButton = findViewById<Button>(R.id.back_button)
+        backButton.setOnClickListener {
+            finish()
         }
     }
 }

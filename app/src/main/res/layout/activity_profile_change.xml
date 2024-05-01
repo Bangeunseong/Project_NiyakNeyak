@@ -28,12 +28,23 @@
         app:layout_constraintBottom_toTopOf="@id/select_from_gallery_button" />
 
     <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2" />
+
+    <Button
         android:id="@+id/select_from_gallery_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="갤러리에서 선택"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/back_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
