@@ -2,7 +2,6 @@ package com.capstone.project_niyakneyak.main.fragment
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,10 +28,6 @@ import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.etc.Filters
 import com.capstone.project_niyakneyak.main.viewmodel.DataViewModel
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeDrawable.BadgeGravity
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -48,7 +43,7 @@ import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@ExperimentalBadgeUtils /**
+/**
  * This Fragment is used for showing Medication info. by using [DataFragment.adapter].
  * [DataFragment.adapter] will be set by using [MedicationAdapter]
  */

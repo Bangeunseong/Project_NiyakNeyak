@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
@@ -40,6 +41,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.util.Date
 
 class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     // Params for ViewModel, binding and adapters
@@ -64,7 +66,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
     // Coroutine Scope
     private var _defaultScope: CoroutineScope? = null
+    private var _mainScope: CoroutineScope? = null
     private val defaultScope get() = _defaultScope!!
+    private val mainScope get() = _mainScope!!
     private val job = Job()
 
     // BackPressed Callback
@@ -74,7 +78,8 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         super.onCreate(savedInstanceState)
         _binding = ActivityInspectBinding.inflate(layoutInflater)
         _viewModel = ViewModelProvider(this)[InspectActivityViewModel::class.java]
-        _defaultScope = CoroutineScope(Dispatchers.Default + job)
+        _defaultScope = CoroutineScope(Dispatchers.Default)
+        _mainScope = CoroutineScope(Dispatchers.Main + job)
         setContentView(binding.root)
 
         binding.toolbar3.setTitle(R.string.action_main_inspect_medicine)
@@ -88,6 +93,12 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
+                .where(
+                    Filter.and(
+                        Filter.lessThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, Date(System.currentTimeMillis())),
+                        Filter.greaterThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, Date(System.currentTimeMillis()))
+                    )
+                )
         } else {
             setResult(RESULT_CANCELED)
             finish()
@@ -139,9 +150,10 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
-            binding.contentCreateResultDocumentBtn.isClickable = false
-            binding.contentDocumentProgressBar.visibility = View.VISIBLE
-            defaultScope.launch {
+            mainScope.launch {
+                binding.contentCreateResultDocumentBtn.isClickable = false
+                binding.contentDocumentProgressBar.visibility = View.VISIBLE
+
                 val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(InspectData.COLLECTION_ID).document(InspectData.DOCUMENT_ID)
                 val result1 = createDocumentAsyncForUsageJoint()
@@ -160,9 +172,10 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                     }
                 }
             }.invokeOnCompletion {
+                viewModel.isInspected = true
                 binding.contentCreateResultDocumentBtn.isClickable = true
                 binding.contentDocumentProgressBar.visibility = View.GONE
-                viewModel.isInspected = true
+                Toast.makeText(this@InspectActivity, "보고서 저장 완료!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -172,8 +185,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
         callback = object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                optionAdapter!!.cancelAllActiveCoroutines()
-                if(!job.isActive){
+                if(medicineAdapter!!.itemCount > 0)
+                    optionAdapter!!.cancelAllActiveCoroutines()
+                if(!job.isCompleted){
                     if(viewModel.isInspected) setResult(RESULT_OK)
                     else setResult(RESULT_CANCELED)
                     finish()
@@ -212,8 +226,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                optionAdapter!!.cancelAllActiveCoroutines()
-                if(!job.isActive){
+                if(medicineAdapter!!.itemCount > 0)
+                    optionAdapter!!.cancelAllActiveCoroutines()
+                if(!job.isCompleted){
                     if(viewModel.isInspected) setResult(RESULT_OK)
                     else setResult(RESULT_CANCELED)
                     finish()
@@ -305,7 +320,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 }
                 OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST -> {
                     if(resultMap.containsKey(OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)){
-                        val jsonObject = resultMap[OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST]
+                        val jsonObject = resultMap[OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST]
                         if(jsonObject != null && !jsonObject.isNull("items")){
                             val jsonArray = jsonObject.getJSONArray("items")
                             for(pos in 0 until jsonArray.length()){
@@ -338,7 +353,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 }
                 OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST -> {
                     if(resultMap.containsKey(OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)){
-                        val jsonObject = resultMap[OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST]
+                        val jsonObject = resultMap[OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST]
                         if(jsonObject != null && !jsonObject.isNull("items")){
                             val jsonArray = jsonObject.getJSONArray("items")
                             for(pos in 0 until jsonArray.length()){

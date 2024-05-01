@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.adapter
 
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +14,9 @@ import com.capstone.project_niyakneyak.main.listener.OnClickedOptionListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -72,11 +73,18 @@ open class OptionAdapter(
                             if (!jsonObject!!.getJSONObject("body").isNull("items")) {
                                 for (pos in 0 until jsonObject!!.getJSONObject("body")
                                     .getJSONArray("items").length()) {
-                                    mixedItem.accumulate(
-                                        "mixedItems",
-                                        jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                            .getJSONObject(pos)
-                                    )
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        mixedItem.append(
+                                            "mixedItems",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    } else{
+                                        if(mixedItem.isNull("mixedItems")) mixedItem.put("mixedItems", JSONArray())
+                                        mixedItem.accumulate("mixedItems",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos))
+                                    }
                                 }
                             }
                             val totalCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
@@ -89,18 +97,30 @@ open class OptionAdapter(
                                 )
                                 for (pos in 0 until jsonObject!!.getJSONObject("body")
                                     .getJSONArray("items").length()) {
-                                    mixedItem.accumulate(
-                                        "mixedItems",
-                                        jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                            .getJSONObject(pos)
-                                    )
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        mixedItem.append(
+                                            "mixedItems",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    } else{
+                                        if(mixedItem.isNull("mixedItems")) mixedItem.put("mixedItems", JSONArray())
+                                        mixedItem.accumulate("mixedItems",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos))
+                                    }
                                 }
                             }
                             if (result == null) result = JSONObject().put(
                                 "typeName",
                                 OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST
                             )
-                            result!!.accumulate("items", mixedItem)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                result!!.append("items", mixedItem)
+                            } else {
+                                if(result!!.isNull("items")) result.put("items", JSONArray())
+                                result.accumulate("items", mixedItem)
+                            }
 
                         } catch (exception: JSONException) {
                             Log.w("OptionAdapter", "Error Occurred: $exception")
@@ -133,7 +153,12 @@ open class OptionAdapter(
                                                 .getJSONArray("mixedItems").getJSONObject(mixedPos)
                                         val inputObject = JSONObject().put("itemSeq", data.itemSeq)
                                             .put("mixedItem", mixedObject)
-                                        resultObject!!.accumulate("items", inputObject)
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            resultObject!!.append("items", inputObject)
+                                        } else {
+                                            if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
+                                            resultObject!!.accumulate("items", inputObject)
+                                        }
                                         flag = true
                                     }
                                 }
@@ -165,11 +190,20 @@ open class OptionAdapter(
                                         "typeName",
                                         OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST
                                     )
-                                    resultObject!!.accumulate(
-                                        "items",
-                                        jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                            .getJSONObject(pos)
-                                    )
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        resultObject!!.append(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    } else{
+                                        if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
+                                        resultObject!!.accumulate(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    }
                                 }
                             }
                         } catch (exception: JSONException) {
@@ -186,6 +220,7 @@ open class OptionAdapter(
 
                     return@launch
                 }
+
                 2 -> job = CoroutineScope(Dispatchers.IO).launch {
                     for (data in medsData) {
                         try {
@@ -199,11 +234,20 @@ open class OptionAdapter(
                                         "typeName",
                                         OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST
                                     )
-                                    resultObject!!.accumulate(
-                                        "items",
-                                        jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                            .getJSONObject(pos)
-                                    )
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        resultObject!!.append(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    } else{
+                                        if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
+                                        resultObject!!.accumulate(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    }
                                 }
                             }
                         } catch (exception: JSONException) {
@@ -220,6 +264,7 @@ open class OptionAdapter(
 
                     return@launch
                 }
+
                 3 -> job = CoroutineScope(Dispatchers.IO).launch {
                     for (data in medsData) {
                         try {
@@ -237,11 +282,20 @@ open class OptionAdapter(
                                         "typeName",
                                         OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST
                                     )
-                                    resultObject!!.accumulate(
-                                        "items",
-                                        jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                            .getJSONObject(pos)
-                                    )
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        resultObject!!.append(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    } else{
+                                        if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
+                                        resultObject!!.accumulate(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    }
                                 }
                             }
                         } catch (exception: JSONException) {
@@ -258,26 +312,34 @@ open class OptionAdapter(
 
                     return@launch
                 }
+
                 4 -> job = CoroutineScope(Dispatchers.IO).launch {
                     for (data in medsData) {
                         try {
                             jsonObject =
                                 openApiFunctions.getPregWomPrdtList(data.itemSeq, null, 1, 25)
                             Log.w("OptionAdapter", jsonObject.toString())
-                            if (jsonObject != null && !jsonObject!!.getJSONObject("body")
-                                    .isNull("items")
-                            ) {
+                            if (!jsonObject!!.getJSONObject("body").isNull("items")) {
                                 for (pos in 0 until jsonObject!!.getJSONObject("body")
                                     .getJSONArray("items").length()) {
                                     if (resultObject == null) resultObject = JSONObject().put(
                                         "typeName",
                                         OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST
                                     )
-                                    resultObject!!.accumulate(
-                                        "items",
-                                        jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                            .getJSONObject(pos)
-                                    )
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        resultObject!!.append(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    } else{
+                                        if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
+                                        resultObject!!.accumulate(
+                                            "items",
+                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
+                                                .getJSONObject(pos)
+                                        )
+                                    }
                                 }
                             }
                         } catch (exception: JSONException) {
@@ -343,6 +405,7 @@ open class OptionAdapter(
     }
 
     fun cancelAllActiveCoroutines(){
-        jobControl.cancel()
+        if(jobControl.isActive)
+            jobControl.cancel()
     }
 }

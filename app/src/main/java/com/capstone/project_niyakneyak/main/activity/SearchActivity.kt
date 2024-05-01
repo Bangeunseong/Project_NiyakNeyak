@@ -20,6 +20,7 @@ import com.capstone.project_niyakneyak.main.listener.OnCheckedSearchItemListener
 import com.capstone.project_niyakneyak.main.viewmodel.SearchActivityViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.isActive
@@ -45,6 +46,7 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
     private var _mainScope: CoroutineScope? = null
     private val mainScope get() = _mainScope!!
     private val channel = Channel<String>()
+    private val job = Job()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,10 +59,10 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         _mainScope = CoroutineScope(Dispatchers.Main)
         adapter = MedicineListAdapter(JSONArray(), this)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar4)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.toolbar4.title = "Search Medicine"
+        setSupportActionBar(binding.toolbar4)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Observe Data changes of radio button selected position
         viewModel.searchQueryObserver.observe(this){
@@ -72,40 +74,42 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
             binding.loadingLayout.visibility = View.VISIBLE
             binding.searchResultNotFound.visibility = View.GONE
 
-            // Start Fetching Data by using API function
-            ioScope.launch{
-                jsonObject = performDataFetchTaskAsync(it!!, viewModel.currentPage, viewModel.currentNumOfRows)
-                Log.w(TAG, jsonObject.toString())
-                if(jsonObject != null) channel.send("Success")
-                else channel.send("Failed")
-            }
-
-            // Start Setting Adapter View and Refresh page count
-            mainScope.launch {
-                val msg = channel.receive()
-                if(msg == "Success"){
-                    try{
-                        val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
-                        viewModel.totalItemCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
-                        binding.searchCurrentPage.text = String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
-                        adapter!!.setJSONArray(jsonArray)
-                    }catch (exception: JSONException){
-                        Log.w(TAG, "Error Occurred: $it")
-                        adapter!!.setJSONArray(JSONArray())
-                    }
-                } else Log.w(TAG, "Items not Found!")
-
-                // Change Layout Statement
-                binding.loadingLayout.visibility = View.GONE
-                if(adapter!!.itemCount < 1) {
-                    binding.searchResultAdapterLayout.visibility = View.GONE
-                    binding.searchPageConvertBtnLayout.visibility = View.GONE
-                    binding.searchResultNotFound.visibility = View.VISIBLE
+            CoroutineScope(Dispatchers.Default + job).launch{
+                // Start Fetching Data by using API function
+                ioScope.launch{
+                    jsonObject = performDataFetchTaskAsync(it!!, viewModel.currentPage, viewModel.currentNumOfRows)
+                    Log.w(TAG, jsonObject.toString())
+                    if(jsonObject != null) channel.send("Success")
+                    else channel.send("Failed")
                 }
-                else {
-                    binding.searchResultAdapterLayout.visibility = View.VISIBLE
-                    binding.searchPageConvertBtnLayout.visibility = View.VISIBLE
-                    binding.searchResultNotFound.visibility = View.GONE
+
+                // Start Setting Adapter View and Refresh page count
+                mainScope.launch {
+                    val msg = channel.receive()
+                    if(msg == "Success"){
+                        try{
+                            val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
+                            viewModel.totalItemCount = jsonObject!!.getJSONObject("body").getInt("totalCount")
+                            binding.searchCurrentPage.text = String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
+                            adapter!!.setJSONArray(jsonArray)
+                        }catch (exception: JSONException){
+                            Log.w(TAG, "Error Occurred: $it")
+                            adapter!!.setJSONArray(JSONArray())
+                        }
+                    } else Log.w(TAG, "Items not Found!")
+
+                    // Change Layout Statement
+                    binding.loadingLayout.visibility = View.GONE
+                    if(adapter!!.itemCount < 1) {
+                        binding.searchResultAdapterLayout.visibility = View.GONE
+                        binding.searchPageConvertBtnLayout.visibility = View.GONE
+                        binding.searchResultNotFound.visibility = View.VISIBLE
+                    }
+                    else {
+                        binding.searchResultAdapterLayout.visibility = View.VISIBLE
+                        binding.searchPageConvertBtnLayout.visibility = View.VISIBLE
+                        binding.searchResultNotFound.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -143,30 +147,37 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
             binding.loadingLayout.visibility = View.VISIBLE
             binding.searchResultNotFound.visibility = View.GONE
 
-            // Start Fetching Data by using API function
-            ioScope.launch{
-                jsonObject = performDataFetchTaskAsync(viewModel.searchQueryObserver.value!!, viewModel.currentPage, viewModel.currentNumOfRows)
-                Log.w(TAG, jsonObject.toString())
-                if(jsonObject != null) channel.send("Success")
-                else channel.send("Failed")
-            }
+            CoroutineScope(Dispatchers.Default + job).launch {
+                // Start Fetching Data by using API function
+                ioScope.launch {
+                    jsonObject = performDataFetchTaskAsync(
+                        viewModel.searchQueryObserver.value!!,
+                        viewModel.currentPage,
+                        viewModel.currentNumOfRows
+                    )
+                    Log.w(TAG, jsonObject.toString())
+                    if (jsonObject != null) channel.send("Success")
+                    else channel.send("Failed")
+                }
 
-            // Start Setting Adapter View and Refresh page count
-            mainScope.launch {
-                val msg = channel.receive()
-                if(msg == "Success"){
-                    try{
-                        val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
-                        binding.searchCurrentPage.text = String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
-                        adapter!!.setJSONArray(jsonArray)
-                    }catch (exception: JSONException){
-                        Log.w(TAG, "Error Occurred: $it")
-                        adapter!!.setJSONArray(JSONArray())
-                    }
-                } else Log.w(TAG, "Items not Found!")
+                // Start Setting Adapter View and Refresh page count
+                mainScope.launch {
+                    val msg = channel.receive()
+                    if (msg == "Success") {
+                        try {
+                            val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
+                            binding.searchCurrentPage.text =
+                                String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
+                            adapter!!.setJSONArray(jsonArray)
+                        } catch (exception: JSONException) {
+                            Log.w(TAG, "Error Occurred: $it")
+                            adapter!!.setJSONArray(JSONArray())
+                        }
+                    } else Log.w(TAG, "Items not Found!")
 
-                // Change Layout Statement
-                binding.loadingLayout.visibility = View.GONE
+                    // Change Layout Statement
+                    binding.loadingLayout.visibility = View.GONE
+                }
             }
         }
 
@@ -181,30 +192,37 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
             binding.loadingLayout.visibility = View.VISIBLE
             binding.searchResultNotFound.visibility = View.GONE
 
-            // Start Fetching Data by using API function
-            ioScope.launch{
-                jsonObject = performDataFetchTaskAsync(viewModel.searchQueryObserver.value!!, viewModel.currentPage, viewModel.currentNumOfRows)
-                Log.w(TAG, jsonObject.toString())
-                if(jsonObject != null) channel.send("Success")
-                else channel.send("Failed")
-            }
+            CoroutineScope(Dispatchers.Default + job).launch {
+                // Start Fetching Data by using API function
+                ioScope.launch {
+                    jsonObject = performDataFetchTaskAsync(
+                        viewModel.searchQueryObserver.value!!,
+                        viewModel.currentPage,
+                        viewModel.currentNumOfRows
+                    )
+                    Log.w(TAG, jsonObject.toString())
+                    if (jsonObject != null) channel.send("Success")
+                    else channel.send("Failed")
+                }
 
-            // Start Setting Adapter View and Refresh page count
-            mainScope.launch {
-                val msg = channel.receive()
-                if(msg == "Success"){
-                    try{
-                        val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
-                        binding.searchCurrentPage.text = String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
-                        adapter!!.setJSONArray(jsonArray)
-                    }catch (exception: JSONException){
-                        Log.w(TAG, "Error Occurred: $it")
-                        adapter!!.setJSONArray(JSONArray())
-                    }
-                } else Log.w(TAG, "Items not Found!")
+                // Start Setting Adapter View and Refresh page count
+                mainScope.launch {
+                    val msg = channel.receive()
+                    if (msg == "Success") {
+                        try {
+                            val jsonArray = jsonObject!!.getJSONObject("body").getJSONArray("items")
+                            binding.searchCurrentPage.text =
+                                String.format("${viewModel.currentPage} / ${viewModel.remainPage}")
+                            adapter!!.setJSONArray(jsonArray)
+                        } catch (exception: JSONException) {
+                            Log.w(TAG, "Error Occurred: $it")
+                            adapter!!.setJSONArray(JSONArray())
+                        }
+                    } else Log.w(TAG, "Items not Found!")
 
-                // Change Layout Statement
-                binding.loadingLayout.visibility = View.GONE
+                    // Change Layout Statement
+                    binding.loadingLayout.visibility = View.GONE
+                }
             }
         }
 
