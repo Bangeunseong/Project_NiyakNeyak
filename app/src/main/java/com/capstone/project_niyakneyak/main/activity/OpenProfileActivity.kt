@@ -253,8 +253,9 @@ class OpenProfileActivity : AppCompatActivity() {
 
         }
         binding.profileImageView.setOnClickListener {
-            showImageChoiceDialog()
-
+            //showImageChoiceDialog()
+            val intent = Intent(this, ProfileChangeActivity::class.java)
+            startActivity(intent)
         }
 
 
