@@ -139,9 +139,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
+            binding.contentCreateResultDocumentBtn.isClickable = false
+            binding.contentDocumentProgressBar.visibility = View.VISIBLE
             defaultScope.launch {
-                binding.contentCreateResultDocumentBtn.isClickable = false
-                binding.contentDocumentProgressBar.visibility = View.VISIBLE
                 val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(InspectData.COLLECTION_ID).document(InspectData.DOCUMENT_ID)
                 val result1 = createDocumentAsyncForUsageJoint()
@@ -213,9 +213,13 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         return when (item.itemId) {
             android.R.id.home -> {
                 optionAdapter!!.cancelAllActiveCoroutines()
-                if(viewModel.isInspected) setResult(RESULT_OK)
-                else setResult(RESULT_CANCELED)
-                finish()
+                if(!job.isActive){
+                    if(viewModel.isInspected) setResult(RESULT_OK)
+                    else setResult(RESULT_CANCELED)
+                    finish()
+                } else{
+                    Toast.makeText(baseContext, "저장 중에는 뒤로가기를 할 수 없습니다!", Toast.LENGTH_SHORT).show()
+                }
                 true
             }
             R.id.menu_documents -> {
@@ -235,27 +239,27 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                     for (pos in 0 until jsonArray.length()) {
                         if (result == null) result = mutableListOf()
                         result.add(UsageJointData(
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_INGR_CODE),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_INGR_KOR_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_INGR_ENG_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_TYPE_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIX_INGR),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ITEM_SEQ),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ITEM_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ENTP_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MAIN_INGR),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_INGR_CODE),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_INGR_KOR_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_INGR_ENG_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ITEM_SEQ),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ITEM_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ENTP_NAME),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_MAIN_INGR),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_NOTIFICATION_DATE),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_PROHBT_CONTENT),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_REMARK),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_ITEM_PERMIT_DATE),
-                            jsonArray.getJSONObject(pos).getString(UsageJointData.FIELD_MIXTURE_ITEM_PERMIT_DATE)))
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_INGR_CODE),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_INGR_KOR_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_INGR_ENG_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_TYPE_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIX_INGR),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_ITEM_SEQ),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_ITEM_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_ENTP_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MAIN_INGR),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_INGR_CODE),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_INGR_KOR_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_INGR_ENG_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_ITEM_SEQ),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_ITEM_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_ENTP_NAME),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_MAIN_INGR),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_NOTIFICATION_DATE),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_PROHBT_CONTENT),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_REMARK),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_ITEM_PERMIT_DATE),
+                            jsonArray.getJSONObject(pos).getJSONObject("mixedItem").getString(UsageJointData.FIELD_MIXTURE_ITEM_PERMIT_DATE)))
                     }
                 }
             }
