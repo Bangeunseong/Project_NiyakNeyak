@@ -22,6 +22,8 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.Filter
+import java.util.Date
 
 /**
  * This adapter is used for showing Medication info. which should be consumed in current date.
@@ -51,6 +53,11 @@ open class CheckAlarmAdapter(query: Query, private val listener: OnCheckedMedica
             secondQuery = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
                 .whereIn(MedicineData.FIELD_MEDICINE_ID_FB, alarm.medsList)
+                .whereLessThanOrEqualTo(MedicineData.FIELD_START_DATE_FB, Date(System.currentTimeMillis()))
+                .whereGreaterThanOrEqualTo(MedicineData.FIELD_END_DATE_FB, Date(System.currentTimeMillis()))
+                .orderBy(MedicineData.FIELD_START_DATE_FB)
+                .orderBy(MedicineData.FIELD_END_DATE_FB)
+                .orderBy(MedicineData.FIELD_MEDICINE_ID_FB)
         }
 
         holder.bind(snapshot, secondQuery, listener)

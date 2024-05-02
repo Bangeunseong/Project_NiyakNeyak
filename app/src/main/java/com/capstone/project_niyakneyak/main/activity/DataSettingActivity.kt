@@ -43,7 +43,7 @@ import java.util.Locale
 import java.util.Random
 
 /**
- * This DialogFragment is used for setting [MedsData](which is Medication Info.).
+ * This DialogFragment is used for setting [MedicineData] (which is Medication Info.).
  */
 class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var _binding: ActivityDataSettingBinding? = null

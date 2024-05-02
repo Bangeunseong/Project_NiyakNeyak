@@ -36,16 +36,9 @@ data class MedicineData(
     var medsDetail: String? = null,
     var medsStartDate: Date? = null,
     var medsEndDate: Date? = null,
+    val alarmList: MutableList<Int> = mutableListOf(),
     @ServerTimestamp
     var timeStamp: Date? = null) : Converter {
-
-    fun getMedicineDataAsString(): String {
-        return "$itemSeq, $itemName, $itemEngName, $entpName, $entpEngName, " +
-                "$entpSeq, $entpNo, ${itemPermDate.toString()}, $inDuty, $prdlstStrdCode, " +
-                "$spcltyPblc, $pdtType, $pdtPermNo, $itemIngrName, $itemIngrCnt, " +
-                "$bigPrdtImgUrl, $permKindCode, ${cancelDate.toString()}, $cancelName, $ediCode" +
-                "$bizrNo"
-    }
 
     override fun convertStrToDate(date: String?): Date? {
         if(TextUtils.isEmpty(date)) return null
