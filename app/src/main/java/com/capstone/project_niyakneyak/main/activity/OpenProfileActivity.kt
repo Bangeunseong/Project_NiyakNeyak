@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -38,6 +39,7 @@ class OpenProfileActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "OPEN_PROFILE_ACTIVITY"
+        private const val IMAGE_PICK_CODE = 1000
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +48,14 @@ class OpenProfileActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarOpenProfile)
+        supportActionBar?.setDisplayShowTitleEnabled(true) // 툴바에 제목을 보이게 설정
         supportActionBar?.title = getString(R.string.toolbar_modification)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        Log.d("Toolbar", "Toolbar title set to: ${getString(R.string.toolbar_modification)}")
+
+
+
+
 
 
         auth = Firebase.auth // Firebase Auth 초기화
@@ -244,6 +252,11 @@ class OpenProfileActivity : AppCompatActivity() {
 
 
         }
+        binding.profileImageView.setOnClickListener {
+            //showImageChoiceDialog()
+            val intent = Intent(this, ProfileChangeActivity::class.java)
+            startActivity(intent)
+        }
 
 
 
@@ -279,6 +292,36 @@ class OpenProfileActivity : AppCompatActivity() {
 
         dpd.show()
     }
+    private fun showImageChoiceDialog() {
+        val items = arrayOf("사진 찍기", "갤러리에서 선택")
+        AlertDialog.Builder(this).apply {
+            setTitle("프로필 사진 변경")
+            setItems(items) { _, which ->
+                when (which) {
+                    0 -> {
+                        // 여기에 사진 찍기 기능을 구현하세요.
+                    }
+                    1 -> {
+                        // 갤러리를 열어 이미지를 선택하도록 합니다.
+                        openGalleryForImage()
+                    }
+                }
+            }
+            show()
+        }
+    }
+    private fun openGalleryForImage() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            binding.profileImageView.setImageURI(data?.data)
+        }
+    }
+
 
     private fun updateAge(birthDate: String) {
         uiScope.launch {
