@@ -111,6 +111,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).get()
                 .addOnSuccessListener {
+                    if(it.data == null) return@addOnSuccessListener
                     viewModel.isChanged = it.data!!["changed"] as Boolean
                     if(viewModel.isChanged) binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
                     else binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)

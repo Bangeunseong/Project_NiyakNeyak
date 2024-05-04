@@ -17,11 +17,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentAlarmListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.AlarmSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.AlarmAdapter
+import com.capstone.project_niyakneyak.main.adapter.MedicationAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.AlarmViewModel
@@ -35,6 +37,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.toObject
 import java.util.Calendar
 
@@ -161,17 +164,34 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     override fun onDelete(snapshot: DocumentSnapshot) {
         val alarmRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(Alarm.COLLECTION_ID).document(snapshot.id)
+        val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(MedicineData.COLLECTION_ID)
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Warning!")
         builder.setMessage("Do you want to delete this timer?")
         builder.setPositiveButton("OK") { _: DialogInterface?, _: Int ->
-            firestore.runTransaction {transaction ->
-                val alarm = transaction.get(alarmRef).toObject<Alarm>()
-                if (alarm!!.isStarted) alarm.cancelAlarm(requireContext())
-                alarmRef.delete()
-            }.addOnSuccessListener {
-                Log.w(TAG, "Delete Alarm Success")
-            }.addOnFailureListener { Log.w(TAG, "Delete Alarm Failed") }
+            var alarm: Alarm?
+            medicationRef.get().addOnSuccessListener {
+                alarmRef.get().addOnSuccessListener { document ->
+                    alarm = document.toObject<Alarm>()
+                    if(alarm!!.isStarted) alarm!!.cancelAlarm(requireContext())
+                    for(data in it.documents){
+                        val medicineData = data.toObject<MedicineData>()
+                        if(medicineData!!.alarmList.contains(alarm!!.alarmCode)){
+                            firestore.runTransaction { transaction ->
+                                transaction.update(medicationRef.document(medicineData.medsID.toString()), MedicineData.FIELD_ALARM_LIST_FB, FieldValue.arrayRemove(alarm!!.alarmCode))
+                            }
+                        }
+                    }
+                    alarmRef.delete()
+                }.addOnFailureListener {
+                    Toast.makeText(context, "Failed to delete Alarm Code in Medicine Data", Toast.LENGTH_SHORT).show()
+                    Log.w(TAG, "Error Occurred!: $it")
+                }
+            }.addOnFailureListener {
+                Toast.makeText(context, "Failed to fetch Medicine Data", Toast.LENGTH_SHORT).show()
+                Log.w(TAG, "Error Occurred!: $it")
+            }
         }
         builder.setNegativeButton("CANCEL") { _: DialogInterface?, _: Int -> }
         builder.create().show()

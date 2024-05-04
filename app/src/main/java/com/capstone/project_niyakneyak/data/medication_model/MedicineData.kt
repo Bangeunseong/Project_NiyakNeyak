@@ -78,6 +78,7 @@ data class MedicineData(
         const val FIELD_DAILY_AMOUNT_FB = "dailyAmount"
         const val FIELD_START_DATE_FB = "medsStartDate"
         const val FIELD_END_DATE_FB = "medsEndDate"
+        const val FIELD_ALARM_LIST_FB = "alarmList"
         const val FIELD_TIME_STAMP_FB = "timeStamp"
     }
 }

@@ -36,8 +36,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import java.sql.Array
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.Arrays
 import java.util.Date
 import java.util.Locale
 import java.util.Random
@@ -54,8 +56,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var originData: MedicineData? = null
     private var fetchedData: MedicineData = MedicineData()
     private var query: Query? = null
-    private var originAlarmID = mutableListOf<String>()
-    private var includedAlarmID = mutableListOf<String>()
+    private var originAlarmID = mutableListOf<Int>()
+    private var includedAlarmID = mutableListOf<Int>()
 
     private var _firestore: FirebaseFirestore? = null
     private val firestore get() = _firestore!!
@@ -219,17 +221,11 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                         SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsStartDate!!),
                         SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsEndDate!!)))
             }
-            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(Alarm.COLLECTION_ID).whereArrayContains(Alarm.FIELD_MEDICATION_LIST, originData.medsID).get()
-                .addOnSuccessListener {
-                    for(document in it.documents){
-                        originAlarmID.add(document.id)
-                        includedAlarmID.add(document.id)
-                    }
-                }
-                .addOnFailureListener {
-                    Log.w(TAG, "Terrible Error Occurred: $it")
-                }
+            for(id in originData.alarmList){
+                fetchedData.alarmList.add(id)
+                originAlarmID.add(id)
+                includedAlarmID.add(id)
+            }
         } else fetchedData.medsID = codeGenerator()
 
         val amountFilter =
@@ -286,7 +282,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 // Data Read -> Need to be executed before Write Process
                 val alarms = mutableListOf<Alarm>()
                 for(snapshotId in includedAlarmID){
-                    val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                    val alarm = transaction.get(alarmRef.document(snapshotId.toString())).toObject<Alarm>() ?: continue
                     alarms.add(alarm)
                 }
 
@@ -310,7 +306,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 val deletedAlarms = mutableListOf<Alarm>()
                 for(snapshotId in includedAlarmID){
                     if(!originAlarmID.contains(snapshotId)) {
-                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                        val alarm = transaction.get(alarmRef.document(snapshotId.toString())).toObject<Alarm>() ?: continue
                         if(!alarm.isStarted)
                             alarm.scheduleAlarm(applicationContext)
                         includedAlarms.add(alarm)
@@ -318,7 +314,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 }
                 for(snapshotId in originAlarmID){
                     if(!includedAlarmID.contains(snapshotId)) {
-                        val alarm = transaction.get(alarmRef.document(snapshotId)).toObject<Alarm>() ?: continue
+                        val alarm = transaction.get(alarmRef.document(snapshotId.toString())).toObject<Alarm>() ?: continue
                         if(alarm.medsList.size <= 1)
                             alarm.cancelAlarm(applicationContext)
                         deletedAlarms.add(alarm)
@@ -352,9 +348,14 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     }
 
     override fun onItemClicked(alarm: Alarm) {
-        if(includedAlarmID.contains(alarm.alarmCode.toString()))
-            includedAlarmID.remove(alarm.alarmCode.toString())
-        else includedAlarmID.add(alarm.alarmCode.toString())
+        if(includedAlarmID.contains(alarm.alarmCode)){
+            fetchedData.alarmList.remove(alarm.alarmCode)
+            includedAlarmID.remove(alarm.alarmCode)
+        }
+        else {
+            fetchedData.alarmList.add(alarm.alarmCode)
+            includedAlarmID.add(alarm.alarmCode)
+        }
     }
 
     private fun codeGenerator(): Int {
