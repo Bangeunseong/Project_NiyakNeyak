@@ -71,7 +71,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             viewModel.isChanged = true
             binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).set(hashMapOf("changed" to false))
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).set(hashMapOf("changed" to true))
             Toast.makeText(context, "Data Saved!", Toast.LENGTH_SHORT).show()
         }else{
             Toast.makeText(context, "Data Save Canceled!", Toast.LENGTH_SHORT).show()
