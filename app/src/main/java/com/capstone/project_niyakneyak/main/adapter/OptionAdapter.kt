@@ -67,8 +67,7 @@ open class OptionAdapter(
                     for (data in medsData) {
                         try {
                             val mixedItem = JSONObject().put("itemSeq", data.itemSeq)
-                            jsonObject =
-                                openApiFunctions.getUsageJointPrdtList(data.itemSeq, null, 1, 25)
+                            jsonObject = openApiFunctions.getUsageJointPrdtList(data.itemSeq, null, 1, 25)
                             Log.w("OptionAdapter", jsonObject.toString())
                             if (!jsonObject!!.getJSONObject("body").isNull("items")) {
                                 for (pos in 0 until jsonObject!!.getJSONObject("body")
@@ -111,10 +110,7 @@ open class OptionAdapter(
                                     }
                                 }
                             }
-                            if (result == null) result = JSONObject().put(
-                                "typeName",
-                                OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST
-                            )
+                            if (result == null) result = JSONObject().put("typeName", OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 result!!.append("items", mixedItem)
                             } else {
@@ -138,16 +134,10 @@ open class OptionAdapter(
                                     .isNull("mixedItems")
                             ) continue
                             for (data in medsData) {
-                                for (mixedPos in 0 until result.getJSONArray("items")
-                                    .getJSONObject(pos).getJSONArray("mixedItems").length()) {
-                                    if (result.getJSONArray("items").getJSONObject(pos)
-                                            .getJSONArray("mixedItems").getJSONObject(mixedPos)
-                                            .getString("MIXTURE_ITEM_SEQ") == data.itemSeq
-                                    ) {
-                                        if (resultObject == null) resultObject = JSONObject().put(
-                                            "typeName",
-                                            OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST
-                                        )
+                                for (mixedPos in 0 until result.getJSONArray("items").getJSONObject(pos).getJSONArray("mixedItems").length()) {
+                                    if (result.getJSONArray("items").getJSONObject(pos).getJSONArray("mixedItems").getJSONObject(mixedPos).getString("MIXTURE_ITEM_SEQ") == data.itemSeq) {
+                                        if (resultObject == null) resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_USAGE_JOINT_TABOO_LIST)
+                                        else { if(!resultObject!!.isNull("items")) resultObject!!.remove("items") }
                                         val mixedObject =
                                             result.getJSONArray("items").getJSONObject(pos)
                                                 .getJSONArray("mixedItems").getJSONObject(mixedPos)
@@ -176,33 +166,18 @@ open class OptionAdapter(
                 1 -> job = CoroutineScope(Dispatchers.IO).launch {
                     for (data in medsData) {
                         try {
-                            jsonObject = openApiFunctions.getElderlyAttentionPrdtList(
-                                data.itemSeq,
-                                null,
-                                1,
-                                25
-                            )
+                            jsonObject = openApiFunctions.getElderlyAttentionPrdtList(data.itemSeq, null, 1, 25)
                             Log.w("OptionAdapter", jsonObject.toString())
                             if (!jsonObject!!.getJSONObject("body").isNull("items")) {
-                                for (pos in 0 until jsonObject!!.getJSONObject("body")
-                                    .getJSONArray("items").length()) {
-                                    if (resultObject == null) resultObject = JSONObject().put(
-                                        "typeName",
-                                        OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST
-                                    )
+                                if (resultObject == null)
+                                    resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
+                                else { if(!resultObject!!.isNull("items")) resultObject!!.remove("items") }
+                                for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        resultObject!!.append(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.append("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     } else{
                                         if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
-                                        resultObject!!.accumulate(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
                             }
@@ -228,25 +203,15 @@ open class OptionAdapter(
                                 openApiFunctions.getMdcCnsDatePrdtList(data.itemSeq, null, 1, 25)
                             Log.w("OptionAdapter", jsonObject.toString())
                             if (!jsonObject!!.getJSONObject("body").isNull("items")) {
-                                for (pos in 0 until jsonObject!!.getJSONObject("body")
-                                    .getJSONArray("items").length()) {
-                                    if (resultObject == null) resultObject = JSONObject().put(
-                                        "typeName",
-                                        OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST
-                                    )
+                                if (resultObject == null)
+                                    resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)
+                                else { if(!resultObject!!.isNull("items")) resultObject!!.remove("items") }
+                                for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        resultObject!!.append(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.append("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     } else{
                                         if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
-                                        resultObject!!.accumulate(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
                             }
@@ -268,33 +233,20 @@ open class OptionAdapter(
                 3 -> job = CoroutineScope(Dispatchers.IO).launch {
                     for (data in medsData) {
                         try {
-                            jsonObject = openApiFunctions.getSpecificAgeRangePrdtList(
-                                data.itemSeq,
-                                null,
-                                1,
-                                25
-                            )
+                            jsonObject = openApiFunctions.getSpecificAgeRangePrdtList(data.itemSeq, null, 1, 25)
                             Log.w("OptionAdapter", jsonObject.toString())
                             if (!jsonObject!!.getJSONObject("body").isNull("items")) {
+                                if (resultObject == null)
+                                    resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
+                                else { if(!resultObject!!.isNull("items")) resultObject!!.remove("items") }
                                 for (pos in 0 until jsonObject!!.getJSONObject("body")
                                     .getJSONArray("items").length()) {
-                                    if (resultObject == null) resultObject = JSONObject().put(
-                                        "typeName",
-                                        OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST
-                                    )
+
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        resultObject!!.append(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.append("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     } else{
                                         if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
-                                        resultObject!!.accumulate(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
                             }
@@ -316,29 +268,18 @@ open class OptionAdapter(
                 4 -> job = CoroutineScope(Dispatchers.IO).launch {
                     for (data in medsData) {
                         try {
-                            jsonObject =
-                                openApiFunctions.getPregWomPrdtList(data.itemSeq, null, 1, 25)
+                            jsonObject = openApiFunctions.getPregWomPrdtList(data.itemSeq, null, 1, 25)
                             Log.w("OptionAdapter", jsonObject.toString())
                             if (!jsonObject!!.getJSONObject("body").isNull("items")) {
-                                for (pos in 0 until jsonObject!!.getJSONObject("body")
-                                    .getJSONArray("items").length()) {
-                                    if (resultObject == null) resultObject = JSONObject().put(
-                                        "typeName",
-                                        OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST
-                                    )
+                                if (resultObject == null)
+                                    resultObject = JSONObject().put("typeName", OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)
+                                else { if(!resultObject!!.isNull("items")) resultObject!!.remove("items") }
+                                for (pos in 0 until jsonObject!!.getJSONObject("body").getJSONArray("items").length()) {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        resultObject!!.append(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.append("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     } else{
                                         if(resultObject!!.isNull("items")) resultObject!!.put("items", JSONArray())
-                                        resultObject!!.accumulate(
-                                            "items",
-                                            jsonObject!!.getJSONObject("body").getJSONArray("items")
-                                                .getJSONObject(pos)
-                                        )
+                                        resultObject!!.accumulate("items", jsonObject!!.getJSONObject("body").getJSONArray("items").getJSONObject(pos))
                                     }
                                 }
                             }

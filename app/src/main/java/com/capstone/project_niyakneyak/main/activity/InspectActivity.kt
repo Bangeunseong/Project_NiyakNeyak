@@ -38,7 +38,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.Date
@@ -62,6 +61,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     private var query: Query? = null
 
     // Inspection Results
+    private var isCreated = false
     private val resultMap = mutableMapOf<String, JSONObject>()
 
     // Coroutine Scope
@@ -150,24 +150,98 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         binding.contentRecyclerInspectOption.layoutManager = LinearLayoutManager(this)
 
         binding.contentCreateResultDocumentBtn.setOnClickListener {
+            if(!isCreated){
+                Toast.makeText(this, "하나 이상의 항목을 먼저 검사하세요!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             mainScope.launch {
                 binding.contentCreateResultDocumentBtn.isClickable = false
                 binding.contentDocumentProgressBar.visibility = View.VISIBLE
 
                 val documentSnapshot = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(InspectData.COLLECTION_ID).document(InspectData.DOCUMENT_ID)
-                val result1 = createDocumentAsyncForUsageJoint()
-                val result2 = createDocumentAsync(OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
-                val result3 = createDocumentAsync(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
-                val result4 = createDocumentAsync(OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)
-                val result5 = createDocumentAsync(OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)
-                result1.await()?.forEach { data ->
-                    firestore.runTransaction { transaction -> transaction.set(documentSnapshot.collection(data.typeName!!).document(), data) }
+
+                documentSnapshot.collection(InspectData.USAGE_JOINT_COLLECTION_ID).get().addOnSuccessListener { snapshot ->
+                    firestore.runTransaction { transaction ->
+                        for(document in snapshot.documents) {
+                            transaction.delete(documentSnapshot.collection(InspectData.USAGE_JOINT_COLLECTION_ID).document(document.id))
+                        }
+                    }.addOnSuccessListener {
+                        val result = createDocumentAsyncForUsageJoint()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            result.await()?.forEach { data ->
+                                firestore.runTransaction { transaction ->
+                                    transaction.set(documentSnapshot.collection(InspectData.USAGE_JOINT_COLLECTION_ID).document(), data)
+                                }
+                            }
+                        }
+                    }
                 }
-                awaitAll(result2, result3, result4, result5).stream().forEach {
-                    if(it != null){
-                        for(data in it){
-                            firestore.runTransaction { transaction -> transaction.set(documentSnapshot.collection(data.typeName!!).document(), data) }
+
+                documentSnapshot.collection(InspectData.ELDERLY_ATTENTION_COLLECTION_ID).get().addOnSuccessListener { snapshot ->
+                    firestore.runTransaction { transaction ->
+                        for(document in snapshot.documents) {
+                            transaction.delete(documentSnapshot.collection(InspectData.ELDERLY_ATTENTION_COLLECTION_ID).document(document.id))
+                        }
+                    }.addOnSuccessListener {
+                        val result = createDocumentAsync(OpenApiFunctions.GET_ELDERLY_ATTENTION_PRODUCT_LIST)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            result.await()?.forEach { data ->
+                                firestore.runTransaction { transaction ->
+                                    transaction.set(documentSnapshot.collection(InspectData.ELDERLY_ATTENTION_COLLECTION_ID).document(), data)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                documentSnapshot.collection(InspectData.SPCF_AGE_GRADE_ATTEN_COLLECTION_ID).get().addOnSuccessListener { snapshot ->
+                    firestore.runTransaction { transaction ->
+                        for(document in snapshot.documents) {
+                            transaction.delete(documentSnapshot.collection(InspectData.SPCF_AGE_GRADE_ATTEN_COLLECTION_ID).document(document.id))
+                        }
+                    }.addOnSuccessListener {
+                        val result = createDocumentAsync(OpenApiFunctions.GET_SPECIFIC_AGE_GRADE_TABOO_LIST)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            result.await()?.forEach { data ->
+                                firestore.runTransaction { transaction ->
+                                    transaction.set(documentSnapshot.collection(InspectData.SPCF_AGE_GRADE_ATTEN_COLLECTION_ID).document(), data)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                documentSnapshot.collection(InspectData.CONSUME_DURATION_ATTEN_COLLECTION_ID).get().addOnSuccessListener { snapshot ->
+                    firestore.runTransaction { transaction ->
+                        for(document in snapshot.documents) {
+                            transaction.delete(documentSnapshot.collection(InspectData.CONSUME_DURATION_ATTEN_COLLECTION_ID).document(document.id))
+                        }
+                    }.addOnSuccessListener {
+                        val result = createDocumentAsync(OpenApiFunctions.GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            result.await()?.forEach { data ->
+                                firestore.runTransaction { transaction ->
+                                    transaction.set(documentSnapshot.collection(InspectData.CONSUME_DURATION_ATTEN_COLLECTION_ID).document(), data)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                documentSnapshot.collection(InspectData.PRGNT_WOMEN_ATTEN_COLLECTION_ID).get().addOnSuccessListener { snapshot ->
+                    firestore.runTransaction { transaction ->
+                        for(document in snapshot.documents) {
+                            transaction.delete(documentSnapshot.collection(InspectData.PRGNT_WOMEN_ATTEN_COLLECTION_ID).document(document.id))
+                        }
+                    }.addOnSuccessListener {
+                        val result = createDocumentAsync(OpenApiFunctions.GET_PREGNANT_WOMAN_TABOO_LIST)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            result.await()?.forEach { data ->
+                                firestore.runTransaction { transaction ->
+                                    transaction.set(documentSnapshot.collection(InspectData.PRGNT_WOMEN_ATTEN_COLLECTION_ID).document(), data)
+                                }
+                            }
                         }
                     }
                 }
@@ -214,6 +288,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
 
     override fun onOptionClicked(option: String, jsonObject: JSONObject?) {
         if(jsonObject != null){
+            isCreated = true
             resultMap[option] = jsonObject
         }
     }

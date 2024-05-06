@@ -3,9 +3,6 @@ package com.capstone.project_niyakneyak.data.inspect_model
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.firebase.firestore.IgnoreExtraProperties
-import com.google.firebase.firestore.ServerTimestamp
-import org.json.JSONObject
-import java.util.Date
 
 @IgnoreExtraProperties
 data class InspectData(
@@ -107,6 +104,11 @@ data class InspectData(
         const val FIELD_CHANGE_DATE = "CHANGE_DATE"
         const val COLLECTION_ID = "inspect_collection"
         const val DOCUMENT_ID = "inspect_document"
+        const val USAGE_JOINT_COLLECTION_ID = "병용금기"
+        const val ELDERLY_ATTENTION_COLLECTION_ID = "노인주의"
+        const val SPCF_AGE_GRADE_ATTEN_COLLECTION_ID = "특정연령대금기"
+        const val CONSUME_DURATION_ATTEN_COLLECTION_ID = "투여기간주의"
+        const val PRGNT_WOMEN_ATTEN_COLLECTION_ID = "임부금기"
         const val PARAM_CHANGE_DOCUMENT_ID = "param_changed"
 
         override fun createFromParcel(parcel: Parcel): InspectData {
