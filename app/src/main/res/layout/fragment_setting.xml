@@ -153,7 +153,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/virsion_settings"
+                android:id="@+id/version_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -166,6 +166,16 @@
                     android:layout_weight="1"
                     android:text="버전 정보"
                     android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_version"
+                    android:gravity="end"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

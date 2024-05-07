@@ -3,17 +3,21 @@ package com.capstone.project_niyakneyak.login.activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -164,6 +168,10 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, RegisterActivity::class.java)
             signUpLauncher.launch(intent)
         }
+
+        binding.findPassword.setOnClickListener {
+            showResetPasswordDialog()
+        }
     }
 
     // Handle Email SignIn Process
@@ -223,7 +231,7 @@ class LoginActivity : AppCompatActivity() {
         val userMap = hashMapOf("email" to (user.email ?: ""))
         firestore.collection("users").document(user.uid).set(userMap)
             .addOnSuccessListener {
-                Log.d("Firestore", "User successfully written!")
+                Log.d( "Firestore", "User successfully written!")
                 Toast.makeText(this, "사용자 정보가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
                 navigateToGoogleRegisterActivity(user)
             }
@@ -259,4 +267,44 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(errorString: Exception) {
         Toast.makeText(this, errorString.toString(), Toast.LENGTH_SHORT).show()
     }
+
+    private fun showResetPasswordDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Reset Password")
+
+        // Set up the input (EditText field)
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        input.hint = "Enter your email"
+        builder.setView(input)
+
+        // Set up the buttons
+        builder.setPositiveButton("Send Reset Email") { dialog, which ->
+            val email = input.text.toString().trim()
+            if (email.isNotEmpty()) {
+                sendPasswordResetEmail(email)
+            } else {
+                Toast.makeText(this, "Please enter an email address.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()  // This will just close the dialog and nothing else
+        }
+
+        builder.show()
+    }
+
+    private fun sendPasswordResetEmail(email: String) {
+        firebaseAuth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Reset link sent to your email", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "Failed to send reset email: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+    }
+
+
 }
