@@ -6,6 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".main.activity.AlarmSettingActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/alarm_setting_toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/time_picker">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme" />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <TimePicker
         android:id="@+id/time_picker"
         style="@style/TimePickerTheme"
@@ -14,7 +30,7 @@
         android:theme="@style/TimePickerTheme"
         android:timePickerMode="spinner"
         app:layout_constraintBottom_toTopOf="@id/dialog_alarm_setting_layout"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/alarm_setting_toolbar_layout"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_bias="0"/>
 
@@ -22,7 +38,7 @@
         android:id="@+id/dialog_alarm_setting_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/dialog_button_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/time_picker"
         app:layout_constraintWidth_max="488dp">
 
@@ -269,38 +285,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/dialog_button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white_500"
-        app:layout_constraintTop_toBottomOf="@id/dialog_alarm_setting_layout"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/alarm_submit"
-            style="@style/customSubmitBtnStyle"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="18dp"
-            android:text="@string/dialog_add_form_submit"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/alarm_cancel"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <Button
-            android:id="@+id/alarm_cancel"
-            style="@style/customSubmitBtnStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="18dp"
-            android:text="@string/dialog_add_form_cancel"
-            app:layout_constraintEnd_toStartOf="@id/alarm_submit"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

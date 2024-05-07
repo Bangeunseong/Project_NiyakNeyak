@@ -1,18 +1,13 @@
 package com.capstone.project_niyakneyak.main.activity
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
-import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -26,42 +21,44 @@ import com.google.firebase.firestore.firestore
  * BottomNavigationBar(NavigationBar listener is created as ItemSelectionListener)
  */
 class MainActivity : AppCompatActivity() {
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var binding: ActivityMainBinding
-    private var navHostFragment: NavHostFragment? = null
-    private var navController: NavController? = null
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
+
+    private var _navHostFragment: NavHostFragment? = null
+    private val navHostFragment get() = _navHostFragment!!
+    private var _navController: NavController? = null
+    private val navController get() = _navController!!
 
     internal inner class ItemSelectionListener : NavigationBarView.OnItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
-            val currentFragmentId = navController!!.currentDestination!!.id
+            val currentFragmentId = navController.currentDestination!!.id
             if (item.itemId == R.id.menu_main) {
                 binding.toolbar.setTitle(R.string.toolbar_main_title)
                 when (currentFragmentId){
-                    R.id.alarmListFragment -> navController!!.navigate(R.id.action_alarmListFragment_to_mainPageFragment)
-                    R.id.checkListFragment -> navController!!.navigate(R.id.action_checkListFragment_to_mainPageFragment)
-                    R.id.settingFragment -> navController!!.navigate(R.id.action_settingFragment_to_mainPageFragment)
+                    R.id.alarmListFragment -> navController.navigate(R.id.action_alarmListFragment_to_mainPageFragment)
+                    R.id.checkListFragment -> navController.navigate(R.id.action_checkListFragment_to_mainPageFragment)
+                    R.id.settingFragment -> navController.navigate(R.id.action_settingFragment_to_mainPageFragment)
                 }
             } else if (item.itemId == R.id.menu_time) {
                 binding.toolbar.setTitle(R.string.toolbar_main_timer)
                 when (currentFragmentId){
-                    R.id.mainPageFragment -> navController!!.navigate(R.id.action_mainPageFragment_to_alarmListFragment)
-                    R.id.checkListFragment -> navController!!.navigate(R.id.action_checkListFragment_to_alarmListFragment)
-                    R.id.settingFragment -> navController!!.navigate(R.id.action_settingFragment_to_alarmListFragment)
+                    R.id.mainPageFragment -> navController.navigate(R.id.action_mainPageFragment_to_alarmListFragment)
+                    R.id.checkListFragment -> navController.navigate(R.id.action_checkListFragment_to_alarmListFragment)
+                    R.id.settingFragment -> navController.navigate(R.id.action_settingFragment_to_alarmListFragment)
                 }
             } else if (item.itemId == R.id.menu_time_check) {
                 binding.toolbar.setTitle(R.string.toolbar_main_checklist)
                 when (currentFragmentId){
-                    R.id.mainPageFragment -> navController!!.navigate(R.id.action_mainPageFragment_to_checkListFragment)
-                    R.id.alarmListFragment -> navController!!.navigate(R.id.action_alarmListFragment_to_checkListFragment)
-                    R.id.settingFragment -> navController!!.navigate(R.id.action_settingFragment_to_checkListFragment)
+                    R.id.mainPageFragment -> navController.navigate(R.id.action_mainPageFragment_to_checkListFragment)
+                    R.id.alarmListFragment -> navController.navigate(R.id.action_alarmListFragment_to_checkListFragment)
+                    R.id.settingFragment -> navController.navigate(R.id.action_settingFragment_to_checkListFragment)
                 }
-            } else if (item.itemId == R.id.menu_setting) {
+            } else if (item.itemId == R.id.menu_account) {
                 binding.toolbar.setTitle(R.string.toolbar_main_settings)
                 when (currentFragmentId){
-                    R.id.mainPageFragment -> navController!!.navigate(R.id.action_mainPageFragment_to_settingFragment)
-                    R.id.alarmListFragment -> navController!!.navigate(R.id.action_alarmListFragment_to_settingFragment)
-                    R.id.checkListFragment -> navController!!.navigate(R.id.action_checkListFragment_to_settingFragment)
+                    R.id.mainPageFragment -> navController.navigate(R.id.action_mainPageFragment_to_settingFragment)
+                    R.id.alarmListFragment -> navController.navigate(R.id.action_alarmListFragment_to_settingFragment)
+                    R.id.checkListFragment -> navController.navigate(R.id.action_checkListFragment_to_settingFragment)
                 }
             }
             return true
@@ -75,10 +72,22 @@ class MainActivity : AppCompatActivity() {
             arguments: Bundle?
         ) {
             when(destination.id){
-                R.id.mainPageFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_main).isChecked = true
-                R.id.alarmListFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_time).isChecked = true
-                R.id.checkListFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_time_check).isChecked = true
-                R.id.settingFragment -> binding.menuBottomNavigation.menu.findItem(R.id.menu_setting).isChecked = true
+                R.id.mainPageFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_title)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_main).isChecked = true
+                }
+                R.id.alarmListFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_timer)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_time).isChecked = true
+                }
+                R.id.checkListFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_checklist)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_time_check).isChecked = true
+                }
+                R.id.settingFragment -> {
+                    binding.toolbar.setTitle(R.string.toolbar_main_settings)
+                    binding.menuBottomNavigation.menu.findItem(R.id.menu_account).isChecked = true
+                }
             }
         }
 
@@ -86,49 +95,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
 
         binding.toolbar.setTitle(R.string.toolbar_main_title)
         setSupportActionBar(binding.toolbar)
-        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
-        assert(navHostFragment != null)
-        navController = navHostFragment!!.navController
-        navController!!.addOnDestinationChangedListener(DestinationChangedListener())
+        _navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
+        _navController = navHostFragment.navController
+        navController.addOnDestinationChangedListener(DestinationChangedListener())
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_tool, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-
-            R.id.nav_setting -> {
-                val alertDialog = AlertDialog.Builder(this)
-                    .setTitle("Warning!")
-                    .setMessage("Do you really want to sign out?")
-                    .setPositiveButton("OK") { _: DialogInterface?, _: Int ->
-                        // When SignOut option clicked signs out
-                        firebaseAuth.signOut()
-
-                        // Return to SignIn Activity
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
-                    }.setNegativeButton("Cancel"){ _: DialogInterface?, _: Int -> }
-                alertDialog.create().show()
-
-            }
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController!!.navigateUp()
+        return navController.navigateUp()
     }
 }

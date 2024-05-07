@@ -23,8 +23,12 @@
         <item name="android:textColor">@color/text_color</item>
         <item name="android:background">@drawable/item_dialog_submit_btn</item>
     </style>
-    <style name="DialogBackground" parent="ThemeOverlay.AppCompat.Dialog.Alert">
-        <item name="android:windowBackground">@drawable/item_dialog_bg</item>
+    <style name="DialogFragmentStyle" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.2</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/transparent_gray_500</item>
+        <item name="android:gravity">center</item>
     </style>
     <style name="TimePickerTheme" parent="ThemeOverlay.MaterialComponents.TimePicker">
         <item name="android:textSize">35sp</item>
@@ -40,5 +44,11 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/gray_500</item>
         <item name="android:background">@drawable/item_dialog_timer_add_btn_bg</item>
+    </style>
+    <style name="customInspectBtnStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black_500</item>
+        <item name="android:background">@drawable/item_option_layout_bg</item>
     </style>
 </resources>
