@@ -1,16 +1,18 @@
 package com.capstone.project_niyakneyak.main.fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
-import com.capstone.project_niyakneyak.main.activity.SetProfileActivity
+import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
 import com.google.android.material.snackbar.Snackbar
@@ -25,11 +27,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+
 class SettingFragment: Fragment() {
     private lateinit var binding: FragmentSettingBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
@@ -41,6 +43,23 @@ class SettingFragment: Fragment() {
 
         firebaseAuth = Firebase.auth
         firestore = Firebase.firestore
+
+        // Initialize the ActivityResultLauncher with a callback function
+        var appSettingsLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    // Redirect to LoginActivity
+                    val intent = Intent(activity, LoginActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    activity?.finish()
+                }
+            }
+
+        binding.appSettings.setOnClickListener {
+            val intentSetting = Intent(activity, AppSettingActivity::class.java)
+            appSettingsLauncher.launch(intentSetting) // Launch using the new launcher
+        }
 
         binding.profileButton.setOnClickListener {
             // 사용자 정보를 Firestore에서 조회
@@ -82,6 +101,7 @@ class SettingFragment: Fragment() {
                 Log.d(TAG, "Terrible Error Occurred: $it")
             }
     }
+
     override fun onResume() {
         super.onResume()
 

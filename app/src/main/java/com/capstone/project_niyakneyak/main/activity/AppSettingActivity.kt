@@ -1,13 +1,14 @@
 package com.capstone.project_niyakneyak.main.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
+import android.text.InputType
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.databinding.ActivityAppSettingsBinding
-import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
@@ -36,15 +37,7 @@ class AppSettingActivity : AppCompatActivity() {
         user = auth?.currentUser // 현재 사용자 가져오기
 
         binding.buttonWithdrawal.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle("회원 탈퇴")
-                .setMessage("정말로 탈퇴하시겠습니까?")
-                .setPositiveButton("예") { dialog, which ->
-                    deleteUserAccount()
-                }
-                .setNegativeButton("아니오", null)
-                .show()
-
+            promptForPassword()
         }
 
         binding.backButton.setOnClickListener {
@@ -52,34 +45,83 @@ class AppSettingActivity : AppCompatActivity() {
         }
     }
 
+    private fun promptForPassword() {
+        AlertDialog.Builder(this)
+            .setTitle("회원 탈퇴 확인")
+            .setMessage("정말로 탈퇴하시겠습니까? 탈퇴한 계정은 복구할 수 없습니다.")
+            .setPositiveButton("계속하기") { dialog, which ->
+                showPasswordDialog()
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
 
-    private fun deleteUserAccount() {
-        user?.let { user ->
-            // Firestore에서 사용자 데이터 삭제
-            firestore.collection("users").document(user.uid).delete().addOnSuccessListener {
-                Log.d(TAG, "Firestore user data deleted")
-                // 인증 정보에서 사용자 삭제
-                deleteUserAuth(user)
-            }.addOnFailureListener { e ->
-                Log.w(TAG, "Error deleting Firestore user data", e)
+    private fun showPasswordDialog() {
+        val passwordInput = EditText(this).apply {
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("비밀번호 확인")
+            .setMessage("회원 탈퇴를 진행하기 위해 비밀번호를 다시 입력해 주세요.")
+            .setView(passwordInput)
+            .setPositiveButton("확인") { dialog, which ->
+                val password = passwordInput.text.toString()
+                attemptToDeleteUser(password)
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+
+    private fun attemptToDeleteUser(password: String) {
+        user?.email?.let { email ->
+            val credential = EmailAuthProvider.getCredential(email, password)
+            user?.reauthenticate(credential)?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    deleteUserAccount()
+                } else {
+                    Log.e(TAG, "Reauthentication failed: ", task.exception)
+                    promptReauthentication()
+                }
             }
         }
     }
 
-    private fun deleteUserAuth(user: FirebaseUser) {
-        user.delete().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Log.d(TAG, "FirebaseAuth user account deleted.")
-                auth?.signOut() // 사용자 삭제 후 로그아웃
-                // 회원 탈퇴 후 처리, 예를 들어 로그인 화면으로 이동
-                val intent = Intent(this, LoginActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+    private fun deleteUserAccount() {
+        user?.let { user ->
+            user.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "FirebaseAuth user account deleted.")
+                    deleteUserFromFirestore(user.uid)
+                } else {
+                    Log.e(TAG, "Error deleting FirebaseAuth user account", task.exception)
+                    promptReauthentication()
                 }
-                startActivity(intent)
-                finish()
-            } else {
-                Log.w(TAG, "Error deleting FirebaseAuth user account", task.exception)
             }
         }
+    }
+
+    private fun deleteUserFromFirestore(uid: String) {
+        firestore.collection("users").document(uid).delete().addOnSuccessListener {
+            Log.d(TAG, "Firestore user data deleted")
+            setResult(RESULT_OK)
+            auth?.signOut()
+            finish()
+        }.addOnFailureListener { e ->
+            Log.e(TAG, "Error deleting Firestore user data", e)
+        }
+    }
+
+    private fun promptReauthentication() {
+        AlertDialog.Builder(this)
+            .setTitle("재인증 필요")
+            .setMessage("회원 탈퇴를 위해 최근에 로그인해야 합니다. 로그아웃 후 다시 로그인 해주세요.")
+            .setPositiveButton("로그아웃") { dialog, which ->
+                auth?.signOut()
+                finish() // Optionally, redirect to the login screen instead of finishing
+            }
+            .setNegativeButton("취소", null)
+            .show()
     }
 }
