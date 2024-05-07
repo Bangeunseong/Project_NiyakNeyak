@@ -24,6 +24,7 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.Filter
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -128,51 +129,37 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
             Calendar.SUNDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
-                    .whereIn(Alarm.FIELD_ALARM_CODE, medicineData.alarmList)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_SUNDAY, true)
+                    .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_SUNDAY, true)))
             }
             Calendar.MONDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
-                    .whereIn(Alarm.FIELD_ALARM_CODE, medicineData.alarmList)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_MONDAY, true)
+                    .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_MONDAY, true)))
             }
             Calendar.TUESDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
-                    .whereIn(Alarm.FIELD_ALARM_CODE, medicineData.alarmList)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_TUESDAY, true)
+                    .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_TUESDAY, true)))
             }
             Calendar.WEDNESDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
-                    .whereIn(Alarm.FIELD_ALARM_CODE, medicineData.alarmList)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_WEDNESDAY, true)
+                    .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_WEDNESDAY, true)))
             }
             Calendar.THURSDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
-                    .whereIn(Alarm.FIELD_ALARM_CODE, medicineData.alarmList)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_THURSDAY, true)
+                    .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_THURSDAY, true)))
             }
             Calendar.FRIDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
-                    .whereIn(Alarm.FIELD_ALARM_CODE, medicineData.alarmList)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_FRIDAY, true)
+                    .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_FRIDAY, true)))
             }
             Calendar.SATURDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
-                    .whereIn(Alarm.FIELD_ALARM_CODE, medicineData.alarmList)
-                    .whereEqualTo(Alarm.FIELD_IS_STARTED, true)
-                    .whereEqualTo(Alarm.FIELD_IS_SATURDAY, true)
+                    .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_SATURDAY, true)))
             }
             else -> {null}
         }
