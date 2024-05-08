@@ -64,6 +64,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
+            adapter?.startListening()
         }
     }
     private val dataProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -102,6 +103,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         FirebaseFirestore.setLoggingEnabled(true)
         _firebaseAuth = Firebase.auth
         _firestore = Firebase.firestore
+
 
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
@@ -263,6 +265,4 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     companion object {
         private const val TAG = "DATA_FRAGMENT"
     }
-
-
 }

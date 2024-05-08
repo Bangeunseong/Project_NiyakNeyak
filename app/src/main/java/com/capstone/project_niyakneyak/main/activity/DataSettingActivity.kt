@@ -1,6 +1,8 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
@@ -36,10 +38,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import java.sql.Array
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Arrays
 import java.util.Date
 import java.util.Locale
 import java.util.Random
@@ -91,6 +91,13 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             fetchedData.cancelName = container.cancelName; fetchedData.ediCode = container.ediCode; fetchedData.bizrNo = container.bizrNo
 
             binding.medsNameText.setText(fetchedData.itemName)
+
+            if(checkSelfPermission(NOTIFICATION_SERVICE) == PackageManager.PERMISSION_DENIED){
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),101)
+                }
+            }
+
             invalidateMenu()
         }
     }

@@ -1,5 +1,8 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -9,11 +12,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 
 /**
  * This activity is used for showing fragments which are linked by [MainActivity.navHostFragment].
@@ -104,6 +102,15 @@ class MainActivity : AppCompatActivity() {
         _navController = navHostFragment.navController
         navController.addOnDestinationChangedListener(DestinationChangedListener())
         binding.menuBottomNavigation.setOnItemSelectedListener(ItemSelectionListener())
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(checkSelfPermission(NOTIFICATION_SERVICE) == PackageManager.PERMISSION_DENIED){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),101)
+            }
+        }
     }
 
     override fun onDestroy() {
