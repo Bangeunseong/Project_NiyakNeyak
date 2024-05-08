@@ -90,7 +90,7 @@ class RescheduleAlarmService : LifecycleService() {
                     stopForeground(STOP_FOREGROUND_DETACH)
                     stopSelf()
                 }
-        }else{
+        } else{
             val notificationIntent = Intent(this, LoginActivity::class.java)
             notificationIntent.putExtra("request_token", 1)
             val pendingIntent =

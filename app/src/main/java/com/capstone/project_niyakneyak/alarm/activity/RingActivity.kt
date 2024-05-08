@@ -78,6 +78,8 @@ class RingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        _binding = null
+        _firestore = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(false)
             setTurnScreenOn(false)
