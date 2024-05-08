@@ -130,36 +130,50 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_SUNDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.MONDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_MONDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.TUESDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_TUESDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.WEDNESDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_WEDNESDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.THURSDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_THURSDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.FRIDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_FRIDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.SATURDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_SATURDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             else -> {null}
         }

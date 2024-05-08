@@ -154,6 +154,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         // Setting RecyclerView Data Query
         query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(Alarm.COLLECTION_ID)
+            .orderBy(Alarm.FIELD_HOUR)
+            .orderBy(Alarm.FIELD_MINUTE)
 
         query?.let {
             adapter = object: AlarmSelectionAdapter(it, snapshotId, this@DataSettingActivity){

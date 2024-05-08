@@ -64,7 +64,6 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
-            adapter?.startListening()
         }
     }
     private val dataProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -173,9 +172,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             val intent = Intent(activity, LoginActivity::class.java)
             intent.putExtra("request_token", 0)
             loginProcessLauncher.launch(intent)
-            return
         }
-
         // Start Listening Data changes from firebase when activity starts
         adapter?.startListening()
     }
@@ -217,20 +214,34 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
 
         alarmList.get().addOnSuccessListener { querySnapshot ->
             val alarms = querySnapshot.documents
+            val alarmData = mutableListOf<Alarm>()
             firestore.runTransaction { transaction ->
                 for(snapshotId in alarms){
                     val alarm = transaction.get(alarmRef.document(snapshotId.id)).toObject<Alarm>()
-                    if(alarm!!.medsList.size <= 1){
-                        transaction.update(alarmRef.document(snapshotId.id), Alarm.FIELD_IS_STARTED, false)
+                    alarmData.add(alarm!!)
+                    if(alarm.medsList.size <= 1){
                         alarm.cancelAlarm(requireContext())
                     }
-                    transaction.update(alarmRef.document(snapshotId.id), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(target.id.toInt()))
                 }
                 transaction.delete(medicationRef)
             }.addOnSuccessListener {
-                Log.w(TAG, "Successfully Updated Alarm Data")
+                firestore.runTransaction { transaction ->
+                    for(alarm in alarmData){
+                        if(alarm.medsList.size <= 1) {
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, false)
+                        }
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(target.id.toInt()))
+                    }
+                    transaction.delete(medicationRef)
+                }.addOnSuccessListener {
+                    Log.w(TAG, "Successfully Updated Alarm Data")
+                    Toast.makeText(context, "Deleted Medicine!", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Log.w(TAG, "Failed to Update Alarm Data: $it")
+                    FirebaseFirestoreException.Code.ABORTED
+                }
             }.addOnFailureListener {
-                Log.w(TAG, "Failed to Update Alarm Data")
+                Log.w(TAG, "Failed to delete medicine data: $it")
                 FirebaseFirestoreException.Code.ABORTED
             }
         }.addOnFailureListener {

@@ -10,8 +10,6 @@ class RescheduleAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action){
             Intent.ACTION_LOCKED_BOOT_COMPLETED -> startRescheduleAlarmsService(context)
-            Intent.ACTION_PACKAGE_ADDED -> startRescheduleAlarmsService(context)
-            Intent.ACTION_PACKAGE_REPLACED -> startRescheduleAlarmsService(context)
         }
     }
     private fun startRescheduleAlarmsService(context: Context) {
