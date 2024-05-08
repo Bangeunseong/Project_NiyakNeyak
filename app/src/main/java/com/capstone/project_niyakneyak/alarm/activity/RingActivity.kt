@@ -16,7 +16,9 @@ import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.databinding.ActivityRingBinding
 import com.capstone.project_niyakneyak.alarm.service.AlarmService
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import java.util.Calendar
 import java.util.Random
 
@@ -24,15 +26,20 @@ class RingActivity : AppCompatActivity() {
     private val snoozeTime =
         ArrayList(mutableListOf("Five Minutes", "Ten Minutes", "Fifteen Minutes"))
     private var snoozeVal = 0
-    private var binding: ActivityRingBinding? = null
+    private var _binding: ActivityRingBinding? = null
+    private val binding get() = _binding!!
     private var alarm: Alarm? = null
-    private lateinit var firestore: FirebaseFirestore
+
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityRingBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        _binding = ActivityRingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        _firestore = Firebase.firestore
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -53,8 +60,8 @@ class RingActivity : AppCompatActivity() {
                 bundle.getParcelable(getString(R.string.arg_alarm_obj))
             }
         }
-        binding!!.alarmRingSnoozeTime.adapter = ArrayAdapter(applicationContext, android.R.layout.simple_spinner_dropdown_item, snoozeTime)
-        binding!!.alarmRingSnoozeTime.onItemSelectedListener =
+        binding.alarmRingSnoozeTime.adapter = ArrayAdapter(applicationContext, android.R.layout.simple_spinner_dropdown_item, snoozeTime)
+        binding.alarmRingSnoozeTime.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
                     snoozeVal = (position + 1) * 5
@@ -64,8 +71,8 @@ class RingActivity : AppCompatActivity() {
                     snoozeVal = 5
                 }
             }
-        binding!!.alarmRingReschedule.setOnClickListener { rescheduleAlarm() }
-        binding!!.alarmRingOff.setOnClickListener { dismissAlarm() }
+        binding.alarmRingReschedule.setOnClickListener { rescheduleAlarm() }
+        binding.alarmRingOff.setOnClickListener { dismissAlarm() }
         animateClock()
     }
 
@@ -82,7 +89,7 @@ class RingActivity : AppCompatActivity() {
 
     private fun animateClock() {
         val rotateAnimation =
-            ObjectAnimator.ofFloat(binding!!.alarmRingClock, "rotation", 0f, 30f, 0f, -30f, 0f)
+            ObjectAnimator.ofFloat(binding.alarmRingClock, "rotation", 0f, 30f, 0f, -30f, 0f)
         rotateAnimation.repeatCount = ValueAnimator.INFINITE
         rotateAnimation.duration = 800
         rotateAnimation.start()
