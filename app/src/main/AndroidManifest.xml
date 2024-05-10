@@ -43,6 +43,9 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".main.activity.ProfileChangeActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.AppSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
@@ -60,8 +63,7 @@
             android:parentActivityName=".main.activity.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".main.activity.SetProfileActivity"
-            android:exported="false" />
+
         <activity android:name=".main.activity.AlarmSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
