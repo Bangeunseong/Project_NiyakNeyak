@@ -137,7 +137,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
                 }
 
                 override fun onError(e: FirebaseFirestoreException) {
-                    Snackbar.make(binding.root, "Error: check logs for info.", Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(context, "Error: check logs for info.", Toast.LENGTH_LONG).show()
                 }
             }
             binding.contentMainMeds.adapter = adapter

@@ -48,6 +48,5 @@ data class UsageJointData(
         const val FIELD_REMARK = "REMARK"
         const val FIELD_ITEM_PERMIT_DATE = "ITEM_PERMIT_DATE"
         const val FIELD_MIXTURE_ITEM_PERMIT_DATE = "MIXTURE_ITEM_PERMIT_DATE"
-        const val COLLECTION_ID = "inspect_documents"
     }
 }

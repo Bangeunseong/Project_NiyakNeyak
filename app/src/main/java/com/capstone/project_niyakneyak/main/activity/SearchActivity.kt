@@ -203,7 +203,7 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
                     Log.w(TAG, jsonObject.toString())
                     if (jsonObject != null) channel.send("Success")
                     else channel.send("Failed")
-                }
+                }.join()
 
                 // Start Setting Adapter View and Refresh page count
                 mainScope.launch {

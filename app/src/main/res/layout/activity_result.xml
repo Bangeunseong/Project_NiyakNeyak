@@ -41,15 +41,12 @@
 
                 <TextView
                     android:id="@+id/content_usage_joint_text"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="병용금기 약물 검사 결과"
                     android:textSize="16sp"
                     android:gravity="center"
                     android:padding="5dp"
-                    app:layout_constraintBottom_toTopOf="@id/content_usage_joint_view"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -69,15 +66,12 @@
 
                 <TextView
                     android:id="@+id/content_elderly_attn_text"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="노인주의 약물 검사 결과"
                     android:textSize="16sp"
                     android:padding="5dp"
                     android:gravity="center"
-                    app:layout_constraintBottom_toTopOf="@id/content_elderly_attn_view"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -99,15 +93,12 @@
 
                 <TextView
                     android:id="@+id/content_spcfc_age_grade_attn_text"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="특정 연령대 주의 약물 검사 결과"
                     android:textSize="16sp"
                     android:padding="5dp"
                     android:gravity="center"
-                    app:layout_constraintBottom_toTopOf="content_spcfc_age_grade_attn_view"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -127,15 +118,12 @@
 
                 <TextView
                     android:id="@+id/content_consume_duration_attn_text"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="복용 기간 주의 약물 검사 결과"
                     android:textSize="16sp"
                     android:padding="5dp"
                     android:gravity="center"
-                    app:layout_constraintBottom_toTopOf="content_consume_duration_attn_view"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -143,9 +131,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/content_consume_duration_attn_text"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -157,15 +143,12 @@
 
                 <TextView
                     android:id="@+id/content_prgnt_women_attn_text"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="임신부 주의 약물 검사 결과"
                     android:textSize="16sp"
                     android:padding="5dp"
                     android:gravity="center"
-                    app:layout_constraintBottom_toTopOf="content_prgnt_women_attn_view"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -173,11 +156,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/content_prgnt_women_attn_text"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
