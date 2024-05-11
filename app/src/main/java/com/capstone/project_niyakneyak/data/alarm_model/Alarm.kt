@@ -20,7 +20,7 @@ data class Alarm(
     var isTue: Boolean = false, var isWed: Boolean = false, var isThu: Boolean = false,
     var isFri: Boolean = false, var isSat: Boolean = false, var isSun: Boolean = false,
     var title: String? = null, var tone: String? = null, var isVibrate: Boolean = false,
-    var medsList: MutableList<Int> = mutableListOf()) : Parcelable {
+    val medsList: MutableList<Int> = mutableListOf()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         alarmCode = parcel.readInt()
