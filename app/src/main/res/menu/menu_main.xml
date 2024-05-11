@@ -16,4 +16,5 @@
         android:id="@+id/menu_account"
         android:icon="@drawable/baseline_account_circle_24"
         android:title="@string/toolbar_main_settings"/>
+
 </menu>
