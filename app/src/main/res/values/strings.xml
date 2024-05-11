@@ -116,6 +116,10 @@
     <string name="all_category">All Categories</string>
     <string name="all_medications">All Medications</string>
     <string name="all_manufacturers">All Manufacturers</string>
+
+
+    <string name="sorted_by_medication_entp">Sorted by Medication Enterprise</string>
+    <string name="sort_by">Sort By</string>
     <string name="sorted_by_medication_name">Sorted by Medication Name</string>
     <string name="sorted_by_medication_id">Sorted by Medicine ID</string>
     <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
