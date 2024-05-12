@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 import android.Manifest
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
@@ -23,8 +24,11 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import java.util.UUID
 
 class ProfileChangeActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
@@ -33,14 +37,15 @@ class ProfileChangeActivity : AppCompatActivity() {
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
     lateinit var photoLauncher: ActivityResultLauncher<Intent>
-
+    private lateinit var selectedImageView: ImageView
 
 
     private var _binding: ActivityProfileChangeBinding? = null
     private val binding get() = _binding!!
-    private var selectedImageView: ImageView? = null
+
     private var defaultDrawable: Drawable? = null
     var userId: String? = null
+    var fileUri: Uri? = null
 
     val TAG = "ProfileChangeActivity"
 
@@ -120,6 +125,10 @@ class ProfileChangeActivity : AppCompatActivity() {
 
 
         binding.setProfileButton.setOnClickListener {
+            val intent= Intent()
+            intent.type= "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(intent, 100)
 
         }
         binding.backButton.setOnClickListener {
@@ -138,6 +147,40 @@ class ProfileChangeActivity : AppCompatActivity() {
 
         if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
             requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 100)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==0 && resultCode==RESULT_OK && data!=null){
+            fileUri = data.data
+            try{
+                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
+                selectedImageView.setImageBitmap(bitmap)
+
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
+            selectedImageView = binding.imageViewYou
+            uploadToFirestore(data.data!!)
+        }
+    }
+    fun uploadImage(){
+        if (fileUri != null){
+            val progressDialog = ProgressDialog(this)
+            progressDialog.setTitle("Uploading Image...")
+            progressDialog.setMessage("Processing...")
+            progressDialog.show()
+
+            val ref: StorageReference = FirebaseStorage.getInstance().reference
+                .child("uploads/" + UUID.randomUUID().toString())
+            ref.putFile(fileUri!!).addOnSuccessListener {
+                progressDialog.dismiss()
+                Toast.makeText(this, "Image Uploaded", Toast.LENGTH_LONG).show()
+            }.addOnFailureListener {
+                progressDialog.dismiss()
+                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+            }
         }
     }
     fun checkPermissionAndPickPhoto() {
@@ -194,5 +237,13 @@ class ProfileChangeActivity : AppCompatActivity() {
     }
 
 
+
+}
+
+class StorageReference {
+    fun put(fileUri: Uri): Any {
+        return Any()
+
+    }
 
 }

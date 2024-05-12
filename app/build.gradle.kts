@@ -46,6 +46,10 @@ ksp {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-firestore:24.10.3") {
+        exclude(group = "com.google.firebase", module = "firebase-common")
+    }
+    implementation("com.google.firebase:firebase-storage-ktx:21.0.0")
 
     val workVersion = "2.9.0"
     implementation("androidx.core:core-ktx:1.12.0")
