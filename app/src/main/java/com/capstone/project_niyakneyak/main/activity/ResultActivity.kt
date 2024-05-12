@@ -1,15 +1,18 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.inspect_model.InspectData
-import com.capstone.project_niyakneyak.data.inspect_model.UsageJointData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityResultBinding
+import com.capstone.project_niyakneyak.main.adapter.InspectResultAdapter
 import com.capstone.project_niyakneyak.main.adapter.UsageJointAdapter
-import com.google.android.material.snackbar.Snackbar
+import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
+import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -32,6 +35,14 @@ class ResultActivity: AppCompatActivity() {
     // Params for adapters
     private var _usageJointAdapter: UsageJointAdapter? = null
     private val usageJointAdapter get() = _usageJointAdapter!!
+    private var _elderlyAttnAdapter: InspectResultAdapter? = null
+    private val elderlyAttnAdapter get() = _elderlyAttnAdapter!!
+    private var _spcAgeGradeAdapter: InspectResultAdapter? = null
+    private val spcAgeGradeAdapter get() = _spcAgeGradeAdapter!!
+    private var _durationAdapter: InspectResultAdapter? = null
+    private val durationAdapter get() = _durationAdapter!!
+    private var _prgntWmAdapter: InspectResultAdapter? = null
+    private val prgntWmAdapter get() = _prgntWmAdapter!!
 
     // Query
     private var queryForUsgJnt: Query? = null
@@ -68,18 +79,110 @@ class ResultActivity: AppCompatActivity() {
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentUsageJointView.visibility = View.GONE
-                    }
-                    else {
+                    } else {
                         binding.contentUsageJointView.visibility = View.VISIBLE
                     }
                 }
 
                 override fun onError(e: FirebaseFirestoreException) {
+                    Log.w(TAG, "Error Occurred!: $e")
                     Toast.makeText(this@ResultActivity, "Error: check logs for info.", Toast.LENGTH_LONG).show()
                 }
             }
+            binding.contentUsageJointView.adapter = usageJointAdapter
         }
+        binding.contentUsageJointView.setHasFixedSize(false)
+        binding.contentUsageJointView.layoutManager = LinearLayoutManager(this)
+        binding.contentUsageJointView.addItemDecoration(VerticalItemDecorator(20))
+        binding.contentUsageJointView.addItemDecoration(HorizontalItemDecorator(10))
 
+        queryForEldAttn?.let {
+            _elderlyAttnAdapter = object: InspectResultAdapter(it){
+                override fun onDataChanged() {
+                    if(itemCount == 0){
+                        binding.contentElderlyAttnView.visibility = View.GONE
+                    } else{
+                        binding.contentElderlyAttnView.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onError(e: FirebaseFirestoreException) {
+                    Log.w(TAG, "Error Occurred!: $e")
+                    Toast.makeText(this@ResultActivity, "Error: check logs for info.", Toast.LENGTH_LONG).show()
+                }
+            }
+            binding.contentElderlyAttnView.adapter = elderlyAttnAdapter
+        }
+        binding.contentElderlyAttnView.setHasFixedSize(false)
+        binding.contentElderlyAttnView.layoutManager = LinearLayoutManager(this)
+        binding.contentElderlyAttnView.addItemDecoration(VerticalItemDecorator(10))
+        binding.contentElderlyAttnView.addItemDecoration(HorizontalItemDecorator(10))
+
+        queryForSpcAgeGrd?.let {
+            _spcAgeGradeAdapter = object: InspectResultAdapter(it){
+                override fun onDataChanged() {
+                    if(itemCount == 0){
+                        binding.contentSpcfcAgeGradeAttnView.visibility = View.GONE
+                    } else{
+                        binding.contentSpcfcAgeGradeAttnView.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onError(e: FirebaseFirestoreException) {
+                    Log.w(TAG, "Error Occurred!: $e")
+                    Toast.makeText(this@ResultActivity, "Error: check logs for info.", Toast.LENGTH_LONG).show()
+                }
+            }
+            binding.contentSpcfcAgeGradeAttnView.adapter = spcAgeGradeAdapter
+        }
+        binding.contentSpcfcAgeGradeAttnView.setHasFixedSize(false)
+        binding.contentSpcfcAgeGradeAttnView.layoutManager = LinearLayoutManager(this)
+        binding.contentSpcfcAgeGradeAttnView.addItemDecoration(VerticalItemDecorator(10))
+        binding.contentSpcfcAgeGradeAttnView.addItemDecoration(HorizontalItemDecorator(10))
+
+        queryForDuration?.let {
+            _durationAdapter = object: InspectResultAdapter(it){
+                override fun onDataChanged() {
+                    if(itemCount == 0){
+                        binding.contentConsumeDurationAttnView.visibility = View.GONE
+                    } else{
+                        binding.contentConsumeDurationAttnView.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onError(e: FirebaseFirestoreException) {
+                    Log.w(TAG, "Error Occurred!: $e")
+                    Toast.makeText(this@ResultActivity, "Error: check logs for info.", Toast.LENGTH_LONG).show()
+                }
+            }
+            binding.contentConsumeDurationAttnView.adapter = durationAdapter
+        }
+        binding.contentConsumeDurationAttnView.setHasFixedSize(false)
+        binding.contentConsumeDurationAttnView.layoutManager = LinearLayoutManager(this)
+        binding.contentConsumeDurationAttnView.addItemDecoration(VerticalItemDecorator(10))
+        binding.contentConsumeDurationAttnView.addItemDecoration(HorizontalItemDecorator(10))
+
+        queryForPrgntWm?.let {
+            _prgntWmAdapter = object: InspectResultAdapter(it){
+                override fun onDataChanged() {
+                    if(itemCount == 0){
+                        binding.contentPrgntWomenAttnView.visibility = View.GONE
+                    } else{
+                        binding.contentPrgntWomenAttnView.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onError(e: FirebaseFirestoreException) {
+                    Log.w(TAG, "Error Occurred!: $e")
+                    Toast.makeText(this@ResultActivity, "Error: check logs for info.", Toast.LENGTH_LONG).show()
+                }
+            }
+            binding.contentPrgntWomenAttnView.adapter = prgntWmAdapter
+        }
+        binding.contentPrgntWomenAttnView.setHasFixedSize(false)
+        binding.contentPrgntWomenAttnView.layoutManager = LinearLayoutManager(this)
+        binding.contentPrgntWomenAttnView.addItemDecoration(VerticalItemDecorator(10))
+        binding.contentPrgntWomenAttnView.addItemDecoration(HorizontalItemDecorator(10))
     }
 
     override fun onDestroy() {
@@ -87,5 +190,9 @@ class ResultActivity: AppCompatActivity() {
 
         _firestore = null
         _firebaseAuth = null
+    }
+
+    companion object{
+        private const val TAG = "RESULT_ACTIVITY"
     }
 }

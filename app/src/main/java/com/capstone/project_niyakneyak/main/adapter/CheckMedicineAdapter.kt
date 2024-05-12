@@ -38,8 +38,10 @@ import java.util.Locale
 open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChecklistListener) :
     FireStoreAdapter<CheckMedicineAdapter.ViewHolder>(query) {
     private var secondQuery: Query? = null
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemRecyclerCheckBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -50,8 +52,8 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
         val medicineData = snapshot.toObject<MedicineData>() ?: return
 
         FirebaseFirestore.setLoggingEnabled(true)
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        if(_firestore == null) _firestore = Firebase.firestore
+        if(_firebaseAuth == null) _firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
             secondQuery = getCurrentDateQuery(medicineData)
