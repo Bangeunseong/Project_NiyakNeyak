@@ -42,6 +42,9 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".main.activity.ResultActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".main.activity.AppSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
@@ -89,9 +92,9 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
-            <meta-data android:name="com.capstone.project_niyakneyak.util.FireStoreInitializer"
+            <meta-data android:name="com.capstone.project_niyakneyak.util.Initializer.FireStoreInitializer"
                 android:value="androidx.startup" />
-            <meta-data android:name="com.capstone.project_niyakneyak.util.AuthInitializer"
+            <meta-data android:name="com.capstone.project_niyakneyak.util.Initializer.AuthInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/item_inspect_current_medicine_bg"
@@ -9,19 +10,33 @@
         android:id="@+id/content_inspect_item_img"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@tools:sample/avatars"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="5dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/content_inspect_material_txt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="2dp"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/content_inspect_name_txt"
+        app:layout_constraintStart_toEndOf="@id/content_inspect_item_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/content_inspect_prhbt_txt"/>
 
     <TextView
         android:id="@+id/content_inspect_prhbt_txt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="주의 사항:"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/content_inspect_name_txt"
+        android:layout_marginHorizontal="5dp"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/content_inspect_item_img"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -30,8 +45,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="비고:"
-        android:textSize="18sp"
+        android:layout_marginHorizontal="5dp"
+        android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@id/content_inspect_prhbt_txt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -40,10 +55,21 @@
         android:id="@+id/content_inspect_name_txt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="약물 이름:"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/content_inspect_item_img"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="5dp"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="2dp"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/content_inspect_item_img"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar3"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/content_inspect_item_img"
+        app:layout_constraintEnd_toEndOf="@+id/content_inspect_item_img"
+        app:layout_constraintStart_toStartOf="@+id/content_inspect_item_img"
+        app:layout_constraintTop_toTopOf="@+id/content_inspect_item_img" />
 </androidx.constraintlayout.widget.ConstraintLayout>

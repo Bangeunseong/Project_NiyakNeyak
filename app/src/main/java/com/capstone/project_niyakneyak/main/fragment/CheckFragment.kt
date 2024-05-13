@@ -49,9 +49,31 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
     private var adapter: CheckMedicineAdapter? = null
     private var query: Query? = null
 
-    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == Activity.RESULT_OK){
+    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        if(result.resultCode == Activity.RESULT_OK){
             viewModel.isSignedIn = true
+
+            query = getCurrentMedicineQuery()
+
+            query?.let {
+                adapter = object: CheckMedicineAdapter(it, this@CheckFragment){
+                    override fun onDataChanged() {
+                        if(itemCount == 0) {
+                            binding.contentChecklistDescriptionText.visibility = View.VISIBLE
+                            binding.contentChecklist.visibility = View.GONE
+                        }
+                        else {
+                            binding.contentChecklistDescriptionText.visibility = View.GONE
+                            binding.contentChecklist.visibility = View.VISIBLE
+                        }
+                    }
+
+                    override fun onError(e: FirebaseFirestoreException) {
+                        Snackbar.make(binding.root, "Error: check logs for info.", Snackbar.LENGTH_LONG).show()
+                    }
+                }
+                binding.contentChecklist.adapter = adapter
+            }
         }
     }
 

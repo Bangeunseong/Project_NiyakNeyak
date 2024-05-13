@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -313,7 +314,9 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 true
             }
             R.id.menu_documents -> {
-                TODO("Not yet Implemented")
+                val intent = Intent(this, ResultActivity::class.java)
+                startActivity(intent)
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }

@@ -31,6 +31,7 @@ open class InspectResultAdapter(query: Query): FireStoreAdapter<InspectResultAda
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(_openApiFunctions == null) _openApiFunctions = OpenApiFunctions()
+        holder.bind(getSnapshot(position))
     }
 
     inner class ViewHolder(val binding: ItemRecyclerOtherOptionsBinding): RecyclerView.ViewHolder(binding.root){
@@ -38,23 +39,29 @@ open class InspectResultAdapter(query: Query): FireStoreAdapter<InspectResultAda
             val inspectData = snapshot.toObject<InspectData>() ?: return
 
             binding.contentInspectNameTxt.text = String.format("약물 이름: ${inspectData.itemName}")
-            if(inspectData.prohbtContent != null && inspectData.prohbtContent!!.isNotEmpty())
+            binding.contentInspectMaterialTxt.text = String.format("약물 성분: ${inspectData.mainIngr}")
+            binding.contentInspectItemImg.contentDescription = inspectData.itemName
+            if(!inspectData.prohbtContent.equals("null"))
                 binding.contentInspectPrhbtTxt.text = String.format("주의 사항: ${inspectData.prohbtContent}")
             else binding.contentInspectPrhbtTxt.text = buildString { append("문제점이 발견 되었습니다! \n약물 복용 시 주의점을 반드시 확인하고 복용하시길 바랍니다!") }
-            if(inspectData.remark != null && inspectData.remark!!.isNotEmpty())
+            if(!inspectData.remark.equals("null"))
                 binding.contentInspectRemarkTxt.text = String.format("비고: ${inspectData.remark}")
             else binding.contentInspectRemarkTxt.visibility = View.GONE
 
             var targetJsonObj: JSONObject? = null
+
             CoroutineScope(Dispatchers.Main + job).launch {
+                binding.progressBar3.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.IO).launch {
                     targetJsonObj = performDataFetchTaskAsync(inspectData.itemName!!, 1, 1)
+                }.join()
+                CoroutineScope(Dispatchers.Main).launch {
+                    Glide.with(itemView).load(targetJsonObj?.getJSONObject("body")?.getJSONArray("items")?.getJSONObject(0)?.get(
+                        MedicineData.FIELD_BIG_PRDT_IMG_URL).toString()).placeholder(
+                        R.drawable.baseline_medication_liquid_24).into(binding.contentInspectItemImg)
                 }.invokeOnCompletion {
-                    if(it == null){
-                        Glide.with(itemView).load(targetJsonObj?.getJSONObject("body")?.getJSONArray("items")?.getJSONObject(0)?.get(
-                            MedicineData.FIELD_BIG_PRDT_IMG_URL).toString()).placeholder(
-                            R.drawable.baseline_medication_liquid_24).into(binding.contentInspectItemImg)
-                    }
+                    binding.contentInspectItemImg.visibility = View.VISIBLE
+                    binding.progressBar3.visibility = View.GONE
                 }
             }
         }

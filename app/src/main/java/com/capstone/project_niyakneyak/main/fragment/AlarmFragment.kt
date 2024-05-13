@@ -1,6 +1,5 @@
 package com.capstone.project_niyakneyak.main.fragment
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -23,7 +22,6 @@ import com.capstone.project_niyakneyak.databinding.FragmentAlarmListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.AlarmSettingActivity
 import com.capstone.project_niyakneyak.main.adapter.AlarmAdapter
-import com.capstone.project_niyakneyak.main.adapter.MedicationAdapter
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.AlarmViewModel
@@ -60,9 +58,33 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
     private var adapter: AlarmAdapter? = null
     private var query: Query? = null
 
-    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == RESULT_OK){
+    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        if(result.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
+
+            query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(Alarm.COLLECTION_ID)
+                .orderBy(Alarm.FIELD_HOUR, Query.Direction.ASCENDING)
+                .orderBy(Alarm.FIELD_MINUTE, Query.Direction.ASCENDING)
+
+            query?.let {
+                adapter = object: AlarmAdapter(it, this@AlarmFragment){
+                    override fun onDataChanged() {
+                        if(itemCount == 0) {
+                            binding.contentTimeLeftBeforeAlarm.setText(R.string.dialog_meds_time_timer_error)
+                            binding.contentTimeTable.visibility = View.GONE
+                        }
+                        else {
+                            binding.contentTimeTable.visibility = View.VISIBLE
+                        }
+                    }
+
+                    override fun onError(e: FirebaseFirestoreException) {
+                        Snackbar.make(binding.root, "Error: check logs for info.", Snackbar.LENGTH_LONG).show()
+                    }
+                }
+                binding.contentTimeTable.adapter = adapter
+            }
         }
     }
     private val alarmSettingProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){

@@ -37,7 +37,7 @@
                 android:id="@+id/content_usage_joint_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/item_inspect_current_medicine_bg">
+                android:layout_marginVertical="2dp">
 
                 <TextView
                     android:id="@+id/content_usage_joint_text"
@@ -65,16 +65,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
+                    android:nestedScrollingEnabled="false"
                     app:layout_constraintTop_toBottomOf="@id/content_usage_joint_text"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="?android:attr/listDivider" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content_elderly_attn_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/item_inspect_current_medicine_bg">
+                android:layout_marginVertical="2dp">
 
                 <TextView
                     android:id="@+id/content_elderly_attn_text"
@@ -102,18 +109,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
+                    android:nestedScrollingEnabled="false"
                     app:layout_constraintTop_toBottomOf="@id/content_elderly_attn_text"
                     app:layout_constraintBottom_toBottomOf="parent" >
 
                 </androidx.recyclerview.widget.RecyclerView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="?android:attr/listDivider" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content_spcfc_age_grade_attn_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/item_inspect_current_medicine_bg">
+                android:layout_marginVertical="2dp">
 
                 <TextView
                     android:id="@+id/content_spcfc_age_grade_attn_text"
@@ -141,16 +155,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
+                    android:nestedScrollingEnabled="false"
                     app:layout_constraintTop_toBottomOf="@id/content_spcfc_age_grade_attn_text"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/divider5"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="?android:attr/listDivider" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content_consume_duration_attn_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/item_inspect_current_medicine_bg">
+                android:layout_marginVertical="2dp">
 
                 <TextView
                     android:id="@+id/content_consume_duration_attn_text"
@@ -178,16 +199,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
+                    android:nestedScrollingEnabled="false"
                     app:layout_constraintTop_toBottomOf="@id/content_consume_duration_attn_text"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/divider6"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="?android:attr/listDivider" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content_prgnt_women_attn_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/item_inspect_current_medicine_bg">
+                android:layout_marginVertical="2dp">
 
                 <TextView
                     android:id="@+id/content_prgnt_women_attn_text"
@@ -215,6 +243,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
+                    android:nestedScrollingEnabled="false"
                     app:layout_constraintTop_toBottomOf="@id/content_prgnt_women_attn_text"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>

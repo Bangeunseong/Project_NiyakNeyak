@@ -2,8 +2,10 @@ package com.capstone.project_niyakneyak.main.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.inspect_model.InspectData
@@ -51,12 +53,19 @@ class ResultActivity: AppCompatActivity() {
     private var queryForDuration: Query? = null
     private var queryForPrgntWm: Query? = null
 
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _firestore = Firebase.firestore
         _firebaseAuth = Firebase.auth
         _binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.contentResultToolbar.title = "Inspection Results"
+        setSupportActionBar(binding.contentResultToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if(firebaseAuth.currentUser == null){
             setResult(RESULT_CANCELED)
@@ -79,8 +88,10 @@ class ResultActivity: AppCompatActivity() {
                 override fun onDataChanged() {
                     if(itemCount == 0) {
                         binding.contentUsageJointView.visibility = View.GONE
+                        binding.contentUsageJointNotFoundTxt.visibility = View.VISIBLE
                     } else {
                         binding.contentUsageJointView.visibility = View.VISIBLE
+                        binding.contentUsageJointNotFoundTxt.visibility = View.GONE
                     }
                 }
 
@@ -101,8 +112,10 @@ class ResultActivity: AppCompatActivity() {
                 override fun onDataChanged() {
                     if(itemCount == 0){
                         binding.contentElderlyAttnView.visibility = View.GONE
+                        binding.contentElderlyAttnNotFoundTxt.visibility = View.VISIBLE
                     } else{
                         binding.contentElderlyAttnView.visibility = View.VISIBLE
+                        binding.contentElderlyAttnNotFoundTxt.visibility = View.GONE
                     }
                 }
 
@@ -123,8 +136,10 @@ class ResultActivity: AppCompatActivity() {
                 override fun onDataChanged() {
                     if(itemCount == 0){
                         binding.contentSpcfcAgeGradeAttnView.visibility = View.GONE
+                        binding.contentSpcfcAgeGradeAttnNotFoundTxt.visibility = View.VISIBLE
                     } else{
                         binding.contentSpcfcAgeGradeAttnView.visibility = View.VISIBLE
+                        binding.contentSpcfcAgeGradeAttnNotFoundTxt.visibility = View.GONE
                     }
                 }
 
@@ -145,8 +160,10 @@ class ResultActivity: AppCompatActivity() {
                 override fun onDataChanged() {
                     if(itemCount == 0){
                         binding.contentConsumeDurationAttnView.visibility = View.GONE
+                        binding.contentConsumeDurationAttnNotFoundTxt.visibility = View.VISIBLE
                     } else{
                         binding.contentConsumeDurationAttnView.visibility = View.VISIBLE
+                        binding.contentConsumeDurationAttnNotFoundTxt.visibility = View.GONE
                     }
                 }
 
@@ -167,8 +184,10 @@ class ResultActivity: AppCompatActivity() {
                 override fun onDataChanged() {
                     if(itemCount == 0){
                         binding.contentPrgntWomenAttnView.visibility = View.GONE
+                        binding.contentPrgntWomenAttnNotFoundTxt.visibility = View.VISIBLE
                     } else{
                         binding.contentPrgntWomenAttnView.visibility = View.VISIBLE
+                        binding.contentPrgntWomenAttnNotFoundTxt.visibility = View.GONE
                     }
                 }
 
@@ -183,6 +202,48 @@ class ResultActivity: AppCompatActivity() {
         binding.contentPrgntWomenAttnView.layoutManager = LinearLayoutManager(this)
         binding.contentPrgntWomenAttnView.addItemDecoration(VerticalItemDecorator(10))
         binding.contentPrgntWomenAttnView.addItemDecoration(HorizontalItemDecorator(10))
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        usageJointAdapter.startListening()
+        elderlyAttnAdapter.startListening()
+        spcAgeGradeAdapter.startListening()
+        durationAdapter.startListening()
+        prgntWmAdapter.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        usageJointAdapter.stopListening()
+        elderlyAttnAdapter.stopListening()
+        spcAgeGradeAdapter.stopListening()
+        durationAdapter.stopListening()
+        prgntWmAdapter.stopListening()
     }
 
     override fun onDestroy() {

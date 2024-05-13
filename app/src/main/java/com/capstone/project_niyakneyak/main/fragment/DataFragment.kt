@@ -28,7 +28,6 @@ import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.etc.Filters
 import com.capstone.project_niyakneyak.main.viewmodel.DataViewModel
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,9 +60,45 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     private var adapter: MedicationAdapter? = null
 
     // Intent Launchers for Login Process
-    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == RESULT_OK){
+    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        if(result.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
+            query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(MedicineData.COLLECTION_ID)
+                .orderBy(MedicineData.FIELD_ITEM_NAME_FB, Query.Direction.ASCENDING)
+
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if(documentSnapshot.data == null) return@addOnSuccessListener
+                    viewModel.isChanged = documentSnapshot.data!!["changed"] as Boolean
+                    if(viewModel.isChanged) binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
+                    else binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
+                }.addOnFailureListener {
+                    viewModel.isChanged = false
+                    binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
+                }
+
+            query?.let {
+                adapter = object: MedicationAdapter(it, this@DataFragment){
+                    override fun onDataChanged() {
+                        if(itemCount == 0) {
+                            binding.contentMainGuide.visibility = View.VISIBLE
+                            binding.contentMainMeds.visibility = View.GONE
+                        }
+                        else {
+                            binding.contentMainGuide.visibility = View.GONE
+                            binding.contentMainMeds.visibility = View.VISIBLE
+                        }
+                    }
+
+                    override fun onError(e: FirebaseFirestoreException) {
+                        Toast.makeText(context, "Error: check logs for info.", Toast.LENGTH_LONG).show()
+                    }
+                }
+                binding.contentMainMeds.adapter = adapter
+            }
+            adapter?.startListening()
         }
     }
     private val dataProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -172,6 +207,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             val intent = Intent(activity, LoginActivity::class.java)
             intent.putExtra("request_token", 0)
             loginProcessLauncher.launch(intent)
+            return
         }
         // Start Listening Data changes from firebase when activity starts
         adapter?.startListening()
