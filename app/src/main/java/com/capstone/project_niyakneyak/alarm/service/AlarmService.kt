@@ -84,7 +84,7 @@ class AlarmService : Service() {
         val notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
             .setContentTitle("Ring Ring .. Ring Ring")
             .setContentText(alarmTitle)
-            .setSmallIcon(R.drawable.ic_alarm_purple)
+            .setSmallIcon(R.drawable.ic_timer_addition)
             .setSound(null)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -101,8 +101,8 @@ class AlarmService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer!!.stop()
-        vibrator!!.cancel()
+        mediaPlayer?.stop()
+        vibrator?.cancel()
     }
 
     override fun onBind(intent: Intent): IBinder? {

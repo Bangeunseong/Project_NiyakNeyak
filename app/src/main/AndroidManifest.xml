@@ -28,8 +28,12 @@
         <service android:name=".alarm.service.AlarmService" />
         <service android:name=".alarm.service.RescheduleAlarmService"
             android:foregroundServiceType="shortService"/>
+        <service android:name=".util.service.AlarmValidationService" />
         <receiver
             android:name=".alarm.receiver.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver android:name=".util.receiver.AlarmValidationReceiver"
             android:enabled="true"
             android:exported="false" />
         <receiver

@@ -23,13 +23,20 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.firestore
 
 class RescheduleAlarmService : LifecycleService() {
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
+    private var _firestore: FirebaseFirestore? = null
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firestore get() = _firestore!!
+    private val firebaseAuth get() = _firebaseAuth!!
+
+    override fun onCreate() {
+        super.onCreate()
+
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
             var notification: Notification
@@ -39,7 +46,7 @@ class RescheduleAlarmService : LifecycleService() {
             val processNotification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                 .setContentTitle("Project_NiyakNeyak")
                 .setContentText("Currently Rescheduling Alarms!")
-                .setSmallIcon(R.drawable.ic_alarm_purple)
+                .setSmallIcon(R.drawable.ic_timer_addition)
                 .setSound(null)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -59,7 +66,7 @@ class RescheduleAlarmService : LifecycleService() {
                     notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                         .setContentTitle("Project_NiyakNeyak")
                         .setContentText("Alarms rescheduled!")
-                        .setSmallIcon(R.drawable.ic_alarm_purple)
+                        .setSmallIcon(R.drawable.ic_timer_addition)
                         .setSound(null)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -74,7 +81,7 @@ class RescheduleAlarmService : LifecycleService() {
                     notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                         .setContentTitle("Project_NiyakNeyak")
                         .setContentText("Failed to reschedule Alarms")
-                        .setSmallIcon(R.drawable.ic_alarm_purple)
+                        .setSmallIcon(R.drawable.ic_timer_addition)
                         .setSound(null)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -96,7 +103,7 @@ class RescheduleAlarmService : LifecycleService() {
             val notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                 .setContentTitle("Project_NiyakNeyak")
                 .setContentText("Login to set alarms for medications!")
-                .setSmallIcon(R.drawable.ic_alarm_purple)
+                .setSmallIcon(R.drawable.ic_timer_addition)
                 .setSound(null)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -111,5 +118,12 @@ class RescheduleAlarmService : LifecycleService() {
     override fun onBind(intent: Intent): IBinder? {
         super.onBind(intent)
         return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        _firestore = null
+        _firebaseAuth = null
     }
 }
