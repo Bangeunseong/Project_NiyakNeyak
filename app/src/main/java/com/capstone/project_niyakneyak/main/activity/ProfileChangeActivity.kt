@@ -25,7 +25,6 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import java.util.UUID
@@ -114,136 +113,64 @@ class ProfileChangeActivity : AppCompatActivity() {
             binding.imageViewYou.setImageResource(R.drawable.woman)
         }
 
-        photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                //
-                selectedImageView = binding.imageViewYou
-                uploadToFirestore(result.data?.data!!)
-
-            }
-        }
-
-
         binding.setProfileButton.setOnClickListener {
-            val intent= Intent()
-            intent.type= "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(intent, 100)
 
         }
         binding.backButton.setOnClickListener {
             finish()
         }
         binding.selectFromGalleryButton.setOnClickListener {
-            //Toast.makeText(this, "a.", Toast.LENGTH_SHORT).show()
-            checkPermissionAndPickPhoto()
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            photoLauncher.launch(intent)
+            if (fileUri != null) {
+                uploadImageToFirebaseStorage()
+            } else {
+                Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show()
+            }
 
 
         }
     }
+    private fun uploadImageToFirebaseStorage() {
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Uploading...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
 
-    override fun onStart() {
-        super.onStart()
+        val storageReference = FirebaseStorage.getInstance().reference
+        val filePath = storageReference.child("profile_images").child("${UUID.randomUUID()}.jpg")
 
-        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 100)
+        fileUri?.let { uri ->
+            filePath.putFile(uri)
+                .addOnSuccessListener {
+                    filePath.downloadUrl.addOnSuccessListener { downloadUri ->
+                        updateProfileImageUrl(downloadUri.toString())
+                        progressDialog.dismiss()
+                    }.addOnFailureListener { e ->
+                        progressDialog.dismiss()
+                        Log.w(TAG, "Error getting download URL", e)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    progressDialog.dismiss()
+                    Log.w(TAG, "Error uploading image", e)
+                }
+        }
+    }
+    private fun updateProfileImageUrl(downloadUrl: String) {
+        userId?.let { uid ->
+            firestore.collection("users").document(uid)
+                .update("profilePic", downloadUrl)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Profile picture updated successfully", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "Profile picture URL updated in Firestore")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error updating profile picture URL", e)
+                }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==0 && resultCode==RESULT_OK && data!=null){
-            fileUri = data.data
-            try{
-                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
-                selectedImageView.setImageBitmap(bitmap)
 
-            }catch (e: Exception) {
-                e.printStackTrace()
-            }
-            selectedImageView = binding.imageViewYou
-            uploadToFirestore(data.data!!)
-        }
-    }
-    fun uploadImage(){
-        if (fileUri != null){
-            val progressDialog = ProgressDialog(this)
-            progressDialog.setTitle("Uploading Image...")
-            progressDialog.setMessage("Processing...")
-            progressDialog.show()
-
-            val ref: StorageReference = FirebaseStorage.getInstance().reference
-                .child("uploads/" + UUID.randomUUID().toString())
-            ref.putFile(fileUri!!).addOnSuccessListener {
-                progressDialog.dismiss()
-                Toast.makeText(this, "Image Uploaded", Toast.LENGTH_LONG).show()
-            }.addOnFailureListener {
-                progressDialog.dismiss()
-                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-    fun checkPermissionAndPickPhoto() {
-        //Toast.makeText(this, "b.", Toast.LENGTH_SHORT).show()
-        var readExternalPhoto: String = ""
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Toast.makeText(this, "11111111111111111111.", Toast.LENGTH_SHORT).show()
-            readExternalPhoto = android.Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Toast.makeText(this, "222222222222222222222222222.", Toast.LENGTH_SHORT).show()
-            readExternalPhoto = android.Manifest.permission.READ_EXTERNAL_STORAGE
-        }
-        Toast.makeText(this, "33333333333333333333333333.", Toast.LENGTH_SHORT).show()
-        if(ContextCompat.checkSelfPermission(this, readExternalPhoto) == PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(this, "c.", Toast.LENGTH_SHORT).show()
-            openPhotoPicker()
-        } else {
-            Toast.makeText(this, "444444444444444444444444444444.", Toast.LENGTH_SHORT).show()
-            ActivityCompat.requestPermissions(this, arrayOf(readExternalPhoto), 100)
-        }
-    }
-
-    private fun openPhotoPicker() {
-        Toast.makeText(this, "d.", Toast.LENGTH_SHORT).show()
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.type="image/*"
-        photoLauncher.launch(intent)
-        Toast.makeText(this, "e.", Toast.LENGTH_SHORT).show()
-    }
-
-    fun uploadToFirestore(photoUri: Uri){
-        val firestore = Firebase.firestore
-        val data= hashMapOf("profilePic" to photoUri.toString())
-        firestore.collection("users").document(userId!!)
-            .set(data)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Profile photo uploaded to Firestore", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Profile photo upload failed", Toast.LENGTH_SHORT).show()
-            }
-
-    }
-    fun postToFirestore(photoUrl: String){
-        Firebase.firestore.collection("users")
-            .document(userId!!)
-            .update("profilePic", photoUrl)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Profile photo updated", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Profile photo update failed", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-
-
-}
-
-class StorageReference {
-    fun put(fileUri: Uri): Any {
-        return Any()
-
-    }
 
 }
