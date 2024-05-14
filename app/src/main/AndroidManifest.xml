@@ -92,9 +92,9 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
-            <meta-data android:name="com.capstone.project_niyakneyak.util.Initializer.FireStoreInitializer"
+            <meta-data android:name="com.capstone.project_niyakneyak.util.initializer.FireStoreInitializer"
                 android:value="androidx.startup" />
-            <meta-data android:name="com.capstone.project_niyakneyak.util.Initializer.AuthInitializer"
+            <meta-data android:name="com.capstone.project_niyakneyak.util.initializer.AuthInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>
