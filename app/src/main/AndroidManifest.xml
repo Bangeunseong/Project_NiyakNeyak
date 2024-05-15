@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+
     <application
         android:name="com.capstone.project_niyakneyak.App"
         android:allowBackup="true"
