@@ -1,11 +1,9 @@
 package com.capstone.project_niyakneyak.main.activity
-import android.Manifest
+
 import android.app.ProgressDialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -14,16 +12,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityProfileChangeBinding
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +31,6 @@ class ProfileChangeActivity : AppCompatActivity() {
     lateinit var photoLauncher: ActivityResultLauncher<Intent>
     private lateinit var selectedImageView: ImageView
 
-
     private var _binding: ActivityProfileChangeBinding? = null
     private val binding get() = _binding!!
 
@@ -48,13 +40,12 @@ class ProfileChangeActivity : AppCompatActivity() {
 
     val TAG = "ProfileChangeActivity"
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityProfileChangeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        auth = Firebase.auth // Firebase Auth 초기화
-        firestore = Firebase.firestore // Firestore 초기화
+        auth = FirebaseAuth.getInstance() // Firebase Auth 초기화
+        firestore = FirebaseFirestore.getInstance() // Firestore 초기화
         user = auth.currentUser // 현재 사용자 가져오기
 
         userId = auth.currentUser?.uid
@@ -66,10 +57,8 @@ class ProfileChangeActivity : AppCompatActivity() {
                     if (document != null) {
                         Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                         if (document.contains("profilePic")) {
-                            // "프로필이미지" 필드가 이미 존재하는 경우의 처리
-                            Log.d(TAG, "profilePid field already exists!")
+                            Log.d(TAG, "profilePic field already exists!")
                         } else {
-                            // "프로필이미지" 필드가 존재하지 않는 경우, 필드를 추가
                             userDocument.update("profilePic", "default_profile_image_url")
                                 .addOnSuccessListener {
                                     Log.d(TAG, "profilePic field successfully added!")
@@ -89,48 +78,87 @@ class ProfileChangeActivity : AppCompatActivity() {
             Log.d(TAG, "No such document")
         }
 
-
-
-
         binding.imageViewBoy.setOnClickListener {
-
             Toast.makeText(this, "boy.", Toast.LENGTH_SHORT).show()
             binding.imageViewYou.setImageResource(R.drawable.boy)
-
-
+            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.boy}")
         }
         binding.imageViewGirl.setOnClickListener {
             Toast.makeText(this, "girl.", Toast.LENGTH_SHORT).show()
             binding.imageViewYou.setImageResource(R.drawable.girl)
-
+            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.girl}")
         }
         binding.imageViewMan.setOnClickListener {
             Toast.makeText(this, "man.", Toast.LENGTH_SHORT).show()
             binding.imageViewYou.setImageResource(R.drawable.man)
+            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.man}")
         }
         binding.imageViewWoman.setOnClickListener {
             Toast.makeText(this, "woman.", Toast.LENGTH_SHORT).show()
             binding.imageViewYou.setImageResource(R.drawable.woman)
+            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.woman}")
         }
 
         binding.setProfileButton.setOnClickListener {
+            if (userId != null) {
+                val userDocument = firestore.collection("users").document(userId!!)
+                userDocument.get()
+                firestore.collection("users").document(userId!!).get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            userDocument.update("profilePic", fileUri)
+                                .addOnSuccessListener {
+                                    Log.d(TAG, "profilePic field successfully added!")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w(TAG, "Error adding profilePic field", e)
+                                }
 
+                        } else {
+                            Log.d(TAG, "No such document")
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d(TAG, "get failed with ", exception)
+                    }
+            } else {
+                Log.d(TAG, "No such document")
+            }/*
+
+            fileUri?.let {
+                uploadImageToFirebaseStorage()
+            } ?: run {
+                Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show()
+            }*/
         }
+
         binding.backButton.setOnClickListener {
             finish()
         }
+
+        // ActivityResultLauncher 초기화
+        photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data: Intent? = result.data
+                fileUri = data?.data
+                fileUri?.let {
+                    selectedImageView.setImageURI(it)
+                    binding.imageViewYou.setImageURI(it)
+                    Log.d(TAG, "Image selected: $fileUri")
+                } ?: run {
+                    Log.d(TAG, "fileUri is null")
+                }
+            }
+        }
+
         binding.selectFromGalleryButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             photoLauncher.launch(intent)
-            if (fileUri != null) {
-                uploadImageToFirebaseStorage()
-            } else {
-                Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show()
-            }
-
-
         }
+
+        //selectedImageView = binding.selectedImageView
     }
+
     private fun uploadImageToFirebaseStorage() {
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Uploading...")
@@ -146,6 +174,7 @@ class ProfileChangeActivity : AppCompatActivity() {
                     filePath.downloadUrl.addOnSuccessListener { downloadUri ->
                         updateProfileImageUrl(downloadUri.toString())
                         progressDialog.dismiss()
+                        Log.d(TAG, "Image uploaded successfully: $downloadUri")
                     }.addOnFailureListener { e ->
                         progressDialog.dismiss()
                         Log.w(TAG, "Error getting download URL", e)
@@ -155,8 +184,12 @@ class ProfileChangeActivity : AppCompatActivity() {
                     progressDialog.dismiss()
                     Log.w(TAG, "Error uploading image", e)
                 }
+        } ?: run {
+            progressDialog.dismiss()
+            Log.w(TAG, "fileUri is null")
         }
     }
+
     private fun updateProfileImageUrl(downloadUrl: String) {
         userId?.let { uid ->
             firestore.collection("users").document(uid)
@@ -170,7 +203,4 @@ class ProfileChangeActivity : AppCompatActivity() {
                 }
         }
     }
-
-
-
 }
