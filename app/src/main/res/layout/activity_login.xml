@@ -96,16 +96,16 @@
                 android:layout_height="wrap_content"
                 android:minWidth="250dp"
                 android:text="@string/main_register_text"
-                app:layout_constraintBottom_toTopOf="@id/find_password"
+                app:layout_constraintBottom_toTopOf="@id/reset_password"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/main_login_google" />
 
             <TextView
-                android:id="@+id/find_password"
+                android:id="@+id/reset_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/find_password"
+                android:text="@string/reset_password"
                 android:textColor="#787878"
                 android:textStyle="italic"
                 android:layout_marginTop="16dp"
@@ -122,7 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/find_password"
+                app:layout_constraintTop_toBottomOf="@id/reset_password"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 

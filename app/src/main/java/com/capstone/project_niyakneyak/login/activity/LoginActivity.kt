@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
+import android.text.SpannableString
 import android.text.TextWatcher
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -169,8 +171,14 @@ class LoginActivity : AppCompatActivity() {
             signUpLauncher.launch(intent)
         }
 
-        binding.findPassword.setOnClickListener {
-            showResetPasswordDialog()
+        binding.resetPassword.setOnClickListener {
+            // 밑줄 추가
+            val content = SpannableString("비밀번호를 잊어버렸습니다")
+            content.setSpan(UnderlineSpan(), 0, content.length, 0)
+            binding.resetPassword.text = content
+
+            val intent = Intent(this, ResetPasswordActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -267,44 +275,5 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(errorString: Exception) {
         Toast.makeText(this, errorString.toString(), Toast.LENGTH_SHORT).show()
     }
-
-    private fun showResetPasswordDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Reset Password")
-
-        // Set up the input (EditText field)
-        val input = EditText(this)
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        input.hint = "Enter your email"
-        builder.setView(input)
-
-        // Set up the buttons
-        builder.setPositiveButton("Send Reset Email") { dialog, which ->
-            val email = input.text.toString().trim()
-            if (email.isNotEmpty()) {
-                sendPasswordResetEmail(email)
-            } else {
-                Toast.makeText(this, "Please enter an email address.", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        builder.setNegativeButton("Cancel") { dialog, which ->
-            dialog.dismiss()  // This will just close the dialog and nothing else
-        }
-
-        builder.show()
-    }
-
-    private fun sendPasswordResetEmail(email: String) {
-        firebaseAuth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "Reset link sent to your email", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(this, "Failed to send reset email: ${task.exception?.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-    }
-
 
 }

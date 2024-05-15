@@ -119,7 +119,7 @@ class AppSettingActivity : AppCompatActivity() {
             .setMessage("회원 탈퇴를 위해 최근에 로그인해야 합니다. 로그아웃 후 다시 로그인 해주세요.")
             .setPositiveButton("로그아웃") { dialog, which ->
                 auth?.signOut()
-                finish() // Optionally, redirect to the login screen instead of finishing
+                finish() // 이걸로 Settingfragment로 이동
             }
             .setNegativeButton("취소", null)
             .show()
