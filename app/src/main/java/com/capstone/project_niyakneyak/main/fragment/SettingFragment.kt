@@ -16,22 +16,19 @@ import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-
-class SettingFragment: Fragment() {
+class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
@@ -41,20 +38,19 @@ class SettingFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firebaseAuth = Firebase.auth
-        firestore = Firebase.firestore
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         // Initialize the ActivityResultLauncher with a callback function
-        var appSettingsLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    // Redirect to LoginActivity
-                    val intent = Intent(activity, LoginActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    activity?.finish()
-                }
+        val appSettingsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // Redirect to LoginActivity
+                val intent = Intent(activity, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                activity?.finish()
             }
+        }
 
         binding.appSettings.setOnClickListener {
             val intentSetting = Intent(activity, AppSettingActivity::class.java)
@@ -73,18 +69,15 @@ class SettingFragment: Fragment() {
                         }
                         startActivity(intent)
                     }
-                }.addOnFailureListener{
+                }.addOnFailureListener {
                     Snackbar.make(view, it.toString(), Snackbar.LENGTH_SHORT).show()
                 }
         }
 
         binding.appSettings.setOnClickListener {
-            val intentSetting = Intent(activity, AppSettingActivity::class.java).apply {
-
-            }
+            val intentSetting = Intent(activity, AppSettingActivity::class.java)
             startActivity(intentSetting)
         }
-
 
         firestore.collection("users").document(firebaseAuth.currentUser!!.uid).get()
             .addOnSuccessListener {
@@ -100,6 +93,17 @@ class SettingFragment: Fragment() {
             .addOnFailureListener {
                 Log.d(TAG, "Terrible Error Occurred: $it")
             }
+
+        // Initialize AuthStateListener
+        authStateListener = FirebaseAuth.AuthStateListener { auth ->
+            if (auth.currentUser == null) {
+                // Redirect to LoginActivity if user is not authenticated
+                val intent = Intent(activity, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                activity?.finish()
+            }
+        }
     }
 
     override fun onResume() {
@@ -119,6 +123,16 @@ class SettingFragment: Fragment() {
                 Log.d(TAG, "Error updating name: $e")
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        firebaseAuth.addAuthStateListener(authStateListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        firebaseAuth.removeAuthStateListener(authStateListener)
     }
 
     companion object { // 이 메소드로 외부에서 이 프래그먼트에 접근할 수 있음
