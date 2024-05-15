@@ -102,6 +102,7 @@ class OpenProfileActivity : AppCompatActivity() {
             binding.backButton.visibility = View.INVISIBLE
             binding.modifyButton.visibility = View.INVISIBLE
 
+            binding.birthdayTextEdit.text = binding.birthdayText.text
 
         }
         binding.modifyBackButton.setOnClickListener {
