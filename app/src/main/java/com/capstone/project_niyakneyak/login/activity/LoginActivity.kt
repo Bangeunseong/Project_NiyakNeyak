@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.alarm_valid_model.AlarmV
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding
 import com.capstone.project_niyakneyak.login.etc.LoggedInUserView
@@ -32,7 +33,6 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
 
 
 class LoginActivity : AppCompatActivity() {
@@ -113,13 +113,12 @@ class LoginActivity : AppCompatActivity() {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID).where(Filter.equalTo(Alarm.FIELD_IS_STARTED, true)).get()
                     .addOnSuccessListener {
-                        for(snapshot in it.documents){
-                            val alarm = snapshot.toObject<Alarm>() ?: continue
-                            alarm.scheduleAlarm(applicationContext)
-                        }
                         if(requestToken == 1){
                             val intentService = Intent(applicationContext, RescheduleAlarmService::class.java)
-                            applicationContext.stopService(intentService)
+                            applicationContext.startService(intentService)
+                        } else{
+                            val alarmV = AlarmV(alarmCode = 1, isStarted = true)
+                            alarmV.scheduleAlarm(applicationContext)
                         }
                         setResult(RESULT_OK)
                         finish()

@@ -12,6 +12,7 @@ import androidx.lifecycle.LifecycleService
 import com.capstone.project_niyakneyak.App
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.alarm_valid_model.AlarmV
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -58,6 +59,9 @@ class RescheduleAlarmService : LifecycleService() {
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).collection(Alarm.COLLECTION_ID)
                 .where(Filter.equalTo(Alarm.FIELD_IS_STARTED, true)).get()
                 .addOnSuccessListener {
+                    val alarmV = AlarmV(alarmCode = 1, isStarted = true)
+                    alarmV.scheduleAlarm(applicationContext)
+
                     for(snapshot in it.documents){
                         val alarm = snapshot.toObject<Alarm>() ?: continue
                         alarm.scheduleAlarm(applicationContext)

@@ -72,19 +72,21 @@ class AlarmValidationService: Service() {
                 .whereArrayContainsAny(Alarm.FIELD_MEDICATION_LIST, medicines)
 
             queryForMeds?.let { firstQuery ->
-                val processNotification = NotificationCompat.Builder(this, App.CHANNEL_ID)
-                    .setContentTitle("Project_NiyakNeyak")
-                    .setContentText("Currently Validating Alarms")
-                    .setSmallIcon(R.drawable.ic_timer_addition)
-                    .setSound(null)
-                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                    .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setAutoCancel(true)
-                    .build()
-                startForeground(4, processNotification)
-
                 firstQuery.get().addOnSuccessListener { firstSnapshot ->
+                    if(firstSnapshot.documents.isEmpty()) return@addOnSuccessListener
+
+                    val processNotification = NotificationCompat.Builder(this, App.CHANNEL_ID)
+                        .setContentTitle("Project_NiyakNeyak")
+                        .setContentText("Currently Validating Alarms")
+                        .setSmallIcon(R.drawable.ic_timer_addition)
+                        .setSound(null)
+                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setAutoCancel(true)
+                        .build()
+                    startForeground(4, processNotification)
+
                     for(document in firstSnapshot.documents){
                         val medicine = document.toObject<MedicineData>() ?: continue
                         medicineData.add(medicine)
@@ -181,7 +183,7 @@ class AlarmValidationService: Service() {
                 }.addOnFailureListener {
                     notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                         .setContentTitle("Project_NiyakNeyak")
-                        .setContentText("Alarms Validation Failed!")
+                        .setContentText("Failed to connecting server!\nPlease contact with server administrator!")
                         .setSmallIcon(R.drawable.ic_timer_addition)
                         .setSound(null)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
@@ -190,8 +192,6 @@ class AlarmValidationService: Service() {
                         .setAutoCancel(true)
                         .build()
                     notificationManager.notify(5, notification)
-                    stopForeground(STOP_FOREGROUND_DETACH)
-                    stopSelf()
                 }
             }
         }
