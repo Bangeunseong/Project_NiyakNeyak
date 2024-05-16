@@ -29,12 +29,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 import androidx.appcompat.app.AlertDialog
+import com.bumptech.glide.Glide
+import com.capstone.project_niyakneyak.main.fragment.SettingFragment
 
 class OpenProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOpenProfileBinding
     private lateinit var firestore: FirebaseFirestore
     private var user: FirebaseUser? = null
     private lateinit var auth: FirebaseAuth
+    private var userId: String? = null
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
     companion object {
@@ -370,5 +373,42 @@ class OpenProfileActivity : AppCompatActivity() {
 
         }
 
+    }
+    private fun updateProfile() {
+        uiScope.launch {
+            userId = auth.currentUser?.uid
+            if (userId != null) {
+                val userDocument = firestore.collection("users").document(userId!!)
+                userDocument.get()
+                firestore.collection("users").document(userId!!).get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            if (document.contains("profilePic")) {
+                                Toast.makeText(this@OpenProfileActivity, "yes", Toast.LENGTH_SHORT).show()
+                                val profilePicUrl = document.getString("profilePic")
+                                Glide.with(this@OpenProfileActivity )
+                                    .load(profilePicUrl)
+                                    .into(binding.profileImageView)
+                            } else {
+                                Toast.makeText(this@OpenProfileActivity, "no", Toast.LENGTH_SHORT).show()
+
+                            }
+                        } else {
+                            Log.d(SettingFragment.TAG, "No such document")
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d(SettingFragment.TAG, "get failed with ", exception)
+                    }
+            } else {
+                Log.d(SettingFragment.TAG, "No such document")
+            }
+
+        }
+
+    }
+    override fun onResume() {
+        super.onResume()
+        updateProfile()
     }
 }

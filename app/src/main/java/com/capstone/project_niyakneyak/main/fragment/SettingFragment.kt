@@ -47,7 +47,6 @@ class SettingFragment: Fragment() {
 
         firebaseAuth = Firebase.auth
         firestore = Firebase.firestore
-        updateProfile()
         binding.profileButton.setOnClickListener {
             // 사용자 정보를 Firestore에서 조회
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get()
@@ -93,6 +92,7 @@ class SettingFragment: Fragment() {
     }
     override fun onResume() {
         super.onResume()
+        updateProfile()
 
         lifecycleScope.launch {
             try {
@@ -110,33 +110,37 @@ class SettingFragment: Fragment() {
         }
     }
     private fun updateProfile() {
-        userId = firebaseAuth.currentUser?.uid
-        if (userId != null) {
-            val userDocument = firestore.collection("users").document(userId!!)
-            userDocument.get()
-            firestore.collection("users").document(userId!!).get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        if (document.contains("profilePic")) {
-                            Toast.makeText(getActivity(), "yes", Toast.LENGTH_SHORT).show()
-                            val profilePicUrl = document.getString("profilePic")
-                            Glide.with(this)
-                                .load(profilePicUrl)
-                                .into(binding.profileImageView)
-                        } else {
-                            Toast.makeText(getActivity(), "no", Toast.LENGTH_SHORT).show()
+        uiScope.launch {
+            userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                val userDocument = firestore.collection("users").document(userId!!)
+                userDocument.get()
+                firestore.collection("users").document(userId!!).get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            if (document.contains("profilePic")) {
+                                Toast.makeText(getActivity(), "yes", Toast.LENGTH_SHORT).show()
+                                val profilePicUrl = document.getString("profilePic")
+                                Glide.with(this@SettingFragment)
+                                    .load(profilePicUrl)
+                                    .into(binding.profileImageView)
+                            } else {
+                                Toast.makeText(getActivity(), "no", Toast.LENGTH_SHORT).show()
 
+                            }
+                        } else {
+                            Log.d(TAG, "No such document")
                         }
-                    } else {
-                        Log.d(TAG, "No such document")
                     }
-                }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "get failed with ", exception)
-                }
-        } else {
-            Log.d(TAG, "No such document")
+                    .addOnFailureListener { exception ->
+                        Log.d(TAG, "get failed with ", exception)
+                    }
+            } else {
+                Log.d(TAG, "No such document")
+            }
+
         }
+
     }
 
     companion object { // 이 메소드로 외부에서 이 프래그먼트에 접근할 수 있음

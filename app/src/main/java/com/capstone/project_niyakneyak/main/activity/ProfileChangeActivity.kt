@@ -11,9 +11,11 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityProfileChangeBinding
+import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -110,6 +112,7 @@ class ProfileChangeActivity : AppCompatActivity() {
                                 .addOnSuccessListener {
                                     Toast.makeText(this, "changed", Toast.LENGTH_SHORT).show()
                                     Log.d(TAG, "profilePic field successfully added!")
+                                    finish()
                                 }
                                 .addOnFailureListener { e ->
                                     Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
