@@ -45,6 +45,8 @@
         </receiver>
 
         <activity android:name=".main.activity.ProfileChangeActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".login.activity.ResetPasswordActivity"
             android:exported = "false"
             android:windowSoftInputMode="adjustPan"/>
