@@ -11,18 +11,14 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityProfileChangeBinding
-import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import java.util.UUID
 
 class ProfileChangeActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
@@ -30,7 +26,7 @@ class ProfileChangeActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
-    lateinit var photoLauncher: ActivityResultLauncher<Intent>
+    private lateinit var photoLauncher: ActivityResultLauncher<Intent>
     private lateinit var selectedImageView: ImageView
 
     private var _binding: ActivityProfileChangeBinding? = null
@@ -102,13 +98,14 @@ class ProfileChangeActivity : AppCompatActivity() {
         }
 
         binding.setProfileButton.setOnClickListener {
+
             if (userId != null) {
                 val userDocument = firestore.collection("users").document(userId!!)
                 userDocument.get()
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
                         if (document != null) {
-                            userDocument.update("profilePic", fileUri)
+                            userDocument.update("profilePic", fileUri.toString())
                                 .addOnSuccessListener {
                                     Toast.makeText(this, "changed", Toast.LENGTH_SHORT).show()
                                     Log.d(TAG, "profilePic field successfully added!")
@@ -129,13 +126,8 @@ class ProfileChangeActivity : AppCompatActivity() {
                     }
             } else {
                 Log.d(TAG, "No such document")
-            }/*
+            }
 
-            fileUri?.let {
-                uploadImageToFirebaseStorage()
-            } ?: run {
-                Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show()
-            }*/
         }
 
         binding.backButton.setOnClickListener {
@@ -148,7 +140,6 @@ class ProfileChangeActivity : AppCompatActivity() {
                 val data: Intent? = result.data
                 fileUri = data?.data
                 fileUri?.let {
-                    selectedImageView.setImageURI(it)
                     binding.imageViewYou.setImageURI(it)
                     Log.d(TAG, "Image selected: $fileUri")
                 } ?: run {
@@ -160,53 +151,6 @@ class ProfileChangeActivity : AppCompatActivity() {
         binding.selectFromGalleryButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             photoLauncher.launch(intent)
-        }
-
-        //selectedImageView = binding.selectedImageView
-    }
-
-    private fun uploadImageToFirebaseStorage() {
-        val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Uploading...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
-
-        val storageReference = FirebaseStorage.getInstance().reference
-        val filePath = storageReference.child("profile_images").child("${UUID.randomUUID()}.jpg")
-
-        fileUri?.let { uri ->
-            filePath.putFile(uri)
-                .addOnSuccessListener {
-                    filePath.downloadUrl.addOnSuccessListener { downloadUri ->
-                        updateProfileImageUrl(downloadUri.toString())
-                        progressDialog.dismiss()
-                        Log.d(TAG, "Image uploaded successfully: $downloadUri")
-                    }.addOnFailureListener { e ->
-                        progressDialog.dismiss()
-                        Log.w(TAG, "Error getting download URL", e)
-                    }
-                }
-                .addOnFailureListener { e ->
-                    progressDialog.dismiss()
-                    Log.w(TAG, "Error uploading image", e)
-                }
-        } ?: run {
-            progressDialog.dismiss()
-            Log.w(TAG, "fileUri is null")
-        }
-    }
-
-    private fun updateProfileImageUrl(downloadUrl: String) {
-        userId?.let { uid ->
-            firestore.collection("users").document(uid)
-                .update("profilePic", downloadUrl)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Profile picture updated successfully", Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, "Profile picture URL updated in Firestore")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error updating profile picture URL", e)
-                }
         }
     }
 }
