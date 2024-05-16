@@ -144,7 +144,7 @@ class AlarmValidationService: Service() {
                                     .setPriority(NotificationCompat.PRIORITY_MAX)
                                     .setAutoCancel(true)
                                     .build()
-                                notificationManager.notify(2, notification)
+                                notificationManager.notify(5, notification)
                                 stopForeground(STOP_FOREGROUND_DETACH)
                                 stopSelf()
                             }.addOnFailureListener {
@@ -158,7 +158,7 @@ class AlarmValidationService: Service() {
                                     .setPriority(NotificationCompat.PRIORITY_MAX)
                                     .setAutoCancel(true)
                                     .build()
-                                notificationManager.notify(2, notification)
+                                notificationManager.notify(5, notification)
                                 stopForeground(STOP_FOREGROUND_DETACH)
                                 stopSelf()
                             }
@@ -173,7 +173,7 @@ class AlarmValidationService: Service() {
                                 .setPriority(NotificationCompat.PRIORITY_MAX)
                                 .setAutoCancel(true)
                                 .build()
-                            notificationManager.notify(2, notification)
+                            notificationManager.notify(5, notification)
                             stopForeground(STOP_FOREGROUND_DETACH)
                             stopSelf()
                         }
@@ -189,7 +189,7 @@ class AlarmValidationService: Service() {
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setAutoCancel(true)
                         .build()
-                    notificationManager.notify(2, notification)
+                    notificationManager.notify(5, notification)
                     stopForeground(STOP_FOREGROUND_DETACH)
                     stopSelf()
                 }
