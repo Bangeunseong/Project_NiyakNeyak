@@ -202,11 +202,18 @@ open class OpenApiFunctions {
         // REPRESENT URL
         private const val PRODUCT_INFO_BASE_URL = "https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService05"
         private const val PRODUCT_MATERIAL_DETAILS = "/getDrugPrdtPrmsnInq05"
-        private const val DUR_PRODUCT_LIST_BASE_URL = "http://apis.data.go.kr/1471000/DURPrdlstInfoService03"
+        private const val DUR_PRODUCT_LIST_BASE_URL = "https://apis.data.go.kr/1471000/DURPrdlstInfoService03"
         private const val DUR_ELDERLY_ATTENTION_PRODUCT_LIST = "/getOdsnAtentInfoList03"
         private const val DUR_USAGE_JOINT_TABOO_LIST = "/getUsjntTabooInfoList03"
         private const val DUR_SPECIFY_AGE_GRADE_TABOO_LIST = "/getSpcifyAgrdeTabooInfoList03"
         private const val DUR_MEDICINE_CONSUME_DATE_ATTENTION_PRODUCT_LIST = "/getMdctnPdAtentInfoList03"
-        private const val DUR_PREGNANT_WOMAN_TABOO_LIST = "/getPwnmTabooList03"
+        private const val DUR_PREGNANT_WOMAN_TABOO_LIST = "/getPwnmTabooInfoList03"
+
+        // REPRESENT KEYWORD
+        const val GET_ELDERLY_ATTENTION_PRODUCT_LIST = "노인주의 약물확인"
+        const val GET_USAGE_JOINT_TABOO_LIST = "병용금기 약물확인"
+        const val GET_SPECIFIC_AGE_GRADE_TABOO_LIST = "특정연령대금기 약물확인"
+        const val GET_MEDICINE_CONSUME_DATE_ATTENTION_TABOO_LIST = "투여기간주의 약물확인"
+        const val GET_PREGNANT_WOMAN_TABOO_LIST = "임신부 금지 약물확인"
     }
 }

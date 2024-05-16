@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
@@ -22,6 +24,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -33,8 +36,13 @@ class SettingFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
+    private var userId: String? = null
+    private val uiScope = CoroutineScope(Dispatchers.Main)
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -77,6 +85,9 @@ class SettingFragment : Fragment() {
                 }
         }
 
+
+
+
         binding.appSettings.setOnClickListener {
             val intentSetting = Intent(activity, AppSettingActivity::class.java)
             startActivity(intentSetting)
@@ -111,6 +122,7 @@ class SettingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        updateProfile()
 
         lifecycleScope.launch {
             try {
@@ -126,6 +138,40 @@ class SettingFragment : Fragment() {
                 Log.d(TAG, "Error updating name: $e")
             }
         }
+    }
+    private fun updateProfile() {
+        uiScope.launch {
+            userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                val userDocument = firestore.collection("users").document(userId!!)
+                userDocument.get()
+                firestore.collection("users").document(userId!!).get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            if (document.contains("profilePic") && document.getString("profilePic") != null){
+
+                                Toast.makeText(getActivity(), "yes", Toast.LENGTH_SHORT).show()
+                                val profilePicUrl = document.getString("profilePic")
+                                Glide.with(this@SettingFragment)
+                                    .load(profilePicUrl)
+                                    .into(binding.profileImageView)
+                            } else {
+                                Toast.makeText(getActivity(), "no", Toast.LENGTH_SHORT).show()
+
+                            }
+                        } else {
+                            Log.d(TAG, "No such document")
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d(TAG, "get failed with ", exception)
+                    }
+            } else {
+                Log.d(TAG, "No such document")
+            }
+
+        }
+
     }
 
     override fun onStart() {

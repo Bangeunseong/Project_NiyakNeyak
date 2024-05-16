@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_main"
-        android:icon="@drawable/baseline_list_alt_24"
+        android:icon="@drawable/ic_drug_entities"
         android:title="@string/toolbar_main_title" />
     <item
         android:id="@+id/menu_time"
@@ -16,4 +16,5 @@
         android:id="@+id/menu_account"
         android:icon="@drawable/baseline_account_circle_24"
         android:title="@string/toolbar_main_settings"/>
+
 </menu>
