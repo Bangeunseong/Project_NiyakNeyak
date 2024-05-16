@@ -6,8 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
@@ -19,6 +21,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -29,9 +32,13 @@ class SettingFragment: Fragment() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
+    private var userId: String? = null
+    private val uiScope = CoroutineScope(Dispatchers.Main)
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -40,7 +47,7 @@ class SettingFragment: Fragment() {
 
         firebaseAuth = Firebase.auth
         firestore = Firebase.firestore
-
+        updateProfile()
         binding.profileButton.setOnClickListener {
             // 사용자 정보를 Firestore에서 조회
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get()
@@ -57,6 +64,9 @@ class SettingFragment: Fragment() {
                     Snackbar.make(view, it.toString(), Snackbar.LENGTH_SHORT).show()
                 }
         }
+
+
+
 
         binding.appSettings.setOnClickListener {
             val intentSetting = Intent(activity, AppSettingActivity::class.java).apply {
@@ -97,6 +107,35 @@ class SettingFragment: Fragment() {
             } catch (e: Exception) {
                 Log.d(TAG, "Error updating name: $e")
             }
+        }
+    }
+    private fun updateProfile() {
+        userId = firebaseAuth.currentUser?.uid
+        if (userId != null) {
+            val userDocument = firestore.collection("users").document(userId!!)
+            userDocument.get()
+            firestore.collection("users").document(userId!!).get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        if (document.contains("profilePic")) {
+                            Toast.makeText(getActivity(), "yes", Toast.LENGTH_SHORT).show()
+                            val profilePicUrl = document.getString("profilePic")
+                            Glide.with(this)
+                                .load(profilePicUrl)
+                                .into(binding.profileImageView)
+                        } else {
+                            Toast.makeText(getActivity(), "no", Toast.LENGTH_SHORT).show()
+
+                        }
+                    } else {
+                        Log.d(TAG, "No such document")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "get failed with ", exception)
+                }
+        } else {
+            Log.d(TAG, "No such document")
         }
     }
 

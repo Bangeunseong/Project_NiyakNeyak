@@ -108,13 +108,16 @@ class ProfileChangeActivity : AppCompatActivity() {
                         if (document != null) {
                             userDocument.update("profilePic", fileUri)
                                 .addOnSuccessListener {
+                                    Toast.makeText(this, "changed", Toast.LENGTH_SHORT).show()
                                     Log.d(TAG, "profilePic field successfully added!")
                                 }
                                 .addOnFailureListener { e ->
+                                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
                                     Log.w(TAG, "Error adding profilePic field", e)
                                 }
 
                         } else {
+                            Toast.makeText(this, "Nothing is selected", Toast.LENGTH_SHORT).show()
                             Log.d(TAG, "No such document")
                         }
                     }
