@@ -38,6 +38,7 @@ class OpenProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private var userId: String? = null
     private val uiScope = CoroutineScope(Dispatchers.Main)
+    private var url: String? = null
 
     companion object {
         private const val TAG = "OPEN_PROFILE_ACTIVITY"
@@ -61,7 +62,6 @@ class OpenProfileActivity : AppCompatActivity() {
 
         binding.progressBarModify.visibility = View.VISIBLE
         binding.modifyButton.isEnabled = false
-        //binding.modifyButton.setBackgroundColor(getColor(R.color.gray))
 
         val userId = auth.currentUser?.uid
         if (userId != null) {
@@ -93,6 +93,9 @@ class OpenProfileActivity : AppCompatActivity() {
                     binding.birthdayTextEdit.setOnClickListener {
                         showDatePickerDialog()
                     }
+                    url= user.profilePic
+
+
 
 
 
@@ -208,7 +211,8 @@ class OpenProfileActivity : AppCompatActivity() {
                     birthDate,
                     selectedGender,
                     binding.phonenumberTextEdit.text.toString(),
-                    age = calculateAge(birthDate)
+                    age = calculateAge(birthDate),
+
                 )
 
                 firestore.collection(UserAccount.COLLECTION_ID).document(account.idToken!!).set(account)
@@ -289,29 +293,6 @@ class OpenProfileActivity : AppCompatActivity() {
 
         dpd.show()
     }
-    private fun showImageChoiceDialog() {
-        val items = arrayOf("사진 찍기", "갤러리에서 선택")
-        AlertDialog.Builder(this).apply {
-            setTitle("프로필 사진 변경")
-            setItems(items) { _, which ->
-                when (which) {
-                    0 -> {
-                        // 여기에 사진 찍기 기능을 구현하세요.
-                    }
-                    1 -> {
-                        // 갤러리를 열어 이미지를 선택하도록 합니다.
-                        openGalleryForImage()
-                    }
-                }
-            }
-            show()
-        }
-    }
-    private fun openGalleryForImage() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_PICK_CODE)
-    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
@@ -377,7 +358,7 @@ class OpenProfileActivity : AppCompatActivity() {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
                         if (document != null) {
-                            if (document.contains("profilePic")) {
+                            if (document.contains("profilePic") && document.getString("profilePic") != null){
                                 Toast.makeText(this@OpenProfileActivity, "yes", Toast.LENGTH_SHORT).show()
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@OpenProfileActivity )

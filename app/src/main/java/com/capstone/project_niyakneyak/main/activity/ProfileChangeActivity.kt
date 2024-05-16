@@ -123,7 +123,6 @@ class ProfileChangeActivity : AppCompatActivity() {
             } else {
                 Log.d(TAG, "No such document")
             }
-
         }
 
         binding.backButton.setOnClickListener {
