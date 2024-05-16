@@ -93,7 +93,7 @@ class OpenProfileActivity : AppCompatActivity() {
                     binding.birthdayTextEdit.setOnClickListener {
                         showDatePickerDialog()
                     }
-                    url= user.profilePic
+
 
 
 
@@ -212,6 +212,7 @@ class OpenProfileActivity : AppCompatActivity() {
                     selectedGender,
                     binding.phonenumberTextEdit.text.toString(),
                     age = calculateAge(birthDate),
+                    profilePic = url
 
                 )
 
@@ -350,6 +351,7 @@ class OpenProfileActivity : AppCompatActivity() {
 
     }
     private fun updateProfile() {
+
         uiScope.launch {
             userId = auth.currentUser?.uid
             if (userId != null) {
@@ -359,6 +361,7 @@ class OpenProfileActivity : AppCompatActivity() {
                     .addOnSuccessListener { document ->
                         if (document != null) {
                             if (document.contains("profilePic") && document.getString("profilePic") != null){
+                                url= document.getString("profilePic")
                                 Toast.makeText(this@OpenProfileActivity, "yes", Toast.LENGTH_SHORT).show()
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@OpenProfileActivity )

@@ -119,6 +119,7 @@ class SettingFragment: Fragment() {
                     .addOnSuccessListener { document ->
                         if (document != null) {
                             if (document.contains("profilePic") && document.getString("profilePic") != null){
+
                                 Toast.makeText(getActivity(), "yes", Toast.LENGTH_SHORT).show()
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@SettingFragment)
