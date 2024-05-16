@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -55,11 +54,6 @@ class OpenProfileActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.toolbar_modification)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Log.d("Toolbar", "Toolbar title set to: ${getString(R.string.toolbar_modification)}")
-
-
-
-
-
 
         auth = Firebase.auth // Firebase Auth 초기화
         firestore = Firebase.firestore // Firestore 초기화

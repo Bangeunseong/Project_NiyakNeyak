@@ -1,8 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 
-import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,12 +25,10 @@ class ProfileChangeActivity : AppCompatActivity() {
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
     private lateinit var photoLauncher: ActivityResultLauncher<Intent>
-    private lateinit var selectedImageView: ImageView
 
     private var _binding: ActivityProfileChangeBinding? = null
     private val binding get() = _binding!!
 
-    private var defaultDrawable: Drawable? = null
     var userId: String? = null
     var fileUri: Uri? = null
 
