@@ -1,34 +1,30 @@
 package com.capstone.project_niyakneyak.main.fragment
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
-import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
+import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingBinding
@@ -39,18 +35,16 @@ class SettingFragment : Fragment() {
     private var userId: String? = null
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firebaseAuth = Firebase.auth
-        firestore = Firebase.firestore
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         // Initialize the ActivityResultLauncher with a callback function
         val appSettingsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -67,9 +61,14 @@ class SettingFragment : Fragment() {
             appSettingsLauncher.launch(intentSetting) // Launch using the new launcher
         }
 
+        binding.profileImageView.setOnClickListener {
+            showImagePopup()
+        }
+
         binding.profileButton.setOnClickListener {
             // 사용자 정보를 Firestore에서 조회
-            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get()
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .get()
                 .addOnSuccessListener { documentSnapshot ->
                     val userAccount = documentSnapshot.toObject<UserAccount>()
                     userAccount?.let {
@@ -84,9 +83,6 @@ class SettingFragment : Fragment() {
                 }
         }
 
-
-
-
         binding.appSettings.setOnClickListener {
             val intentSetting = Intent(activity, AppSettingActivity::class.java)
             startActivity(intentSetting)
@@ -97,7 +93,6 @@ class SettingFragment : Fragment() {
                 if (it.exists()) {
                     val userAccount = it.toObject<UserAccount>()
                     binding.yourCurrentNameTextview.text = userAccount!!.name
-                    //binding.yourCurrentGenderTextview.text = userAccount?.gender ?: "성별 미설정"
                     Log.d(TAG, "YourCurrentNameTextView: ${userAccount.name}")
                 } else {
                     Log.d(TAG, "No such document")
@@ -119,25 +114,33 @@ class SettingFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateProfile()
+    private fun showImagePopup() {
+        val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_image_popup, null)
+        val popupImageView = dialogView.findViewById<ImageView>(R.id.popupImageView)
+        val profilePicUrl = binding.profileImageView.drawable // 현재 이미지뷰의 drawable 가져오기
+        popupImageView.setImageDrawable(profilePicUrl)
 
-        lifecycleScope.launch {
-            try {
-                val documentSnapshot = withContext(Dispatchers.IO) {
-                    firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get().await()
-                }
-
-                val userAccount = documentSnapshot.toObject<UserAccount>()
-                userAccount?.let {
-                    binding.yourCurrentNameTextview.text = it.name
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "Error updating name: $e")
-            }
+        val builder = AlertDialog.Builder(activity)
+        builder.setView(dialogView)
+        builder.setPositiveButton("닫기") { dialog, _ ->
+            dialog.dismiss()
         }
+        builder.create().show()
     }
+
+    override fun onStart() {
+        super.onStart()
+        firebaseAuth.addAuthStateListener(authStateListener)
+        updateProfile()
+        firestore.collection(UserAccount.COLLECTION_ID)
+            .document(firebaseAuth.currentUser!!.uid).get().addOnSuccessListener {
+                val userAccount = it.toObject<UserAccount>()
+                if (userAccount != null) {
+                    binding.yourCurrentNameTextview.text = userAccount.name
+                }
+            }
+    }
+
     private fun updateProfile() {
         uiScope.launch {
             userId = firebaseAuth.currentUser?.uid
@@ -147,15 +150,12 @@ class SettingFragment : Fragment() {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
                         if (document != null) {
-                            if (document.contains("profilePic") && document.getString("profilePic") != null){
-
-                                Toast.makeText(getActivity(), "yes", Toast.LENGTH_SHORT).show()
+                            if (document.contains("profilePic") && document.getString("profilePic") != null) {
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@SettingFragment)
                                     .load(profilePicUrl)
                                     .into(binding.profileImageView)
                             } else {
-                                Toast.makeText(getActivity(), "no", Toast.LENGTH_SHORT).show()
 
                             }
                         } else {
@@ -168,14 +168,7 @@ class SettingFragment : Fragment() {
             } else {
                 Log.d(TAG, "No such document")
             }
-
         }
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        firebaseAuth.addAuthStateListener(authStateListener)
     }
 
     override fun onStop() {

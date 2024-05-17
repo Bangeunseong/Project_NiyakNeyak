@@ -94,13 +94,13 @@ class OpenProfileActivity : AppCompatActivity() {
                     binding.progressBarModify.visibility = View.GONE
                     binding.modifyButton.isEnabled = false
 
-                    // 사용자에게 오류 메시지를 표시합니다.
-                    Toast.makeText(
-                        this@OpenProfileActivity,
-                        "프로필 정보를 불러오는데 실패했습니다.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                // 사용자에게 오류 메시지를 표시합니다.
+                Toast.makeText(
+                    this@OpenProfileActivity,
+                    "프로필 정보를 불러오는데 실패했습니다.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
         binding.backButton.setOnClickListener {
             finish()
@@ -137,9 +137,39 @@ class OpenProfileActivity : AppCompatActivity() {
                             binding.ageText.text = "만 $age 세"
                             binding.birthdayText.text = user.birth
                             binding.idText.text = user.emailId
+                            binding.passwordText.text = user.password
+                            binding.phonenumberText.text = user.phoneNum
+                            binding.genderText.text = user.gender
+                firestore.collection("users").document(userId).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        val user = documentSnapshot.toObject<UserAccount>()
+                        val age = user?.age.toString()
+                        if (user != null) {
+                            binding.yourCurrentNameTextview.text = user.name
+                            binding.nameText.text = user.name
+                            binding.ageText.text = "만 $age 세"
+                            binding.birthdayText.text = user.birth
+                            binding.idText.text = user.emailId
                             binding.phonenumberText.text = user.phoneNum
                             binding.genderText.text = user.gender
 
+                            binding.nameTextEdit.setText(user.name)
+                            binding.passwordTextEdit.setText(user.password)
+                            binding.phonenumberTextEdit.setText(user.phoneNum)
+                            when (user.gender) {
+                                "남성" -> binding.maleRadioButton.isChecked = true
+                                "여성" -> binding.femaleRadioButton.isChecked = true
+
+                            }
+                            binding.birthdayTextEdit.setOnClickListener {
+                                showDatePickerDialog()
+                            }
+
+
+                        }
+                    }.addOnFailureListener { exception ->
+                    Log.e("Firestore", "Error getting user data: ", exception)
+                }
                             binding.nameTextEdit.setText(user.name)
                             binding.phonenumberTextEdit.setText(user.phoneNum)
                             when (user.gender) {
@@ -211,6 +241,21 @@ class OpenProfileActivity : AppCompatActivity() {
                                 binding.birthdayText.text = account.birth
                                 binding.phonenumberText.text = account.phoneNum
                                 binding.genderText.text = account.gender
+                firestore.collection(UserAccount.COLLECTION_ID).document(account.idToken!!)
+                    .set(account)
+                    .addOnSuccessListener {
+                        Toast.makeText(
+                            this@OpenProfileActivity,
+                            "프로필 수정이 완료되었습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.yourCurrentNameTextview.text = account.name
+                        binding.nameText.text = account.name
+                        binding.ageText.text = "만 ${account.age} 세"
+                        binding.birthdayText.text = account.birth
+                        binding.passwordText.text = account.password
+                        binding.phonenumberText.text = account.phoneNum
+                        binding.genderText.text = account.gender
 
                                 binding.nameTextEdit.visibility = View.INVISIBLE
                                 binding.birthdayTextEdit.visibility = View.INVISIBLE
@@ -234,10 +279,27 @@ class OpenProfileActivity : AppCompatActivity() {
                                 ).show()
                                 Log.w(TAG, "Error updating profile: $it")
                             }
+                        binding.nameText.visibility = View.VISIBLE
+                        binding.birthdayText.visibility = View.VISIBLE
+                        binding.passwordText.visibility = View.VISIBLE
+                        binding.phonenumberText.visibility = View.VISIBLE
+                        binding.genderText.visibility = View.VISIBLE
+                        binding.backButton.visibility = View.VISIBLE
+                        binding.modifyButton.visibility = View.VISIBLE
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(
+                            this@OpenProfileActivity,
+                            "프로필 수정에 실패하였습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.w(TAG, "Error updating profile: $it")
                     }
             }
         }
 
+
+        }
         binding.profileImageView.setOnClickListener {
             val intent = Intent(this, ProfileChangeActivity::class.java)
             startActivity(intent)
@@ -263,7 +325,17 @@ class OpenProfileActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Default).launch {
             updateProfile()
         }
+
     }
+
+    override fun onStart() {
+        super.onStart()
+        CoroutineScope(Dispatchers.Default).launch {
+            updateProfile()
+
+        }
+    }
+
 
     private fun showDatePickerDialog() {
         val c = Calendar.getInstance()
@@ -277,7 +349,21 @@ class OpenProfileActivity : AppCompatActivity() {
                 val dateStr =
                     String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
                 binding.birthdayTextEdit.text = dateStr
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { _, selectedYear, selectedMonth, selectedDay ->
+                // Format and display the date in the TextView
+                val dateStr =
+                    String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                binding.birthdayTextEdit.text = dateStr
 
+                // Update age when a date is selected
+                updateAge(dateStr)  // Call this function here to update the age
+            },
+            year,
+            month,
+            day
+        )
                 // Update age when a date is selected
                 updateAge(dateStr)
             },
@@ -344,6 +430,9 @@ class OpenProfileActivity : AppCompatActivity() {
         }
     }
 
+    }
+
+
     private fun updateProfile() {
         uiScope.launch {
             userId = auth.currentUser?.uid
@@ -356,6 +445,8 @@ class OpenProfileActivity : AppCompatActivity() {
                             if (document.contains("profilePic") && document.getString("profilePic") != null) {
                                 url = document.getString("profilePic")
                                 Toast.makeText(this@OpenProfileActivity, "yes", Toast.LENGTH_SHORT).show()
+                            if (document.contains("profilePic") && document.getString("profilePic") != null) {
+                                url = document.getString("profilePic")
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@OpenProfileActivity)
                                     .load(profilePicUrl)
