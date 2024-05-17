@@ -253,64 +253,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/password_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16sp"
-                app:layout_constraintTop_toBottomOf="@id/id_layout">
-
-                <TextView
-                    android:id="@+id/password_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="10sp"
-                    android:text="비밀번호"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.05"
-                    app:layout_constraintHorizontal_chainStyle="spread"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/password_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text="-"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.6"
-                    app:layout_constraintStart_toEndOf="@id/password_title"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <EditText
-                    android:id="@+id/password_text_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text="-"
-                    android:textAlignment="center"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.6"
-                    app:layout_constraintStart_toEndOf="@id/password_title"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/phonenumber_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16sp"
-                app:layout_constraintTop_toBottomOf="@id/password_layout">
+                app:layout_constraintTop_toBottomOf="@id/id_layout">
 
                 <TextView
                     android:id="@+id/phonenumber_title"

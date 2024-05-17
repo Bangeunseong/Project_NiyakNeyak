@@ -16,12 +16,9 @@ import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityOpenProfileBinding
 import com.google.firebase.firestore.toObject
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,59 +53,54 @@ class OpenProfileActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Log.d("Toolbar", "Toolbar title set to: ${getString(R.string.toolbar_modification)}")
 
-        auth = Firebase.auth // Firebase Auth 초기화
-        firestore = Firebase.firestore // Firestore 초기화
-        user = auth?.currentUser // 현재 사용자 가져오기
+        auth = FirebaseAuth.getInstance() // Firebase Auth 초기화
+        firestore = FirebaseFirestore.getInstance() // Firestore 초기화
+        user = auth.currentUser // 현재 사용자 가져오기
 
         binding.progressBarModify.visibility = View.VISIBLE
         binding.modifyButton.isEnabled = false
 
         val userId = auth.currentUser?.uid
         if (userId != null) {
-            firestore.collection("users").document(userId).get().addOnSuccessListener { documentSnapshot ->
-                val user = documentSnapshot.toObject<UserAccount>()
-                val age = user?.age.toString()
-                if (user != null) {
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val user = documentSnapshot.toObject<UserAccount>()
+                    val age = user?.age.toString()
+                    if (user != null) {
+                        binding.progressBarModify.visibility = View.GONE
+                        binding.modifyButton.isEnabled = true
+
+                        binding.yourCurrentNameTextview.text = user.name
+                        binding.nameText.text = user.name
+                        binding.ageText.text = "만 $age 세"
+                        binding.birthdayText.text = user.birth
+                        binding.idText.text = user.emailId
+                        binding.phonenumberText.text = user.phoneNum
+                        binding.genderText.text = user.gender
+
+                        binding.nameTextEdit.setText(user.name)
+                        binding.phonenumberTextEdit.setText(user.phoneNum)
+                        when (user.gender) {
+                            "남성" -> binding.maleRadioButton.isChecked = true
+                            "여성" -> binding.femaleRadioButton.isChecked = true
+                        }
+                        binding.birthdayTextEdit.setOnClickListener {
+                            showDatePickerDialog()
+                        }
+                    }
+                }.addOnFailureListener { exception ->
+                    Log.e("Firestore", "Error getting user data: ", exception)
+
                     binding.progressBarModify.visibility = View.GONE
-                    binding.modifyButton.isEnabled = true
+                    binding.modifyButton.isEnabled = false
 
-                    binding.yourCurrentNameTextview.text = user.name
-                    binding.nameText.text = user.name
-                    binding.ageText.text = "만 $age 세"
-                    binding.birthdayText.text = user.birth
-                    binding.idText.text = user.emailId
-                    binding.passwordText.text = user.password
-                    binding.phonenumberText.text = user.phoneNum
-                    binding.genderText.text = user.gender
-
-                    binding.nameTextEdit.setText(user.name)
-                    //binding.birthdayTextEdit.setText(user.birth)
-                    binding.passwordTextEdit.setText(user.password)
-                    binding.phonenumberTextEdit.setText(user.phoneNum)
-                    when(user.gender){
-                        "남성" -> binding.maleRadioButton.isChecked = true
-                        "여성" -> binding.femaleRadioButton.isChecked = true
-
-                    }
-                    binding.birthdayTextEdit.setOnClickListener {
-                        showDatePickerDialog()
-                    }
-
-
-
-
-
-
+                    // 사용자에게 오류 메시지를 표시합니다.
+                    Toast.makeText(
+                        this@OpenProfileActivity,
+                        "프로필 정보를 불러오는데 실패했습니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            }.addOnFailureListener { exception ->
-                Log.e("Firestore", "Error getting user data: ", exception)
-
-                binding.progressBarModify.visibility = View.GONE
-                binding.modifyButton.isEnabled = false
-
-                // 사용자에게 오류 메시지를 표시합니다.
-                Toast.makeText(this@OpenProfileActivity, "프로필 정보를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
         }
         binding.backButton.setOnClickListener {
             finish()
@@ -117,7 +109,6 @@ class OpenProfileActivity : AppCompatActivity() {
         binding.modifyButton.setOnClickListener {
             binding.nameTextEdit.visibility = View.VISIBLE
             binding.birthdayTextEdit.visibility = View.VISIBLE
-            binding.passwordTextEdit.visibility = View.VISIBLE
             binding.phonenumberTextEdit.visibility = View.VISIBLE
             binding.genderRadioGroup.visibility = View.VISIBLE
             binding.modifyBackButton.visibility = View.VISIBLE
@@ -125,56 +116,47 @@ class OpenProfileActivity : AppCompatActivity() {
 
             binding.nameText.visibility = View.INVISIBLE
             binding.birthdayText.visibility = View.INVISIBLE
-            binding.passwordText.visibility = View.INVISIBLE
             binding.phonenumberText.visibility = View.INVISIBLE
             binding.genderText.visibility = View.INVISIBLE
             binding.backButton.visibility = View.INVISIBLE
             binding.modifyButton.visibility = View.INVISIBLE
 
             binding.birthdayTextEdit.text = binding.birthdayText.text
-
-            binding.birthdayTextEdit.text = binding.birthdayText.text
-
         }
+
         binding.modifyBackButton.setOnClickListener {
             val userId = auth.currentUser?.uid
             if (userId != null) {
-                firestore.collection("users").document(userId).get().addOnSuccessListener { documentSnapshot ->
-                    val user = documentSnapshot.toObject<UserAccount>()
-                    val age = user?.age.toString()
-                    if (user != null) {
-                        binding.yourCurrentNameTextview.text = user.name
-                        binding.nameText.text = user.name
-                        binding.ageText.text = "만 $age 세"
-                        binding.birthdayText.text = user.birth
-                        binding.idText.text = user.emailId
-                        binding.passwordText.text = user.password
-                        binding.phonenumberText.text = user.phoneNum
-                        binding.genderText.text = user.gender
+                firestore.collection("users").document(userId).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        val user = documentSnapshot.toObject<UserAccount>()
+                        val age = user?.age.toString()
+                        if (user != null) {
+                            binding.yourCurrentNameTextview.text = user.name
+                            binding.nameText.text = user.name
+                            binding.ageText.text = "만 $age 세"
+                            binding.birthdayText.text = user.birth
+                            binding.idText.text = user.emailId
+                            binding.phonenumberText.text = user.phoneNum
+                            binding.genderText.text = user.gender
 
-                        binding.nameTextEdit.setText(user.name)
-                        binding.passwordTextEdit.setText(user.password)
-                        binding.phonenumberTextEdit.setText(user.phoneNum)
-                        when(user.gender){
-                            "남성" -> binding.maleRadioButton.isChecked = true
-                            "여성" -> binding.femaleRadioButton.isChecked = true
-
+                            binding.nameTextEdit.setText(user.name)
+                            binding.phonenumberTextEdit.setText(user.phoneNum)
+                            when (user.gender) {
+                                "남성" -> binding.maleRadioButton.isChecked = true
+                                "여성" -> binding.femaleRadioButton.isChecked = true
+                            }
+                            binding.birthdayTextEdit.setOnClickListener {
+                                showDatePickerDialog()
+                            }
                         }
-                        binding.birthdayTextEdit.setOnClickListener {
-                            showDatePickerDialog()
-                        }
-
-
-
+                    }.addOnFailureListener { exception ->
+                        Log.e("Firestore", "Error getting user data: ", exception)
                     }
-                }.addOnFailureListener { exception ->
-                    Log.e("Firestore", "Error getting user data: ", exception)
-                }
             }
 
             binding.nameTextEdit.visibility = View.INVISIBLE
             binding.birthdayTextEdit.visibility = View.INVISIBLE
-            binding.passwordTextEdit.visibility = View.INVISIBLE
             binding.phonenumberTextEdit.visibility = View.INVISIBLE
             binding.genderRadioGroup.visibility = View.INVISIBLE
             binding.modifyBackButton.visibility = View.INVISIBLE
@@ -182,93 +164,91 @@ class OpenProfileActivity : AppCompatActivity() {
 
             binding.nameText.visibility = View.VISIBLE
             binding.birthdayText.visibility = View.VISIBLE
-            binding.passwordText.visibility = View.VISIBLE
             binding.phonenumberText.visibility = View.VISIBLE
             binding.genderText.visibility = View.VISIBLE
             binding.backButton.visibility = View.VISIBLE
             binding.modifyButton.visibility = View.VISIBLE
         }
+
         binding.modifyFinishButton.setOnClickListener {
+            val userId = auth.currentUser?.uid
+            if (userId != null) {
+                firestore.collection("users").document(userId).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        val user = documentSnapshot.toObject<UserAccount>()
+                        val strPassword = user?.password
+                        val selectedGenderId = binding.genderRadioGroup.checkedRadioButtonId
+                        val selectedGender = if (selectedGenderId != -1) {
+                            findViewById<RadioButton>(selectedGenderId).text.toString()
+                        } else {
+                            "성별 선택 안됨"
+                        }
+                        val birthDate = binding.birthdayTextEdit.text.toString()
+                        val firebaseUser = auth.currentUser
+                        val account = UserAccount(
+                            firebaseUser?.uid,
+                            firebaseUser?.email,
+                            strPassword,
+                            binding.nameTextEdit.text.toString(),
+                            birthDate,
+                            selectedGender,
+                            binding.phonenumberTextEdit.text.toString(),
+                            age = calculateAge(birthDate),
+                            profilePic = url
+                        )
 
-            val strPassword = binding.passwordTextEdit.text.toString().trim()
+                        firestore.collection(UserAccount.COLLECTION_ID).document(account.idToken!!)
+                            .set(account)
+                            .addOnSuccessListener {
+                                Toast.makeText(
+                                    this@OpenProfileActivity,
+                                    "프로필 수정이 완료되었습니다.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                binding.yourCurrentNameTextview.text = account.name
+                                binding.nameText.text = account.name
+                                binding.ageText.text = "만 ${account.age} 세"
+                                binding.birthdayText.text = account.birth
+                                binding.phonenumberText.text = account.phoneNum
+                                binding.genderText.text = account.gender
 
+                                binding.nameTextEdit.visibility = View.INVISIBLE
+                                binding.birthdayTextEdit.visibility = View.INVISIBLE
+                                binding.phonenumberTextEdit.visibility = View.INVISIBLE
+                                binding.genderRadioGroup.visibility = View.INVISIBLE
+                                binding.modifyBackButton.visibility = View.INVISIBLE
+                                binding.modifyFinishButton.visibility = View.INVISIBLE
 
-            if (strPassword.isNotEmpty()) {
-                val selectedGenderId = binding.genderRadioGroup.checkedRadioButtonId
-
-                val selectedGender = if (selectedGenderId != -1) {
-                    findViewById<RadioButton>(selectedGenderId).text.toString()
-                } else {
-                    "성별 선택 안됨"
-                }
-
-                val birthDate = binding.birthdayTextEdit.text.toString()
-                val firebaseUser = auth.currentUser
-                val account = UserAccount(
-                    firebaseUser?.uid,
-                    firebaseUser?.email,
-                    strPassword,
-                    binding.nameTextEdit.text.toString(),
-                    birthDate,
-                    selectedGender,
-                    binding.phonenumberTextEdit.text.toString(),
-                    age = calculateAge(birthDate),
-                    profilePic = url
-
-                )
-
-                firestore.collection(UserAccount.COLLECTION_ID).document(account.idToken!!).set(account)
-                    .addOnSuccessListener {
-                        Toast.makeText(this@OpenProfileActivity, "프로필 수정이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                        binding.yourCurrentNameTextview.text = account.name
-                        binding.nameText.text = account.name
-                        binding.ageText.text = "만 ${account.age} 세"
-                        binding.birthdayText.text = account.birth
-                        binding.passwordText.text = account.password
-                        binding.phonenumberText.text = account.phoneNum
-                        binding.genderText.text = account.gender
-
-                        binding.nameTextEdit.visibility = View.INVISIBLE
-                        binding.birthdayTextEdit.visibility = View.INVISIBLE
-                        binding.passwordTextEdit.visibility = View.INVISIBLE
-                        binding.phonenumberTextEdit.visibility = View.INVISIBLE
-                        binding.genderRadioGroup.visibility = View.INVISIBLE
-                        binding.modifyBackButton.visibility = View.INVISIBLE
-                        binding.modifyFinishButton.visibility = View.INVISIBLE
-
-                        binding.nameText.visibility = View.VISIBLE
-                        binding.birthdayText.visibility = View.VISIBLE
-                        binding.passwordText.visibility = View.VISIBLE
-                        binding.phonenumberText.visibility = View.VISIBLE
-                        binding.genderText.visibility = View.VISIBLE
-                        binding.backButton.visibility = View.VISIBLE
-                        binding.modifyButton.visibility = View.VISIBLE
+                                binding.nameText.visibility = View.VISIBLE
+                                binding.birthdayText.visibility = View.VISIBLE
+                                binding.phonenumberText.visibility = View.VISIBLE
+                                binding.genderText.visibility = View.VISIBLE
+                                binding.backButton.visibility = View.VISIBLE
+                                binding.modifyButton.visibility = View.VISIBLE
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(
+                                    this@OpenProfileActivity,
+                                    "프로필 수정에 실패하였습니다.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Log.w(TAG, "Error updating profile: $it")
+                            }
                     }
-                    .addOnFailureListener {
-                        Toast.makeText(this@OpenProfileActivity, "프로필 수정에 실패하였습니다.", Toast.LENGTH_SHORT).show()
-                        Log.w(TAG, "Error updating profile: $it")
-                    }
-            } else {
-                Toast.makeText(this@OpenProfileActivity, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
-
-
-
         }
+
         binding.profileImageView.setOnClickListener {
-            //showImageChoiceDialog()
             val intent = Intent(this, ProfileChangeActivity::class.java)
             startActivity(intent)
         }
 
-
-
         binding.logoutButton.setOnClickListener {
             AlertDialog.Builder(this@OpenProfileActivity).apply {
                 setTitle("로그아웃")
-                setMessage("로그아웃 하시겠습니까?")
+                setMessage("로그아웃 하시겠습니까?\n로그아웃 시 일부 기능(기기와 알람 통신)을 사용할 수 없습니다.")
                 setPositiveButton("예") { _, _ ->
-                    auth?.signOut()
+                    auth.signOut()
                     startActivity(Intent(this@OpenProfileActivity, LoginActivity::class.java))
                     finish()
                 }
@@ -276,25 +256,39 @@ class OpenProfileActivity : AppCompatActivity() {
                 show()
             }
         }
-
     }
+
+    override fun onStart() {
+        super.onStart()
+        CoroutineScope(Dispatchers.Default).launch {
+            updateProfile()
+        }
+    }
+
     private fun showDatePickerDialog() {
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)
 
-        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, selectedYear, selectedMonth, selectedDay ->
-            // Format and display the date in the TextView
-            val dateStr = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
-            binding.birthdayTextEdit.text = dateStr
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { _, selectedYear, selectedMonth, selectedDay ->
+                val dateStr =
+                    String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                binding.birthdayTextEdit.text = dateStr
 
-            // Update age when a date is selected
-            updateAge(dateStr)  // Call this function here to update the age
-        }, year, month, day)
+                // Update age when a date is selected
+                updateAge(dateStr)
+            },
+            year,
+            month,
+            day
+        )
 
         dpd.show()
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
@@ -302,18 +296,18 @@ class OpenProfileActivity : AppCompatActivity() {
         }
     }
 
-
     private fun updateAge(birthDate: String) {
         uiScope.launch {
             val age = withContext(Dispatchers.Default) {
-                calculateAge(birthDate)  // 백그라운드 스레드에서 나이 계산
+                calculateAge(birthDate)
             }
-            binding.ageText.text = "만 $age 세"  // UI 스레드에서 TextView 업데이트
+            binding.ageText.text = "만 $age 세"
         }
     }
+
     private fun calculateAge(birthDateString: String): Int {
         val parts = birthDateString.split("-")
-        if (parts.size < 3) return 0  // 날짜 형식이 잘못되었을 경우 안전하게 처리
+        if (parts.size < 3) return 0
 
         val birthYear = parts[0].toInt()
         val birthMonth = parts[1].toInt()
@@ -321,38 +315,36 @@ class OpenProfileActivity : AppCompatActivity() {
 
         val today = Calendar.getInstance()
         val currentYear = today.get(Calendar.YEAR)
-        val currentMonth = today.get(Calendar.MONTH) + 1  // Calendar.MONTH는 0부터 시작하므로 1을 더해줌
+        val currentMonth = today.get(Calendar.MONTH) + 1
         val currentDay = today.get(Calendar.DAY_OF_MONTH)
 
         var age = currentYear - birthYear
 
-        // 만약 생일이 아직 지나지 않았다면 나이에서 1을 빼준다
         if (birthMonth > currentMonth || (birthMonth == currentMonth && birthDay > currentDay)) {
             age -= 1
         }
 
         return age
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return super.onCreateOptionsMenu(menu)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             android.R.id.home -> {
                 setResult(RESULT_CANCELED)
                 finish()
                 true
             }
-
             else -> {
                 super.onOptionsItemSelected(item)
             }
-
         }
-
     }
-    private fun updateProfile() {
 
+    private fun updateProfile() {
         uiScope.launch {
             userId = auth.currentUser?.uid
             if (userId != null) {
@@ -361,16 +353,15 @@ class OpenProfileActivity : AppCompatActivity() {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
                         if (document != null) {
-                            if (document.contains("profilePic") && document.getString("profilePic") != null){
-                                url= document.getString("profilePic")
+                            if (document.contains("profilePic") && document.getString("profilePic") != null) {
+                                url = document.getString("profilePic")
                                 Toast.makeText(this@OpenProfileActivity, "yes", Toast.LENGTH_SHORT).show()
                                 val profilePicUrl = document.getString("profilePic")
-                                Glide.with(this@OpenProfileActivity )
+                                Glide.with(this@OpenProfileActivity)
                                     .load(profilePicUrl)
                                     .into(binding.profileImageView)
                             } else {
                                 Toast.makeText(this@OpenProfileActivity, "no", Toast.LENGTH_SHORT).show()
-
                             }
                         } else {
                             Log.d(SettingFragment.TAG, "No such document")
@@ -382,12 +373,6 @@ class OpenProfileActivity : AppCompatActivity() {
             } else {
                 Log.d(SettingFragment.TAG, "No such document")
             }
-
         }
-
-    }
-    override fun onResume() {
-        super.onResume()
-        updateProfile()
     }
 }
