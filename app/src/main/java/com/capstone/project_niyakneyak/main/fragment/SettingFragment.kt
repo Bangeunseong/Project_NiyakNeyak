@@ -1,9 +1,17 @@
 package com.capstone.project_niyakneyak.main.fragment
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_DENIED
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +19,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -45,6 +55,18 @@ class SettingFragment: Fragment() {
         bluetoothManager.adapter
     }
 
+    @SuppressLint("MissingPermission")
+    private val bluetoothProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            if(requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED){
+                val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
+                pairedDevices?.forEach { device ->
+                    // 연결된 기기 목록
+                    Log.d(TAG, "Paired device: ${device.name}, ${device.address}, ${device.uuids}")
+                }
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
@@ -61,12 +83,11 @@ class SettingFragment: Fragment() {
         // Initialize the ActivityResultLauncher with a callback function
         val appSettingsLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
+                if (result.resultCode == RESULT_OK) {
                     // Redirect to LoginActivity
                     val intent = Intent(activity, LoginActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
-                    activity?.finish()
                 }
             }
 
@@ -97,7 +118,16 @@ class SettingFragment: Fragment() {
             if(bluetoothAdapter == null){
                 Toast.makeText(context, "이 기기는 블루투스 기능을 지원하지 않습니다!", Toast.LENGTH_LONG).show()
             } else{
-
+                if(requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_DENIED){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        requireActivity().requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 101)
+                    }
+                } else{
+                    if(bluetoothAdapter?.isEnabled == false) {
+                        val btSettingIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                        bluetoothProcessLauncher.launch(btSettingIntent)
+                    }
+                }
             }
         }
 
@@ -129,12 +159,12 @@ class SettingFragment: Fragment() {
                 val intent = Intent(activity, LoginActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
-                activity?.finish()
             }
         }
     }
     override fun onStart() {
         super.onStart()
+
         firebaseAuth.addAuthStateListener(authStateListener)
         updateProfile()
         firestore.collection(UserAccount.COLLECTION_ID)
@@ -144,7 +174,6 @@ class SettingFragment: Fragment() {
                     binding.yourCurrentNameTextview.text = userAccount.name
                 }
             }
-
     }
     private fun updateProfile() {
         uiScope.launch {

@@ -108,7 +108,24 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         if(checkSelfPermission(NOTIFICATION_SERVICE) == PackageManager.PERMISSION_DENIED){
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),101)
+                requestPermissions(arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.FOREGROUND_SERVICE,
+                    Manifest.permission.USE_FULL_SCREEN_INTENT,
+                    Manifest.permission.SCHEDULE_EXACT_ALARM),101)
+            }  else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                requestPermissions(arrayOf(
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.FOREGROUND_SERVICE,
+                    Manifest.permission.USE_FULL_SCREEN_INTENT,
+                    Manifest.permission.SCHEDULE_EXACT_ALARM),101)
+            } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                requestPermissions(arrayOf(
+                    Manifest.permission.FOREGROUND_SERVICE,
+                    Manifest.permission.USE_FULL_SCREEN_INTENT), 101)
+            } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+                requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), 101)
             }
         }
     }
