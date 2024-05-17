@@ -170,10 +170,6 @@
                     android:text="블루투스 기기 연결"
                     android:textSize="18sp" />
 
-                <Switch
-                    android:id="@+id/bluetooth_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

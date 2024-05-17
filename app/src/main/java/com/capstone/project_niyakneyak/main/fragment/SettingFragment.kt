@@ -11,9 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
@@ -30,8 +28,6 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class SettingFragment: Fragment() {
     private lateinit var binding: FragmentSettingBinding
@@ -97,7 +93,7 @@ class SettingFragment: Fragment() {
                 }
         }
 
-        binding.bluetoothSetting.setOnClickListener {
+        binding.bluetoothSettings.setOnClickListener {
             if(bluetoothAdapter == null){
                 Toast.makeText(context, "이 기기는 블루투스 기능을 지원하지 않습니다!", Toast.LENGTH_LONG).show()
             } else{
