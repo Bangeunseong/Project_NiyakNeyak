@@ -264,5 +264,4 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         private const val TAG = "DATA_FRAGMENT"
     }
 
-
 }
