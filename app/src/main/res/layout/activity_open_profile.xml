@@ -41,25 +41,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/profile_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:padding="5sp"
-
                 app:layout_constraintTop_toTopOf="parent">
 
-
-
                 <ImageView
-
                     android:id="@+id/profile_imageView"
                     android:layout_width="100sp"
                     android:layout_height="100sp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/baseline_account_circle_24" />
-
+                    android:src="@drawable/baseline_account_circle_24"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <TextView
                     android:id="@+id/your_current_name_textview"
@@ -68,9 +65,22 @@
                     android:layout_gravity="center_horizontal"
                     android:text="yourname"
                     android:textColor="#321061"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    app:layout_constraintTop_toBottomOf="@id/profile_imageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/pencil"
+                    app:layout_constraintBottom_toBottomOf="@id/profile_imageView"
+                    app:layout_constraintEnd_toEndOf="@id/profile_imageView"
+                    android:layout_marginBottom="0dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="0dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/name_layout"

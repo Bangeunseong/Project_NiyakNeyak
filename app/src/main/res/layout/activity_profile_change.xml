@@ -37,16 +37,18 @@
                 android:layout_height="100dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:padding="8dp"
+                android:background="@drawable/image_border"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/boy"
-
-                />
+                app:srcCompat="@drawable/boy" />
 
             <ImageView
                 android:id="@+id/imageViewGirl"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:padding="8dp"
+                android:background="@drawable/image_border"
                 app:layout_constraintBottom_toBottomOf="@+id/imageViewBoy"
                 app:layout_constraintEnd_toStartOf="@+id/imageViewMan"
                 app:layout_constraintStart_toEndOf="@+id/imageViewBoy"
@@ -58,6 +60,8 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginEnd="16dp"
+                android:padding="8dp"
+                android:background="@drawable/image_border"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/imageViewBoy"
                 app:srcCompat="@drawable/man" />
@@ -67,6 +71,8 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="32dp"
+                android:padding="8dp"
+                android:background="@drawable/image_border"
                 app:layout_constraintStart_toStartOf="@+id/imageViewBoy"
                 app:layout_constraintTop_toBottomOf="@+id/imageViewBoy"
                 app:srcCompat="@drawable/woman" />
@@ -76,11 +82,10 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="300dp"
-                
+                android:padding="8dp"
+                android:background="@drawable/image_border"
                 app:layout_constraintStart_toStartOf="@+id/imageViewGirl"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewBoy"
-
-                />
+                app:layout_constraintTop_toBottomOf="@+id/imageViewBoy" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -90,8 +95,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-            >
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
             <Button
                 android:id="@+id/set_profile_button"
@@ -132,9 +136,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/back_button" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

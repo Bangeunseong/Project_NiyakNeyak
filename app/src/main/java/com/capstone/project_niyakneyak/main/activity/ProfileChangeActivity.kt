@@ -72,29 +72,18 @@ class ProfileChangeActivity : AppCompatActivity() {
             Log.d(TAG, "No such document")
         }
 
-        binding.imageViewBoy.setOnClickListener {
-            Toast.makeText(this, "boy.", Toast.LENGTH_SHORT).show()
-            binding.imageViewYou.setImageResource(R.drawable.boy)
-            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.boy}")
-        }
-        binding.imageViewGirl.setOnClickListener {
-            Toast.makeText(this, "girl.", Toast.LENGTH_SHORT).show()
-            binding.imageViewYou.setImageResource(R.drawable.girl)
-            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.girl}")
-        }
-        binding.imageViewMan.setOnClickListener {
-            Toast.makeText(this, "man.", Toast.LENGTH_SHORT).show()
-            binding.imageViewYou.setImageResource(R.drawable.man)
-            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.man}")
-        }
-        binding.imageViewWoman.setOnClickListener {
-            Toast.makeText(this, "woman.", Toast.LENGTH_SHORT).show()
-            binding.imageViewYou.setImageResource(R.drawable.woman)
-            fileUri = Uri.parse("android.resource://${packageName}/${R.drawable.woman}")
+        val imageViews = listOf(binding.imageViewBoy, binding.imageViewGirl, binding.imageViewMan, binding.imageViewWoman)
+
+        imageViews.forEach { imageView ->
+            imageView.setOnClickListener {
+                clearSelection()
+                imageView.isSelected = true
+                fileUri = Uri.parse("android.resource://${packageName}/${getResourceIdForImageView(imageView.id)}")
+                binding.imageViewYou.setImageURI(fileUri)
+            }
         }
 
         binding.setProfileButton.setOnClickListener {
-
             if (userId != null) {
                 val userDocument = firestore.collection("users").document(userId!!)
                 userDocument.get()
@@ -103,7 +92,7 @@ class ProfileChangeActivity : AppCompatActivity() {
                         if (document != null) {
                             userDocument.update("profilePic", fileUri.toString())
                                 .addOnSuccessListener {
-                                    Toast.makeText(this, "changed", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "프로필이 변경되었습니다.", Toast.LENGTH_SHORT).show()
                                     Log.d(TAG, "profilePic field successfully added!")
                                     finish()
                                 }
@@ -113,7 +102,7 @@ class ProfileChangeActivity : AppCompatActivity() {
                                 }
 
                         } else {
-                            Toast.makeText(this, "Nothing is selected", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "선택된 이미지가 없습니다.", Toast.LENGTH_SHORT).show()
                             Log.d(TAG, "No such document")
                         }
                     }
@@ -136,6 +125,7 @@ class ProfileChangeActivity : AppCompatActivity() {
                 fileUri = data?.data
                 fileUri?.let {
                     binding.imageViewYou.setImageURI(it)
+                    clearSelection()
                     Log.d(TAG, "Image selected: $fileUri")
                 } ?: run {
                     Log.d(TAG, "fileUri is null")
@@ -146,6 +136,23 @@ class ProfileChangeActivity : AppCompatActivity() {
         binding.selectFromGalleryButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             photoLauncher.launch(intent)
+        }
+    }
+
+    private fun clearSelection() {
+        binding.imageViewBoy.isSelected = false
+        binding.imageViewGirl.isSelected = false
+        binding.imageViewMan.isSelected = false
+        binding.imageViewWoman.isSelected = false
+    }
+
+    private fun getResourceIdForImageView(imageViewId: Int): Int {
+        return when (imageViewId) {
+            R.id.imageViewBoy -> R.drawable.boy
+            R.id.imageViewGirl -> R.drawable.girl
+            R.id.imageViewMan -> R.drawable.man
+            R.id.imageViewWoman -> R.drawable.woman
+            else -> 0
         }
     }
 }

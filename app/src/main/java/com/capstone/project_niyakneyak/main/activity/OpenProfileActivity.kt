@@ -395,16 +395,11 @@ class OpenProfileActivity : AppCompatActivity() {
                         if (document != null) {
                             if (document.contains("profilePic") && document.getString("profilePic") != null) {
                                 url = document.getString("profilePic")
-                                Toast.makeText(this@OpenProfileActivity, "yes", Toast.LENGTH_SHORT)
-                                    .show()
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@OpenProfileActivity)
                                     .load(profilePicUrl)
                                     .into(binding.profileImageView)
                             } else {
-                                Toast.makeText(this@OpenProfileActivity, "no", Toast.LENGTH_SHORT)
-                                    .show()
-
                             }
                         } else {
                             Log.d(SettingFragment.TAG, "No such document")
