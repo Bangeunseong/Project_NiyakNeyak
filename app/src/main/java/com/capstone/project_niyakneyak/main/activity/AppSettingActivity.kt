@@ -8,13 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.databinding.ActivityAppSettingsBinding
-import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 
 class AppSettingActivity : AppCompatActivity() {
 
@@ -33,8 +31,8 @@ class AppSettingActivity : AppCompatActivity() {
         binding = ActivityAppSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = Firebase.auth // Firebase Auth 초기화
-        firestore = Firebase.firestore // Firestore 초기화
+        auth = FirebaseAuth.getInstance() // Firebase Auth 초기화
+        firestore = FirebaseFirestore.getInstance() // Firestore 초기화
         user = auth?.currentUser // 현재 사용자 가져오기
 
         binding.buttonWithdrawal.setOnClickListener {
@@ -46,12 +44,44 @@ class AppSettingActivity : AppCompatActivity() {
         }
 
         binding.button4.setOnClickListener {
-            user?.email?.let { email ->
+            user?.let { user ->
+                checkSignInProvider(user)
+            } ?: run {
+                Toast.makeText(this, "User not found", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun checkSignInProvider(user: FirebaseUser) {
+        var isGoogleUser = false
+        for (profile in user.providerData) {
+            when (profile.providerId) {
+                GoogleAuthProvider.PROVIDER_ID -> {
+                    isGoogleUser = true
+                    break
+                }
+                EmailAuthProvider.PROVIDER_ID -> {
+                    // Continue checking other providers
+                }
+            }
+        }
+        if (isGoogleUser) {
+            showGoogleSignInErrorDialog()
+        } else {
+            user.email?.let { email ->
                 sendPasswordResetEmail(email)
             } ?: run {
                 Toast.makeText(this, "User email not found", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun showGoogleSignInErrorDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Error")
+            .setMessage("You cannot reset the password for a Google sign-in account.")
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun sendPasswordResetEmail(email: String) {
@@ -92,7 +122,6 @@ class AppSettingActivity : AppCompatActivity() {
             .setNegativeButton("취소", null)
             .show()
     }
-
 
     private fun attemptToDeleteUser(password: String) {
         user?.email?.let { email ->
