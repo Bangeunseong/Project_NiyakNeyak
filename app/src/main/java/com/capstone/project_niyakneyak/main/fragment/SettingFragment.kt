@@ -53,15 +53,16 @@ class SettingFragment : Fragment() {
         firestore = Firebase.firestore
 
         // Initialize the ActivityResultLauncher with a callback function
-        val appSettingsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                // Redirect to LoginActivity
-                val intent = Intent(activity, LoginActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                activity?.finish()
+        val appSettingsLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    // Redirect to LoginActivity
+                    val intent = Intent(activity, LoginActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    activity?.finish()
+                }
             }
-        }
 
         binding.appSettings.setOnClickListener {
             val intentSetting = Intent(activity, AppSettingActivity::class.java)
@@ -70,7 +71,8 @@ class SettingFragment : Fragment() {
 
         binding.profileButton.setOnClickListener {
             // 사용자 정보를 Firestore에서 조회
-            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get()
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .get()
                 .addOnSuccessListener { documentSnapshot ->
                     val userAccount = documentSnapshot.toObject<UserAccount>()
                     userAccount?.let {
@@ -84,9 +86,6 @@ class SettingFragment : Fragment() {
                     Snackbar.make(view, it.toString(), Snackbar.LENGTH_SHORT).show()
                 }
         }
-
-
-
 
         binding.appSettings.setOnClickListener {
             val intentSetting = Intent(activity, AppSettingActivity::class.java)
@@ -119,25 +118,18 @@ class SettingFragment : Fragment() {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
+        firebaseAuth.addAuthStateListener(authStateListener)
         updateProfile()
-
-        lifecycleScope.launch {
-            try {
-                val documentSnapshot = withContext(Dispatchers.IO) {
-                    firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get().await()
+        firestore.collection(UserAccount.COLLECTION_ID)
+            .document(firebaseAuth.currentUser!!.uid).get().addOnSuccessListener {
+                val userAccount = it.toObject<UserAccount>()
+                if (userAccount != null) {
+                    binding.yourCurrentNameTextview.text = userAccount.name
                 }
-
-                val userAccount = documentSnapshot.toObject<UserAccount>()
-                userAccount?.let {
-                    binding.yourCurrentNameTextview.text = it.name
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "Error updating name: $e")
             }
-        }
+
     }
     private fun updateProfile() {
         uiScope.launch {
@@ -172,11 +164,6 @@ class SettingFragment : Fragment() {
 
         }
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-        firebaseAuth.addAuthStateListener(authStateListener)
     }
 
     override fun onStop() {
