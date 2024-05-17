@@ -45,6 +45,7 @@
         <service android:name=".alarm.service.RescheduleAlarmService"
             android:foregroundServiceType="shortService"/>
         <service android:name=".util.service.AlarmValidationService" />
+
         <receiver
             android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"
@@ -91,7 +92,6 @@
             android:parentActivityName=".main.activity.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
-
         <activity android:name=".main.activity.AlarmSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
