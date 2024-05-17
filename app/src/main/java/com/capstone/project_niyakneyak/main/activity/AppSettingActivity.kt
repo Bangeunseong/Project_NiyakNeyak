@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import android.text.InputType
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.databinding.ActivityAppSettingsBinding
@@ -43,6 +44,25 @@ class AppSettingActivity : AppCompatActivity() {
         binding.backButton.setOnClickListener {
             finish()
         }
+
+        binding.button4.setOnClickListener {
+            user?.email?.let { email ->
+                sendPasswordResetEmail(email)
+            } ?: run {
+                Toast.makeText(this, "User email not found", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun sendPasswordResetEmail(email: String) {
+        auth?.sendPasswordResetEmail(email)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Reset link sent to your email", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "Failed to send reset email: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+            }
     }
 
     private fun promptForPassword() {

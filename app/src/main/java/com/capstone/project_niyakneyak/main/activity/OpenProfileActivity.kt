@@ -374,4 +374,5 @@ class OpenProfileActivity : AppCompatActivity() {
         super.onResume()
         updateProfile()
     }
+
 }
