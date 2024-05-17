@@ -157,13 +157,13 @@ class SettingFragment: Fragment() {
                         if (document != null) {
                             if (document.contains("profilePic") && document.getString("profilePic") != null){
 
-                                Toast.makeText(getActivity(), "yes", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(activity, "yes", Toast.LENGTH_SHORT).show()
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@SettingFragment)
                                     .load(profilePicUrl)
                                     .into(binding.profileImageView)
                             } else {
-                                Toast.makeText(getActivity(), "no", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(activity, "no", Toast.LENGTH_SHORT).show()
 
                             }
                         } else {

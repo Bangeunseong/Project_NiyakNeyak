@@ -58,7 +58,7 @@ class OpenProfileActivity : AppCompatActivity() {
 
         auth = Firebase.auth // Firebase Auth 초기화
         firestore = Firebase.firestore // Firestore 초기화
-        user = auth?.currentUser // 현재 사용자 가져오기
+        user = auth.currentUser // 현재 사용자 가져오기
 
         binding.progressBarModify.visibility = View.VISIBLE
         binding.modifyButton.isEnabled = false
@@ -277,7 +277,7 @@ class OpenProfileActivity : AppCompatActivity() {
                 setTitle("로그아웃")
                 setMessage("로그아웃 하시겠습니까?")
                 setPositiveButton("예") { _, _ ->
-                    auth?.signOut()
+                    auth.signOut()
                     startActivity(Intent(this@OpenProfileActivity, LoginActivity::class.java))
                     finish()
                 }
