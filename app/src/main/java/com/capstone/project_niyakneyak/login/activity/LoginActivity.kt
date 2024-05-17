@@ -3,17 +3,23 @@ package com.capstone.project_niyakneyak.login.activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
+import android.text.SpannableString
 import android.text.TextWatcher
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.alarm_valid_model.AlarmV
@@ -22,17 +28,21 @@ import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding
 import com.capstone.project_niyakneyak.login.etc.LoggedInUserView
 import com.capstone.project_niyakneyak.login.etc.LoginResult
 import com.capstone.project_niyakneyak.login.viewmodel.LoginViewModel
+import com.capstone.project_niyakneyak.main.activity.AppSettingActivity.Companion.TAG
+import com.capstone.project_niyakneyak.main.activity.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 
 
 class LoginActivity : AppCompatActivity() {
@@ -105,7 +115,6 @@ class LoginActivity : AppCompatActivity() {
 
             binding.loadingBarPlain.visibility = View.GONE
             binding.loadingBarGoogle.visibility = View.GONE
-            binding.loadingBarNaver.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error!!)
             }
@@ -162,6 +171,16 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, RegisterActivity::class.java)
             signUpLauncher.launch(intent)
         }
+
+        binding.resetPassword.setOnClickListener {
+            // 밑줄 추가
+            val content = SpannableString("비밀번호를 잊어버렸습니다")
+            content.setSpan(UnderlineSpan(), 0, content.length, 0)
+            binding.resetPassword.text = content
+
+            val intent = Intent(this, ResetPasswordActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     // Handle Email SignIn Process
@@ -179,24 +198,68 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
     // Handle Google SignIn Process
     private fun googleSignIn() {
         val signInIntent = mGoogleSignInClient!!.signInIntent
         googleSignInLauncher.launch(signInIntent)
     }
+
     private fun firebaseAuthWithGoogle(idToken: String?) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Change LiveData about LoginResult as Success
-                    loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseAuth.currentUser!!.uid))
+                    //view모델을 통해서 바꿔서 loginResult를 바꿔줘야함
+                    //observe해서 실시간으로 변화를 보면서 값이 변하면 그에 따라서, 절차를 수행
+
+                    val isNewUser = task.result?.additionalUserInfo?.isNewUser == true  // 새 사용자 여부 확인
+                    firebaseAuth.currentUser?.let { firebaseUser ->
+                        if (isNewUser) {
+                            // 새 사용자인 경우 Firestore에 사용자 정보 저장 및 GoogleRegisterActivity로 이동
+                            saveUserToFirestore(firebaseUser)
+                        } else {
+                            // 기존 사용자인 경우 MainActivity로 이동
+                            loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseUser.uid))
+                        }
+                    } ?: run {
+                        Log.w(TAG, "Firebase User is null after sign-in success.")
+                        showLoginFailed(Exception("Authentication succeeded but user is null"))
+                    }
                 } else {
-                    // Change LiveData about LoginResult as Failed
-                    loginViewModel.loginResult.value = LoginResult(task.exception)
+                    // 로그인 실패 처리
+                    task.exception?.let {
+                        loginViewModel.loginResult.value = LoginResult(it)
+                        showLoginFailed(it)
+                    }
                 }
             }
     }
+
+    private fun saveUserToFirestore(user: FirebaseUser) {
+        val userMap = hashMapOf("email" to (user.email ?: ""))
+        firestore.collection("users").document(user.uid).set(userMap)
+            .addOnSuccessListener {
+                Log.d( "Firestore", "User successfully written!")
+                Toast.makeText(this, "사용자 정보가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                navigateToGoogleRegisterActivity(user)
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error writing document", e)
+                Toast.makeText(this, "사용자 정보 등록 실패: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun navigateToGoogleRegisterActivity(firebaseUser: FirebaseUser) {
+        Intent(this, GoogleRegisterActivity::class.java).apply {
+            putExtra("uid", firebaseUser.uid)
+            putExtra("email", firebaseUser.email ?: "")
+            putExtra("name", firebaseUser.displayName ?: "")
+            startActivity(this)
+        }
+        finish()
+    }
+
     private fun handleGoogleSignInResult(data: Intent?) {
         if (data != null) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -213,4 +276,5 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(errorString: Exception) {
         Toast.makeText(this, errorString.toString(), Toast.LENGTH_SHORT).show()
     }
+
 }

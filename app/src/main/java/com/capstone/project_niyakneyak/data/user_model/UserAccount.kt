@@ -14,8 +14,11 @@ data class UserAccount(
     var name: String? = null,
     var birth: String? = null,
     var gender: String? = null,
-    var phoneNum: String? = null){
-
+    var phoneNum: String? = null,
+    var age: Int? = null,
+    var profilePic: String? = null
+)
+{
     companion object{
         const val REPRESENT_KEY = "USER"
         const val COLLECTION_ID = "users"
@@ -24,5 +27,7 @@ data class UserAccount(
         const val PASSWORD = "password"
         const val NAME = "name"
         const val PHONE_NUMBER = "phoneNum"
+        const val BIRTH = "birth"
+        const val PROFILE = "profilePic"
     }
 }

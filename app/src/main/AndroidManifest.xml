@@ -27,6 +27,7 @@
     <!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+
     <application
         android:name="com.capstone.project_niyakneyak.App"
         android:allowBackup="true"
@@ -64,6 +65,15 @@
         <activity android:name=".main.activity.ResultActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".main.activity.ProfileChangeActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".login.activity.ResetPasswordActivity"
+            android:exported = "false"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".login.activity.GoogleRegisterActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.AppSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
@@ -81,8 +91,7 @@
             android:parentActivityName=".main.activity.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".main.activity.SetProfileActivity"
-            android:exported="false" />
+
         <activity android:name=".main.activity.AlarmSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
