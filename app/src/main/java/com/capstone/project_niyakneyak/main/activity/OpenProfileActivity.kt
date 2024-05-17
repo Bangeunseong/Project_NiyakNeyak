@@ -9,7 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.RadioButton
-import android.widget.Toast
+import android.widget.Toast.*
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -103,11 +103,11 @@ class OpenProfileActivity : AppCompatActivity() {
                 binding.progressBarModify.visibility = View.GONE
                 binding.modifyButton.isEnabled = false
 
-                // 사용자에게 오류 메시지를 표시합니다.
-                Toast.makeText(
+                    /* 사용자에게 오류 메시지를 표시합니다. */
+                makeText(
                     this@OpenProfileActivity,
                     "프로필 정보를 불러오는데 실패했습니다.",
-                    Toast.LENGTH_SHORT
+                    LENGTH_SHORT
                 ).show()
             }
         }
@@ -221,10 +221,10 @@ class OpenProfileActivity : AppCompatActivity() {
                 firestore.collection(UserAccount.COLLECTION_ID).document(account.idToken!!)
                     .set(account)
                     .addOnSuccessListener {
-                        Toast.makeText(
+                        makeText(
                             this@OpenProfileActivity,
                             "프로필 수정이 완료되었습니다.",
-                            Toast.LENGTH_SHORT
+                            LENGTH_SHORT
                         ).show()
                         binding.yourCurrentNameTextview.text = account.name
                         binding.nameText.text = account.name
@@ -251,15 +251,15 @@ class OpenProfileActivity : AppCompatActivity() {
                         binding.modifyButton.visibility = View.VISIBLE
                     }
                     .addOnFailureListener {
-                        Toast.makeText(
+                        makeText(
                             this@OpenProfileActivity,
                             "프로필 수정에 실패하였습니다.",
-                            Toast.LENGTH_SHORT
+                            LENGTH_SHORT
                         ).show()
                         Log.w(TAG, "Error updating profile: $it")
                     }
             } else {
-                Toast.makeText(this@OpenProfileActivity, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                makeText(this@OpenProfileActivity, "비밀번호를 입력해주세요.", LENGTH_SHORT).show()
             }
 
 
