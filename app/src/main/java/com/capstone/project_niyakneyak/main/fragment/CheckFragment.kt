@@ -131,6 +131,7 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         }
 
         // Start Listening Data changes
+        adapter?.setQuery(getCurrentMedicineQuery())
         adapter?.startListening()
     }
 

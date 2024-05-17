@@ -1,15 +1,17 @@
 package com.capstone.project_niyakneyak.main.fragment
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
-import com.capstone.project_niyakneyak.main.activity.SetProfileActivity
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +26,13 @@ class SettingFragment: Fragment() {
     private lateinit var binding: FragmentSettingBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+
+    private val bluetoothManager: BluetoothManager by lazy {
+        requireContext().getSystemService(BluetoothManager::class.java)
+    }
+    private val bluetoothAdapter: BluetoothAdapter? by lazy {
+        bluetoothManager.adapter
+    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -52,6 +61,14 @@ class SettingFragment: Fragment() {
                 }.addOnFailureListener{
                     Snackbar.make(view, it.toString(), Snackbar.LENGTH_SHORT).show()
                 }
+        }
+
+        binding.bluetoothSetting.setOnClickListener {
+            if(bluetoothAdapter == null){
+                Toast.makeText(context, "이 기기는 블루투스 기능을 지원하지 않습니다!", Toast.LENGTH_LONG).show()
+            } else{
+
+            }
         }
 
         binding.appSettings.setOnClickListener {

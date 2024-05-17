@@ -83,6 +83,26 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/bluetooth_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@id/family_settings">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="블루투스 설정"
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
+
             <!-- 고급 설정 항목 -->
             <LinearLayout
                 android:id="@+id/app_settings"
@@ -92,7 +112,7 @@
                 android:padding="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:layout_constraintTop_toBottomOf="@id/family_settings">
+                app:layout_constraintTop_toBottomOf="@id/bluetooth_setting">
 
                 <TextView
                     android:layout_width="0dp"
