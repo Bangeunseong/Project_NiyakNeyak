@@ -2,6 +2,7 @@ package com.capstone.project_niyakneyak.main.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -88,19 +89,22 @@ class AlarmSettingActivity : AppCompatActivity() {
                 .collection(Alarm.COLLECTION_ID).document(snapshotId!!).get()
                 .addOnSuccessListener {
                     alarm = it.toObject(Alarm::class.java)
-                    binding.toolbar5.title = "Change Timer"
+                    binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_modify)
                     setSupportActionBar(binding.toolbar5)
+                    binding.toolbar5.setTitleTextColor(Color.WHITE)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     setActivity(alarm)
                 }.addOnFailureListener {
-                    binding.toolbar5.title = "Add Timer"
+                    binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_register)
                     setSupportActionBar(binding.toolbar5)
+                    binding.toolbar5.setTitleTextColor(Color.WHITE)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     setActivity(alarm)
                 }
         } else {
-            binding.toolbar5.title = "Add Timer"
+            binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_register)
             setSupportActionBar(binding.toolbar5)
+            binding.toolbar5.setTitleTextColor(Color.WHITE)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             setActivity(null)
         }
@@ -281,7 +285,7 @@ class AlarmSettingActivity : AppCompatActivity() {
         binding.alarmRingtoneLayout.setOnClickListener {
             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Sound")
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "알람음 선택")
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(tone))
             mStartForResult.launch(intent)
         }

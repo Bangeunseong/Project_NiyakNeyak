@@ -103,19 +103,27 @@ class MainActivity : AppCompatActivity() {
         ) {
             when(destination.id){
                 R.id.mainPageFragment -> {
+                    binding.toolbar.setLogo(R.drawable.ic_drug_entities_white)
                     binding.toolbar.setTitle(R.string.toolbar_main_title)
+                    binding.toolbar.setTitleTextAppearance(this@MainActivity, R.style.ToolbarTextAppearance)
                     binding.menuBottomNavigation.menu.findItem(R.id.menu_main).isChecked = true
                 }
                 R.id.alarmListFragment -> {
+                    binding.toolbar.setLogo(R.drawable.ic_alarm_white)
                     binding.toolbar.setTitle(R.string.toolbar_main_timer)
+                    binding.toolbar.setTitleTextAppearance(this@MainActivity, R.style.ToolbarTextAppearance)
                     binding.menuBottomNavigation.menu.findItem(R.id.menu_time).isChecked = true
                 }
                 R.id.checkListFragment -> {
+                    binding.toolbar.setLogo(R.drawable.baseline_checklist_rtl_24_white)
                     binding.toolbar.setTitle(R.string.toolbar_main_checklist)
+                    binding.toolbar.setTitleTextAppearance(this@MainActivity, R.style.ToolbarTextAppearance)
                     binding.menuBottomNavigation.menu.findItem(R.id.menu_time_check).isChecked = true
                 }
                 R.id.settingFragment -> {
+                    binding.toolbar.setLogo(R.drawable.baseline_account_circle_24_white)
                     binding.toolbar.setTitle(R.string.toolbar_main_settings)
+                    binding.toolbar.setTitleTextAppearance(this@MainActivity, R.style.ToolbarTextAppearance)
                     binding.menuBottomNavigation.menu.findItem(R.id.menu_account).isChecked = true
                 }
             }

@@ -1,6 +1,7 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -84,6 +85,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         setContentView(binding.root)
 
         binding.toolbar3.setTitle(R.string.action_main_inspect_medicine)
+        binding.toolbar3.setTitleTextColor(Color.WHITE)
         setSupportActionBar(binding.toolbar3)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

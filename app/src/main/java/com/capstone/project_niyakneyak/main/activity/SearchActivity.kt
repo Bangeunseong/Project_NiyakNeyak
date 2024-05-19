@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.Container
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.databinding.ActivitySearchBinding
@@ -60,7 +61,7 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         adapter = MedicineListAdapter(JSONArray(), this)
         setContentView(binding.root)
 
-        binding.toolbar4.title = "Search Medicine"
+        binding.toolbar4.setTitle(R.string.toolbar_search_activity)
         setSupportActionBar(binding.toolbar4)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

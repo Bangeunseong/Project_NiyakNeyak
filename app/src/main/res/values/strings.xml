@@ -9,108 +9,82 @@
     <string name="arg_origin_data">Medication_Data</string>
 
     <string name="reset_password"> 비밀번호를 잊어버렸습니다. </string>
-    <string name="hint_main_id">Type your ID</string>
-    <string name="hint_main_password">Type your PW</string>
-    <string name="main_login_plain_text">Login</string>
-    <string name="main_login_google_text">Login with Google</string>
-    <string name="main_login_naver_text">Login with Naver</string>
-    <string name="main_register_text">Register</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid ID or Email</string>
-    <string name="invalid_password_less">Password must be more than 5 characters</string>
-    <string name="invalid_password_more">Password must be less than 20 characters</string>
+    <string name="hint_main_id">아이디를 입력하세요!</string>
+    <string name="hint_main_password">비밀번호를 입력하세요!</string>
+    <string name="main_login_plain_text">로그인</string>
+    <string name="main_login_google_text">구글로 로그인</string>
+    <string name="main_register_text">회원가입</string>
+    <string name="invalid_username">잘못된 아이디 또는 이메일 입니다!</string>
+    <string name="invalid_password_less">비밀번호는 5자리 이상 입력하세요!</string>
+    <string name="invalid_password_more">비밀번호는 20자리 이하 입력하세요!</string>
     <string name="login_failed">"Login failed"</string>
 
-    <string name="toolbar_login_title">Login</string>
     <string name="toolbar_main_title">약물</string>
     <string name="toolbar_main_timer">알람</string>
     <string name="toolbar_main_checklist">복용확인</string>
     <string name="toolbar_modification">Profile Modification</string>
 
-    <string name="action_menu_settings">Settings</string>
-    <string name="action_menu_logout">Logout</string>
-    <string name="action_menu_login">Login</string>
-
-
     <!-- Main Attributes -->
-    <string name="action_main_rcv_addItem">Add Medication Info.</string>
+    <string name="action_main_rcv_addItem">약물 정보를 등록하세요!</string>
     <string name="action_main_rcv_addIntro.">
-        Medication Info. is currently empty,
-        Click <b>+</b> to add.
+        등록된 약물 정보가 현재 비어있습니다,
+        <b>+</b> 버튼을 눌러 추가하세요!
     </string>
-    <string name="action_main_rcv_modifyItem">Modify</string>
-    <string name="action_main_rcv_deleteItem">Delete</string>
+    <string name="action_main_rcv_modifyItem">수정</string>
+    <string name="action_main_rcv_deleteItem">삭제</string>
 
-    <string name="action_main_rcv_add_error">Addition Failed</string>
-    <string name="action_main_rcv_modify_error">Modification Failed</string>
-    <string name="action_main_rcv_delete_error">Deletion Failed</string>
-    <string name="action_main_rcv_search_error">Search Failed</string>
+    <string name="dialog_filter_pos_btn_text">설정</string>
+    <string name="dialog_filter_neg_btn_text">취소</string>
 
-    <string name="dialog_filter_pos_btn_text">OK</string>
-    <string name="dialog_filter_neg_btn_text">Cancel</string>
+    <string name="dialog_add_form_title">정보 입력</string>
+    <string name="dialog_modify_form_title">정보 수정</string>
+    <string name="dialog_add_form_submit">저장</string>
+    <string name="dialog_add_form_cancel">취소</string>
+    <string name="dialog_add_form_meds_name">이곳을 눌러 약물 등록하세요!</string>
+    <string name="dialog_add_form_meds_daily_amount">하루 섭취량 입력하세요!</string>
+    <string name="dialog_add_form_meds_detail">상세정보 입력하세요!</string>
+    <string name="dialog_add_form_meds_date">이곳을 눌러 복용기간 등록하세요!</string>
+    <string name="dialog_add_form_meds_timer">새로운 알람 등록</string>
 
-    <string name="dialog_add_form_title">Insert Information</string>
-    <string name="dialog_modify_form_title">Change Information</string>
-    <string name="dialog_add_form_submit">Save</string>
-    <string name="dialog_add_form_cancel">Cancel</string>
-    <string name="dialog_add_form_meds_name">Click this to search medicine</string>
-    <string name="dialog_add_form_meds_name_error">Not a Valid Name</string>
-    <string name="dialog_add_form_meds_daily_amount">Type Daily Amount of Pills</string>
-    <string name="dialog_add_form_meds_detail">Type Medication Detail</string>
-    <string name="dialog_add_form_meds_date">Click to Configure Medication Duration</string>
-    <string name="dialog_add_form_meds_timer">Click here to Add Timer</string>
+    <string name="dialog_search_form_meds_name">약물 이름을 적으세요!</string>
 
-    <string name="dialog_search_form_meds_name">Type Medicine Name</string>
+    <string name="dialog_meds_time_tgbtn_sunday">일</string>
+    <string name="dialog_meds_time_tgbtn_monday">월</string>
+    <string name="dialog_meds_time_tgbtn_tuesday">화</string>
+    <string name="dialog_meds_time_tgbtn_wednesday">수</string>
+    <string name="dialog_meds_time_tgbtn_thursday">목</string>
+    <string name="dialog_meds_time_tgbtn_friday">금</string>
+    <string name="dialog_meds_time_tgbtn_saturday">토</string>
+    <string name="dialog_meds_time_timer_error">현재 등록된 알람이 없습니다!</string>
 
-    <string name="dialog_meds_time_title">Medication Cycle</string>
-    <string name="dialog_meds_time_sw_morning_title">Morning</string>
-    <string name="dialog_meds_time_sw_afternoon_title">Afternoon</string>
-    <string name="dialog_meds_time_sw_evening_title">Evening</string>
-    <string name="dialog_meds_time_sw_midnight_title">Midnight</string>
+    <string name="action_open_check_list">누르면 열립니다!</string>
 
-    <string name="dialog_meds_time_tgbtn_sunday">sun</string>
-    <string name="dialog_meds_time_tgbtn_monday">mon</string>
-    <string name="dialog_meds_time_tgbtn_tuesday">tue</string>
-    <string name="dialog_meds_time_tgbtn_wednesday">wed</string>
-    <string name="dialog_meds_time_tgbtn_thursday">thu</string>
-    <string name="dialog_meds_time_tgbtn_friday">fri</string>
-    <string name="dialog_meds_time_tgbtn_saturday">sat</string>
-    <string name="dialog_meds_time_timer_error">Currently have no alarm to ring!</string>
+    <string name="dialog_filter_start_date_text">시작 날짜</string>
+    <string name="dialog_filter_end_date_text">종료 날짜</string>
+    <string name="dialog_filter_start_date_btn_desc">시작 날짜를 선택해주세요!</string>
+    <string name="dialog_filter_end_date_btn_desc">종료 날짜를 선택해주세요!</string>
 
-    <string name="dialog_meds_time_picker_title">Select time</string>
-    <string name="dialog_meds_time_picker_min_max_error">Please select time between given interval</string>
-
-    <string name="dialog_meds_time_delete_notification_title">Notification</string>
-    <string name="dialog_meds_time_delete_notification_msg">Do you want to delete?</string>
-    <string name="dialog_meds_time_delete_notification_pos_btn">OK</string>
-    <string name="dialog_meds_time_delete_notification_neg_btn">Cancel</string>
-
-    <string name="action_open_check_list">Click to open check list!</string>
-
-    <string name="dialog_filter_start_date_text">Start Date</string>
-    <string name="dialog_filter_end_date_text">End Date</string>
-    <string name="dialog_filter_start_date_btn_desc">Click to select start date.</string>
-    <string name="dialog_filter_end_date_btn_desc">Click to select end date.</string>
-
-    <string name="toolbar_main_settings">설정</string>
+    <string name="toolbar_main_settings">내 계정</string>
 
 
     <!-- Alarm Attributes -->
-    <string name="alarm_title">Time to eat pills!</string>
+    <string name="alarm_title">약 먹을 시간 입니다!</string>
     <string name="arg_alarm_obj">AlarmObject</string>
     <string name="arg_alarm_bundle_obj">AlarmBundleObject</string>
-    <string name="dialog_alarm_name_text">Alarm Name</string>
-    <string name="dialog_alarm_vol_text">RingTone</string>
-    <string name="dialog_alarm_vib_text">Vibrate</string>
-    <string name="alarm_ring_dismiss_text">Dismiss</string>
-    <string name="alarm_ring_snooze_text">Snooze</string>
+    <string name="dialog_alarm_name_text">알람 제목</string>
+    <string name="dialog_alarm_toolbar_register">알람 등록</string>
+    <string name="dialog_alarm_toolbar_modify">알람 수정</string>
+    <string name="dialog_alarm_vol_text">알람음</string>
+    <string name="dialog_alarm_vib_text">진동</string>
+    <string name="alarm_ring_dismiss_text">해제</string>
+    <string name="alarm_ring_snooze_text">다시 울림</string>
     <string name="alarm_clock_png">ic_alarm_purple</string>
 
 
     <!-- Check Attributes -->
     <string name="check_rcv_ListIntro">
-        Today, there are no medications to consume!&#10;
-        This list will be updated, automatically!
+        오늘 먹어야 할 약물은 없습니다!&#10;
+        자동으로 먹어야 할 약물이 나타나오니 걱정하지 마세요!
     </string>
 
     <!-- Global Attributes -->
@@ -120,22 +94,20 @@
     <string name="all_manufacturers">All Manufacturers</string>
 
 
-    <string name="sorted_by_medication_entp">Sorted by Medication Enterprise</string>
-    <string name="sort_by">Sort By</string>
-    <string name="sorted_by_medication_name">Sorted by Medication Name</string>
-    <string name="sorted_by_medication_id">Sorted by Medicine ID</string>
-    <string name="sorted_by_recently_update">Sorted by Recently Updated</string>
-    <string name="search">Search</string>
-    <string name="logout">Logout</string>
-    <string name="category">Category :</string>
-    <string name="dialog_search_loading_text">Loading</string>
-    <string name="meds_name_search_btn_text">Search your own medicine</string>
-    <string name="search_result_submit_text">submit</string>
-    <string name="search_result_not_fount_text">Cannot find certain Medicine!</string>
+    <string name="sorted_by_medication_entp">제조기업에 따라 정렬</string>
+    <string name="sort_by">정렬 방법</string>
+    <string name="sorted_by_medication_name">약물이름에 따라 정렬</string>
+    <string name="sorted_by_medication_id">고유번호에 따라 정렬</string>
+    <string name="sorted_by_recently_update">최근 등록 순에 따라 정렬</string>
+    <string name="dialog_search_loading_text">불러오는 중</string>
+    <string name="meds_name_search_btn_text">본인이 먹는 약물을 검색하세요!</string>
+    <string name="search_result_submit_text">등록</string>
+    <string name="search_result_not_fount_text">약물을 찾을 수 없습니다!</string>
     <string name="action_main_filter_option">Filter Option</string>
     <string name="action_main_search_option">Search Option</string>
-    <string name="sort_direction">Sort Direction:</string>
-    <string name="action_main_inspect_medicine">Inspect Medicine</string>
-    <string name="action_inspect_current_medicines_text">Current Medicines</string>
-    <string name="current_meds_recycler_state_text">Cannot find Medicines!\n(Refresh App, if can\'t see your own medicines)</string>
+    <string name="sort_direction">정렬 방향:</string>
+    <string name="action_main_inspect_medicine">약물 검사</string>
+    <string name="toolbar_search_activity">약물 검색</string>
+    <string name="action_inspect_current_medicines_text">현재 등록된 약물들</string>
+    <string name="current_meds_recycler_state_text">등록된 약물을 찾을 수 없습니다!\n(앱을 재시작 하거나 개발자에게 버그 문의를 해주세요!)</string>
 </resources>

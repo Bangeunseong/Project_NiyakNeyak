@@ -3,6 +3,7 @@ package com.capstone.project_niyakneyak.main.activity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
@@ -133,6 +134,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
                 // Setting toolbar title
                 binding.toolbar2.setTitle(R.string.dialog_modify_form_title)
+                binding.toolbar2.setTitleTextColor(Color.WHITE)
                 setSupportActionBar(binding.toolbar2)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -146,6 +148,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         }
         else {
             binding.toolbar2.setTitle(R.string.dialog_add_form_title)
+            binding.toolbar2.setTitleTextColor(Color.WHITE)
             setSupportActionBar(binding.toolbar2)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             setActivity(null, binding)
