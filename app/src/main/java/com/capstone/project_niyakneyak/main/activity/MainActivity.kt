@@ -5,6 +5,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -12,6 +14,10 @@ import androidx.navigation.fragment.NavHostFragment
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * This activity is used for showing fragments which are linked by [MainActivity.navHostFragment].
@@ -26,6 +32,32 @@ class MainActivity : AppCompatActivity() {
     private val navHostFragment get() = _navHostFragment!!
     private var _navController: NavController? = null
     private val navController get() = _navController!!
+    private var isPressed = false
+
+    // BackPressed Callback
+    private val callback: OnBackPressedCallback by lazy {
+        object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                when (navController.currentDestination!!.id){
+                    R.id.mainPageFragment -> {
+                        if(!isPressed){
+                            Toast.makeText(applicationContext, "한번 더 누르면 종료됩니다!", Toast.LENGTH_LONG).show()
+                            CoroutineScope(Dispatchers.Default).launch {
+                                isPressed = true
+                                delay(2000)
+                                isPressed = false
+                            }
+                        } else{
+                            finish()
+                        }
+                    }
+                    R.id.alarmListFragment -> navController.navigate(R.id.action_alarmListFragment_to_mainPageFragment)
+                    R.id.checkListFragment -> navController.navigate(R.id.action_checkListFragment_to_mainPageFragment)
+                    R.id.settingFragment -> navController.navigate(R.id.action_settingFragment_to_mainPageFragment)
+                }
+            }
+        }
+    }
 
     internal inner class ItemSelectionListener : NavigationBarView.OnItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -133,6 +165,12 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onSupportNavigateUp(): Boolean {

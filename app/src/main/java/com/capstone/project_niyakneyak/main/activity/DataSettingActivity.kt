@@ -296,12 +296,24 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 }
 
                 // Data Write
-                for(alarm in alarms){
-                    if(!alarm.isStarted) {
-                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
-                        alarm.scheduleAlarm(applicationContext)
+                data.alarmList.addAll(includedAlarmID)
+
+                if(data.medsStartDate == null || data.medsEndDate == null){
+                    for(alarm in alarms){
+                        if(!alarm.isStarted) {
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
+                            alarm.scheduleAlarm(applicationContext)
+                        }
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
                     }
-                    transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                } else if(data.medsStartDate!!.before(Date(System.currentTimeMillis())) && data.medsEndDate!!.after(Date(System.currentTimeMillis()))){
+                    for(alarm in alarms){
+                        if(!alarm.isStarted) {
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
+                            alarm.scheduleAlarm(applicationContext)
+                        }
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                    }
                 }
                 transaction.set(medicationRef.document(data.medsID.toString()), data)
             }.addOnSuccessListener {
@@ -309,7 +321,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             }.addOnFailureListener { Log.w(TAG, "Medication Data Addition Failed!: $it") }
         }
         else{
-            firestore.runTransaction {transaction ->
+            firestore.runTransaction { transaction ->
                 // Data Read -> Need to be executed before Write Process
                 val includedAlarms = mutableListOf<Alarm>()
                 val deletedAlarms = mutableListOf<Alarm>()
@@ -331,6 +343,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 }
 
                 // Data Write
+                data.alarmList.clear()
+                data.alarmList.addAll(includedAlarmID)
+
                 val maxPos =
                     if(includedAlarms.size > deletedAlarms.size) includedAlarms.size
                     else deletedAlarms.size

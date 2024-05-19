@@ -24,7 +24,7 @@
     <string name="toolbar_login_title">Login</string>
     <string name="toolbar_main_title">약물</string>
     <string name="toolbar_main_timer">알람</string>
-    <string name="toolbar_main_checklist">복용확ㅠ인</string>
+    <string name="toolbar_main_checklist">복용확인</string>
     <string name="toolbar_modification">Profile Modification</string>
 
     <string name="action_menu_settings">Settings</string>

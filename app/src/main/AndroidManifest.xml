@@ -41,8 +41,7 @@
         tools:targetApi="34">
 
         <service android:name=".alarm.service.AlarmService" />
-        <service android:name=".alarm.service.RescheduleAlarmService"
-            android:foregroundServiceType="shortService"/>
+        <service android:name=".alarm.service.RescheduleAlarmService" />
         <service android:name=".util.service.AlarmValidationService" />
 
         <receiver
@@ -62,6 +61,9 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".main.activity.BluetoothSettingActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".main.activity.ResultActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
