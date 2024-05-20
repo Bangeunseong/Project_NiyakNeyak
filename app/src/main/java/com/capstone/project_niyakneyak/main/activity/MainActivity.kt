@@ -151,14 +151,20 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions(arrayOf(
                     Manifest.permission.POST_NOTIFICATIONS,
                     Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
                     Manifest.permission.FOREGROUND_SERVICE,
                     Manifest.permission.USE_FULL_SCREEN_INTENT,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.SCHEDULE_EXACT_ALARM),101)
             }  else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
                 requestPermissions(arrayOf(
                     Manifest.permission.BLUETOOTH_CONNECT,
                     Manifest.permission.FOREGROUND_SERVICE,
+                    Manifest.permission.BLUETOOTH_SCAN,
                     Manifest.permission.USE_FULL_SCREEN_INTENT,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.SCHEDULE_EXACT_ALARM),101)
             } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
                 requestPermissions(arrayOf(

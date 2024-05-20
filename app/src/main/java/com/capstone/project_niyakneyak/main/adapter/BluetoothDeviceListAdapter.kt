@@ -11,7 +11,7 @@ import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerBluetoothBinding
 import java.lang.StringBuilder
 
-class BluetoothRegisteredAdapter(private val devices: MutableList<BluetoothDevice>, private val isConnected: MutableList<Boolean>): RecyclerView.Adapter<BluetoothRegisteredAdapter.ViewHolder>() {
+class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevice>, private val isConnected: MutableList<Boolean>): RecyclerView.Adapter<BluetoothDeviceListAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemRecyclerBluetoothBinding): RecyclerView.ViewHolder(binding.root){
         @SuppressLint("MissingPermission")
         fun bind(device: BluetoothDevice, isConnected: Boolean){
@@ -34,7 +34,6 @@ class BluetoothRegisteredAdapter(private val devices: MutableList<BluetoothDevic
             val serviceType = StringBuilder()
             val services = arrayOf(BluetoothClass.Service.TELEPHONY, BluetoothClass.Service.AUDIO, BluetoothClass.Service.CAPTURE,
                 BluetoothClass.Service.INFORMATION, BluetoothClass.Service.NETWORKING, BluetoothClass.Service.POSITIONING, BluetoothClass.Service.OBJECT_TRANSFER)
-
             for(i in services.indices){
                 if(device.bluetoothClass.hasService(services[i])){
                     if(serviceType.isNotEmpty())
@@ -50,7 +49,6 @@ class BluetoothRegisteredAdapter(private val devices: MutableList<BluetoothDevic
                     }
                 }
             }
-
             if(serviceType.isEmpty()) serviceType.append("기타 작업")
             serviceType.append("를 위해 연결됨.")
             return serviceType.toString()
@@ -75,10 +73,13 @@ class BluetoothRegisteredAdapter(private val devices: MutableList<BluetoothDevic
         notifyDataSetChanged()
     }
 
+    @SuppressLint("MissingPermission")
     fun addDevice(device: BluetoothDevice, isConnected: Boolean){
-        this.devices.add(device)
-        this.isConnected.add(isConnected)
-        notifyItemInserted(devices.size - 1)
+        if(!this.devices.contains(device) && device.name != null && device.address != null){
+            this.devices.add(device)
+            this.isConnected.add(isConnected)
+            notifyItemInserted(devices.size - 1)
+        }
     }
 
     fun changeConnectionState(device: BluetoothDevice, isConnected: Boolean){

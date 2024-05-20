@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothAdapter.STATE_ON
@@ -10,16 +11,21 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager.PERMISSION_DENIED
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBinding
-import com.capstone.project_niyakneyak.main.adapter.BluetoothRegisteredAdapter
+import com.capstone.project_niyakneyak.main.adapter.BluetoothDeviceListAdapter
 
 class BluetoothSettingActivity: AppCompatActivity() {
     // View Binding
@@ -27,13 +33,15 @@ class BluetoothSettingActivity: AppCompatActivity() {
     private val binding get() = _binding!!
 
     // Params for bluetooth connection
+    private var isSearching = MutableLiveData(false)
     private val bluetoothManager: BluetoothManager by lazy { getSystemService(BluetoothManager::class.java) }
     private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
-    private val stateChangedReceiver: BroadcastReceiver by lazy {
+    private val broadcastReceiver: BroadcastReceiver by lazy {
         object: BroadcastReceiver(){
             override fun onReceive(context: Context?, intent: Intent?) {
                 when(intent?.action){
                     BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                        Log.w("Bluetooth", "State Changed")
                         when(bluetoothAdapter?.state){
                             STATE_ON -> {
                                 binding.bluetoothEnableBtn.text = "사용 중"
@@ -56,14 +64,32 @@ class BluetoothSettingActivity: AppCompatActivity() {
                             }
                         }
                     }
+                    BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
+                        isSearching.value = true
+                    }
+                    BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                        isSearching.value = false
+                    }
+                    BluetoothDevice.ACTION_FOUND -> {
+                        // BluetoothDevice 객체 획득
+                        val device =
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                            }else {
+                                @Suppress("DEPRECATION")
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                            }
+                        if(device != null){
+                           connectableAdapter?.addDevice(device, false)
+                        }
+                    }
+                    BluetoothDevice.ACTION_ACL_CONNECTED -> {
+
+                    }
+                    BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
+
+                    }
                 }
-            }
-        }
-    }
-    private val deviceConnectionReceiver: BroadcastReceiver by lazy{
-        object: BroadcastReceiver(){
-            override fun onReceive(context: Context?, intent: Intent?) {
-                TODO("Not yet implemented")
             }
         }
     }
@@ -79,7 +105,11 @@ class BluetoothSettingActivity: AppCompatActivity() {
     }
 
     // Adapters
-    private var registeredAdapter: BluetoothRegisteredAdapter? = null
+    private var registeredAdapter: BluetoothDeviceListAdapter? = null
+    private var connectableAdapter: BluetoothDeviceListAdapter? = null
+
+    // Intent Filters
+    private val intentFilter = IntentFilter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +125,11 @@ class BluetoothSettingActivity: AppCompatActivity() {
             finish()
         }
 
-        registeredAdapter = BluetoothRegisteredAdapter(mutableListOf(), mutableListOf())
+        registeredAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf())
+        connectableAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf())
+        isSearching.observe(this){
+            invalidateMenu()
+        }
 
         if(bluetoothAdapter?.isEnabled == true){
             binding.bluetoothEnableBtn.text = "사용 중"
@@ -111,11 +145,40 @@ class BluetoothSettingActivity: AppCompatActivity() {
         binding.bluetoothRegisteredDeviceView.setHasFixedSize(false)
         binding.bluetoothRegisteredDeviceView.layoutManager = LinearLayoutManager(this)
         binding.bluetoothRegisteredDeviceView.adapter = registeredAdapter
+
+        binding.bluetoothConnectableDeviceView.setHasFixedSize(false)
+        binding.bluetoothConnectableDeviceView.layoutManager = LinearLayoutManager(this)
+        binding.bluetoothConnectableDeviceView.adapter = connectableAdapter
+
         binding.bluetoothEnableBtn.setOnClickListener {
             setActive()
         }
 
-        registerReceiver(stateChangedReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+        // Additional Options for searchFilter(IntentFilter)
+        intentFilter.addAction(BluetoothDevice.ACTION_FOUND)
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+
+        // RegisterReceiver
+        registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val permissions = mutableListOf<String>()
+            if(checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PERMISSION_DENIED)
+                permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_DENIED)
+                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_DENIED)
+                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            if(permissions.isNotEmpty())
+                requestPermissions(permissions.toTypedArray(),101)
+        }
     }
 
     private fun setActive(){
@@ -133,6 +196,7 @@ class BluetoothSettingActivity: AppCompatActivity() {
     private fun getPairedDevices(){
         bluetoothAdapter?.let {
             if(it.isEnabled){
+                registeredAdapter?.clear()
                 val pairedDevices: Set<BluetoothDevice> = it.bondedDevices
                 if(pairedDevices.isNotEmpty()){
                     pairedDevices.forEach { device ->
@@ -144,6 +208,28 @@ class BluetoothSettingActivity: AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun findDevice() {
+        bluetoothAdapter?.let {
+            if (it.isEnabled) {
+                if (it.isDiscovering) {
+                    it.cancelDiscovery()
+                    return
+                }
+                connectableAdapter?.clear()
+                it.startDiscovery()
+            } else{
+                Toast.makeText(this, "먼저 블루투스 기능을 활성화 해주세요!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_bluetooth, menu)
+        menu!!.findItem(R.id.bluetooth_find_device).title = if(isSearching.value == true) "중지" else "찾기"
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             android.R.id.home -> {
@@ -152,12 +238,16 @@ class BluetoothSettingActivity: AppCompatActivity() {
                 finish()
                 true
             }
+            R.id.bluetooth_find_device -> {
+                findDevice()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(stateChangedReceiver)
+        unregisterReceiver(broadcastReceiver)
     }
 }
