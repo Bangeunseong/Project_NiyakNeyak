@@ -79,12 +79,13 @@
 
             <ImageView
                 android:id="@+id/imageViewYou"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="300dp"
-                android:padding="8dp"
+                android:layout_width="204dp"
+                android:layout_height="230dp"
+                android:layout_marginTop="196dp"
                 android:background="@drawable/image_border"
-                app:layout_constraintStart_toStartOf="@+id/imageViewGirl"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageViewBoy" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
