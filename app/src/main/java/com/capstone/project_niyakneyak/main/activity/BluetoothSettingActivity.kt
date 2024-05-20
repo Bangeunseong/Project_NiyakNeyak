@@ -11,12 +11,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.capstone.project_niyakneyak.R
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.BluetoothRegisteredAdapter
 
@@ -59,7 +60,7 @@ class BluetoothSettingActivity: AppCompatActivity() {
             }
         }
     }
-    private val deviceFoundReceiver: BroadcastReceiver by lazy{
+    private val deviceConnectionReceiver: BroadcastReceiver by lazy{
         object: BroadcastReceiver(){
             override fun onReceive(context: Context?, intent: Intent?) {
                 TODO("Not yet implemented")
@@ -78,14 +79,14 @@ class BluetoothSettingActivity: AppCompatActivity() {
     }
 
     // Adapters
-    private val registeredAdapter: BluetoothRegisteredAdapter by lazy { BluetoothRegisteredAdapter(arrayListOf()) }
+    private var registeredAdapter: BluetoothRegisteredAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityBluetoothSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.toolbar6.setTitle(R.string.dialog_add_form_title)
+        binding.toolbar6.setTitle("블루투스")
         setSupportActionBar(binding.toolbar6)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -93,6 +94,8 @@ class BluetoothSettingActivity: AppCompatActivity() {
             setResult(RESULT_CANCELED)
             finish()
         }
+
+        registeredAdapter = BluetoothRegisteredAdapter(mutableListOf(), mutableListOf())
 
         if(bluetoothAdapter?.isEnabled == true){
             binding.bluetoothEnableBtn.text = "사용 중"
@@ -102,10 +105,12 @@ class BluetoothSettingActivity: AppCompatActivity() {
         } else{
             binding.bluetoothEnableBtn.text = "사용 안함"
             binding.bluetoothEnableBtn.isEnabled = true
-            binding.bluetoothEnableBtn.invalidate()
             binding.bluetoothMainLayout.visibility = View.INVISIBLE
         }
 
+        binding.bluetoothRegisteredDeviceView.setHasFixedSize(false)
+        binding.bluetoothRegisteredDeviceView.layoutManager = LinearLayoutManager(this)
+        binding.bluetoothRegisteredDeviceView.adapter = registeredAdapter
         binding.bluetoothEnableBtn.setOnClickListener {
             setActive()
         }
@@ -129,7 +134,12 @@ class BluetoothSettingActivity: AppCompatActivity() {
         bluetoothAdapter?.let {
             if(it.isEnabled){
                 val pairedDevices: Set<BluetoothDevice> = it.bondedDevices
-                registeredAdapter.setBluetoothDeviceData(pairedDevices.toMutableList())
+                if(pairedDevices.isNotEmpty()){
+                    pairedDevices.forEach { device ->
+                        Log.w("Bluetooth", "${device.name}, ${device.address}")
+                        registeredAdapter?.addDevice(device, false)
+                    }
+                }
             }
         }
     }
