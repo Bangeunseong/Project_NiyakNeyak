@@ -90,22 +90,34 @@ class AlarmSettingActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     alarm = it.toObject(Alarm::class.java)
                     binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_modify)
+                    binding.toolbar5.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
                     setSupportActionBar(binding.toolbar5)
-                    binding.toolbar5.setTitleTextColor(Color.WHITE)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    binding.toolbar5.navigationIcon?.mutate().let { icon ->
+                        icon?.setTint(Color.WHITE)
+                        binding.toolbar5.navigationIcon = icon
+                    }
                     setActivity(alarm)
                 }.addOnFailureListener {
                     binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_register)
+                    binding.toolbar5.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
                     setSupportActionBar(binding.toolbar5)
-                    binding.toolbar5.setTitleTextColor(Color.WHITE)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    binding.toolbar5.navigationIcon?.mutate().let { icon ->
+                        icon?.setTint(Color.WHITE)
+                        binding.toolbar5.navigationIcon = icon
+                    }
                     setActivity(alarm)
                 }
         } else {
             binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_register)
+            binding.toolbar5.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
             setSupportActionBar(binding.toolbar5)
-            binding.toolbar5.setTitleTextColor(Color.WHITE)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbar5.navigationIcon?.mutate().let { icon ->
+                icon?.setTint(Color.WHITE)
+                binding.toolbar5.navigationIcon = icon
+            }
             setActivity(null)
         }
     }

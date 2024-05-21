@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager.PERMISSION_DENIED
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -48,6 +49,7 @@ class BluetoothSettingActivity: AppCompatActivity() {
                                 binding.bluetoothEnableBtn.isEnabled = false
                                 binding.bluetoothEnableBtn.invalidate()
                                 getPairedDevices()
+                                findDevice()
                                 binding.bluetoothMainLayout.visibility = View.VISIBLE
                             }
                             BluetoothAdapter.STATE_OFF -> {
@@ -117,8 +119,13 @@ class BluetoothSettingActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar6.setTitle("블루투스")
+        binding.toolbar6.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.toolbar6)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar6.navigationIcon?.mutate().let {
+            it?.setTint(Color.WHITE)
+            binding.toolbar6.navigationIcon = it
+        }
 
         if(bluetoothAdapter == null){
             setResult(RESULT_CANCELED)
@@ -135,6 +142,7 @@ class BluetoothSettingActivity: AppCompatActivity() {
             binding.bluetoothEnableBtn.text = "사용 중"
             binding.bluetoothEnableBtn.isEnabled = false
             getPairedDevices()
+            findDevice()
             binding.bluetoothMainLayout.visibility = View.VISIBLE
         } else{
             binding.bluetoothEnableBtn.text = "사용 안함"
@@ -246,8 +254,11 @@ class BluetoothSettingActivity: AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onDestroy() {
         super.onDestroy()
+
+        if(bluetoothAdapter?.isDiscovering == true) bluetoothAdapter?.cancelDiscovery()
         unregisterReceiver(broadcastReceiver)
     }
 }

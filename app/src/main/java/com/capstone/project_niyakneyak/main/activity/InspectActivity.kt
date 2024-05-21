@@ -85,9 +85,13 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         setContentView(binding.root)
 
         binding.toolbar3.setTitle(R.string.action_main_inspect_medicine)
-        binding.toolbar3.setTitleTextColor(Color.WHITE)
+        binding.toolbar3.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.toolbar3)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar3.navigationIcon?.mutate().let { icon ->
+            icon?.setTint(Color.WHITE)
+            binding.toolbar3.navigationIcon = icon
+        }
 
         FirebaseFirestore.setLoggingEnabled(true)
         _firestore = Firebase.firestore

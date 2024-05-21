@@ -16,8 +16,11 @@ class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevic
         @SuppressLint("MissingPermission")
         fun bind(device: BluetoothDevice, isConnected: Boolean){
             binding.bluetoothDeviceName.text = device.name
-            if(device.bluetoothClass.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO)
-                binding.bluetoothTypeIcon.setImageResource(R.drawable.icon_bluetooth_headset)
+            if(device.bluetoothClass.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO){
+                if(device.bluetoothClass.deviceClass == BluetoothClass.Device.AUDIO_VIDEO_SET_TOP_BOX)
+                    binding.bluetoothTypeIcon.setImageResource(R.drawable.icon_bluetooth_screen)
+                else binding.bluetoothTypeIcon.setImageResource(R.drawable.icon_bluetooth_headset)
+            }
             else binding.bluetoothTypeIcon.setImageResource(R.drawable.icon_bluetooth_screen)
             if(isConnected){
                 binding.bluetoothDeviceConnType.visibility = View.VISIBLE

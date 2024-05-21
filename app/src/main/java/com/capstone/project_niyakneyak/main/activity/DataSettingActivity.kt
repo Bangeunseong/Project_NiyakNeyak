@@ -134,10 +134,13 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
                 // Setting toolbar title
                 binding.toolbar2.setTitle(R.string.dialog_modify_form_title)
-                binding.toolbar2.setTitleTextColor(Color.WHITE)
+                binding.toolbar2.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
                 setSupportActionBar(binding.toolbar2)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+                binding.toolbar2.navigationIcon?.mutate().let { icon ->
+                    icon?.setTint(Color.WHITE)
+                    binding.toolbar2.navigationIcon = icon
+                }
                 // Setting Activity Components
                 setActivity(originData, binding)
             }.addOnFailureListener {
@@ -149,8 +152,13 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         else {
             binding.toolbar2.setTitle(R.string.dialog_add_form_title)
             binding.toolbar2.setTitleTextColor(Color.WHITE)
+            binding.toolbar2.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
             setSupportActionBar(binding.toolbar2)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbar2.navigationIcon?.mutate().let {
+                it?.setTint(Color.WHITE)
+                binding.toolbar2.navigationIcon = it
+            }
             setActivity(null, binding)
         }
 
