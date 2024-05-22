@@ -32,9 +32,9 @@ class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevic
             binding.bluetoothDeviceSettingBtn.setImageResource(if(isConnected) R.drawable.icon_disconnect else R.drawable.icon_connect)
             binding.bluetoothDeviceSettingBtn.setOnClickListener {
                 if(isConnected){
-
+                    onBTConnChangedListener.requestDisconnection(device)
                 } else{
-
+                    onBTConnChangedListener.requestConnection(device)
                 }
             }
         }

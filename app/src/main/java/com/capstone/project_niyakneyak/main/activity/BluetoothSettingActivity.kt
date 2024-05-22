@@ -131,10 +131,12 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         }
     }
 
+
+    //TODO: Need to be Fixed!
     @SuppressLint("MissingPermission")
     private inner class ConnectThread(device: BluetoothDevice): Thread(){
         private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
-            device.createRfcommSocketToServiceRecord(UUID.randomUUID())
+            device.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
         }
 
         public override fun run() {
