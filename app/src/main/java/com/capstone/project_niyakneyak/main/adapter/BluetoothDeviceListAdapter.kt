@@ -3,18 +3,20 @@ package com.capstone.project_niyakneyak.main.adapter
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerBluetoothBinding
+import com.capstone.project_niyakneyak.main.listener.OnBTConnChangedListener
 import java.lang.StringBuilder
 
-class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevice>, private val isConnected: MutableList<Boolean>): RecyclerView.Adapter<BluetoothDeviceListAdapter.ViewHolder>() {
+class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevice>, private val isConnected: MutableList<Boolean>, private val onBTConnChangedListener: OnBTConnChangedListener): RecyclerView.Adapter<BluetoothDeviceListAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemRecyclerBluetoothBinding): RecyclerView.ViewHolder(binding.root){
         @SuppressLint("MissingPermission")
-        fun bind(device: BluetoothDevice, isConnected: Boolean){
+        fun bind(device: BluetoothDevice, isConnected: Boolean, onBTConnChangedListener: OnBTConnChangedListener){
             binding.bluetoothDeviceName.text = device.name
             if(device.bluetoothClass.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO){
                 if(device.bluetoothClass.deviceClass == BluetoothClass.Device.AUDIO_VIDEO_SET_TOP_BOX)
@@ -27,8 +29,13 @@ class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevic
                 binding.bluetoothDeviceConnType.text = serviceTypes(device)
             }
             else binding.bluetoothDeviceConnType.visibility = View.GONE
+            binding.bluetoothDeviceSettingBtn.setImageResource(if(isConnected) R.drawable.icon_disconnect else R.drawable.icon_connect)
             binding.bluetoothDeviceSettingBtn.setOnClickListener {
-                TODO("Not yet Implemented")
+                if(isConnected){
+
+                } else{
+
+                }
             }
         }
 
@@ -67,7 +74,7 @@ class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevic
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(devices[position], isConnected[position])
+        holder.bind(devices[position], isConnected[position], onBTConnChangedListener)
     }
 
     fun clear(){
@@ -86,7 +93,13 @@ class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevic
     }
 
     fun changeConnectionState(device: BluetoothDevice, isConnected: Boolean){
-        this.isConnected[devices.indexOf(device)] = isConnected
-        notifyItemChanged(devices.indexOf(device))
+        for(target in devices){
+            Log.w("Bluetooth", "${target.address}, ${device.address}")
+            if(target.address == device.address){
+                this.isConnected[devices.indexOf(target)] = isConnected
+                notifyItemChanged(devices.indexOf(target))
+                break
+            }
+        }
     }
 }

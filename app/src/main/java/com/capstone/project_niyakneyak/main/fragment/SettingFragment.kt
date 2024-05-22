@@ -40,11 +40,6 @@ class SettingFragment: Fragment() {
     private var userId: String? = null
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
-    private val bluetoothProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == RESULT_OK){
-
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
@@ -96,13 +91,13 @@ class SettingFragment: Fragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if(requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED){
                     val intent = Intent(context, BluetoothSettingActivity::class.java)
-                    bluetoothProcessLauncher.launch(intent)
+                    startActivity(intent)
                 } else{
                     requireActivity().requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 101)
                 }
             } else{
                 val intent = Intent(context, BluetoothSettingActivity::class.java)
-                bluetoothProcessLauncher.launch(intent)
+                startActivity(intent)
             }
         }
 

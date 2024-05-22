@@ -3,10 +3,14 @@ package com.capstone.project_niyakneyak.main.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothAdapter.STATE_CONNECTED
 import android.bluetooth.BluetoothAdapter.STATE_ON
 import android.bluetooth.BluetoothClass.Device
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
+import android.bluetooth.BluetoothServerSocket
+import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -27,8 +31,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.BluetoothDeviceListAdapter
+import com.capstone.project_niyakneyak.main.listener.OnBTConnChangedListener
+import java.io.IOException
+import java.lang.IllegalStateException
+import java.lang.reflect.Method
+import java.util.UUID
 
-class BluetoothSettingActivity: AppCompatActivity() {
+class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     // View Binding
     private var _binding: ActivityBluetoothSettingBinding? = null
     private val binding get() = _binding!!
@@ -86,23 +95,65 @@ class BluetoothSettingActivity: AppCompatActivity() {
                         }
                     }
                     BluetoothDevice.ACTION_ACL_CONNECTED -> {
-
+                        val device =
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                            }else {
+                                @Suppress("DEPRECATION")
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                            }
+                        if(device != null){
+                            registeredAdapter?.changeConnectionState(device, true)
+                        }
                     }
                     BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
-
+                        val device =
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                            }else {
+                                @Suppress("DEPRECATION")
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                            }
+                        if(device != null){
+                            registeredAdapter?.changeConnectionState(device, false)
+                        }
                     }
                 }
             }
         }
     }
 
-    private var connectedDevice: Device? = null
-
     private val bluetoothActiveLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             Toast.makeText(this, "블루투스가 활성화 되었습니다!", Toast.LENGTH_SHORT).show()
         } else{
             Toast.makeText(this, "블루투스가 활성화 되지 않았습니다!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private inner class ConnectThread(device: BluetoothDevice): Thread(){
+        private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
+            device.createRfcommSocketToServiceRecord(UUID.randomUUID())
+        }
+
+        public override fun run() {
+            bluetoothAdapter?.cancelDiscovery()
+
+            mSocket?.let { socket ->
+                socket.connect()
+
+            }
+        }
+
+        fun cancel(): Boolean{
+            return try {
+                mSocket?.close()
+                true
+            } catch (e: IOException){
+                Log.w("Bluetooth","Couldn't close the client socket: $e")
+                false
+            }
         }
     }
 
@@ -132,8 +183,8 @@ class BluetoothSettingActivity: AppCompatActivity() {
             finish()
         }
 
-        registeredAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf())
-        connectableAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf())
+        registeredAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf(), this)
+        connectableAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf(), this)
         isSearching.observe(this){
             invalidateMenu()
         }
@@ -201,15 +252,23 @@ class BluetoothSettingActivity: AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getPairedDevices(){
+    private fun getPairedDevices() {
         bluetoothAdapter?.let {
             if(it.isEnabled){
                 registeredAdapter?.clear()
                 val pairedDevices: Set<BluetoothDevice> = it.bondedDevices
                 if(pairedDevices.isNotEmpty()){
+
                     pairedDevices.forEach { device ->
                         Log.w("Bluetooth", "${device.name}, ${device.address}")
-                        registeredAdapter?.addDevice(device, false)
+                        var connected = false
+                        try{
+                            val m: Method = device.javaClass.getMethod("isConnected")
+                            connected = m.invoke(device) as Boolean
+                        } catch (e: IllegalStateException){
+                            Log.w("Bluetooth", "Error Occurred!: $e")
+                        }
+                        registeredAdapter?.addDevice(device, connected)
                     }
                 }
             }
@@ -241,8 +300,6 @@ class BluetoothSettingActivity: AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             android.R.id.home -> {
-                if(connectedDevice == null) setResult(RESULT_CANCELED)
-                else setResult(RESULT_OK)
                 finish()
                 true
             }
@@ -260,5 +317,13 @@ class BluetoothSettingActivity: AppCompatActivity() {
 
         if(bluetoothAdapter?.isDiscovering == true) bluetoothAdapter?.cancelDiscovery()
         unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun requestConnection(device: BluetoothDevice) {
+        ConnectThread(device).start()
+    }
+
+    override fun requestDisconnection(device: BluetoothDevice) {
+        ConnectThread(device).cancel()
     }
 }
