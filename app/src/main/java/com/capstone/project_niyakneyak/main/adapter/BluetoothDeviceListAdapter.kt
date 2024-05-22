@@ -92,6 +92,16 @@ class BluetoothDeviceListAdapter(private val devices: MutableList<BluetoothDevic
         }
     }
 
+    @SuppressLint("MissingPermission")
+    fun removeDevice(device: BluetoothDevice){
+        if(this.devices.contains(device) && device.name != null && device.address != null){
+            val index = devices.indexOf(device)
+            this.isConnected.removeAt(index)
+            this.devices.remove(device)
+            notifyItemRemoved(index)
+        }
+    }
+
     fun changeConnectionState(device: BluetoothDevice, isConnected: Boolean){
         for(target in devices){
             Log.w("Bluetooth", "${target.address}, ${device.address}")

@@ -3,13 +3,11 @@ package com.capstone.project_niyakneyak.main.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothAdapter.STATE_CONNECTED
 import android.bluetooth.BluetoothAdapter.STATE_ON
-import android.bluetooth.BluetoothClass.Device
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothDevice.BOND_BONDED
+import android.bluetooth.BluetoothDevice.BOND_NONE
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothProfile
-import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -48,6 +46,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
     private val broadcastReceiver: BroadcastReceiver by lazy {
         object: BroadcastReceiver(){
+            @SuppressLint("MissingPermission")
             override fun onReceive(context: Context?, intent: Intent?) {
                 when(intent?.action){
                     BluetoothAdapter.ACTION_STATE_CHANGED -> {
@@ -72,6 +71,28 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                             }
                             BluetoothAdapter.STATE_TURNING_ON -> {
 
+                            }
+                        }
+                    }
+                    BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
+                        val device =
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                            }else {
+                                @Suppress("DEPRECATION")
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                            }
+                        if(device != null){
+                            when(device.bondState){
+                                BOND_BONDED -> {
+                                    connectableAdapter?.clear()
+                                    registeredAdapter?.addDevice(device, false)
+                                    ConnectThread(device).start()
+                                }
+                                BOND_NONE -> {
+                                    connectableAdapter?.clear()
+                                    registeredAdapter?.removeDevice(device)
+                                }
                             }
                         }
                     }
@@ -131,20 +152,23 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         }
     }
 
-
-    //TODO: Need to be Fixed!
+    // Connection Thread
     @SuppressLint("MissingPermission")
     private inner class ConnectThread(device: BluetoothDevice): Thread(){
         private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
-            device.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
+            //TODO: Fix UUID
+            device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(""))
         }
 
-        public override fun run() {
+        override fun run() {
             bluetoothAdapter?.cancelDiscovery()
 
             mSocket?.let { socket ->
-                socket.connect()
-
+                try{
+                    socket.connect()
+                } catch (e: IOException){
+                    Log.w("Bluetooth","Couldn't close the client socket: $e")
+                }
             }
         }
 
@@ -158,6 +182,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
             }
         }
     }
+    private var connectionThread: ConnectThread? = null
 
     // Adapters
     private var registeredAdapter: BluetoothDeviceListAdapter? = null
@@ -222,6 +247,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+        intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
 
         // RegisterReceiver
         registerReceiver(broadcastReceiver, intentFilter)
@@ -262,7 +288,6 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                 registeredAdapter?.clear()
                 val pairedDevices: Set<BluetoothDevice> = it.bondedDevices
                 if(pairedDevices.isNotEmpty()){
-
                     pairedDevices.forEach { device ->
                         Log.w("Bluetooth", "${device.name}, ${device.address}")
                         var connected = false
@@ -319,15 +344,18 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     override fun onDestroy() {
         super.onDestroy()
 
+        connectionThread?.cancel()
         if(bluetoothAdapter?.isDiscovering == true) bluetoothAdapter?.cancelDiscovery()
         unregisterReceiver(broadcastReceiver)
     }
 
+    @SuppressLint("MissingPermission")
     override fun requestConnection(device: BluetoothDevice) {
-        ConnectThread(device).start()
+        connectionThread = ConnectThread(device)
+        connectionThread?.start()
     }
 
     override fun requestDisconnection(device: BluetoothDevice) {
-
+        //TODO: Need to be discussed!
     }
 }
