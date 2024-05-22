@@ -237,6 +237,8 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                 permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
             if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_DENIED)
                 permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_DENIED)
+                permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
             if(permissions.isNotEmpty())
                 requestPermissions(permissions.toTypedArray(),101)
         }
@@ -326,6 +328,6 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     }
 
     override fun requestDisconnection(device: BluetoothDevice) {
-        ConnectThread(device).cancel()
+
     }
 }
