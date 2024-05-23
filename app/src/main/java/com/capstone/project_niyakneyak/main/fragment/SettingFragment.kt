@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
@@ -23,7 +24,7 @@ import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -158,8 +159,31 @@ class SettingFragment : Fragment() {
     private fun showImagePopup() {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_image_popup, null)
         val popupImageView = dialogView.findViewById<ImageView>(R.id.popupImageView)
-        val profilePicUrl = binding.profileImageView.drawable // 현재 이미지뷰의 drawable 가져오기
-        popupImageView.setImageDrawable(profilePicUrl)
+
+        // Firestore에서 원본 이미지 URL을 가져와 Glide로 로드
+        val userId = firebaseAuth.currentUser?.uid
+        if (userId != null) {
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.contains("profilePic")) {
+                        val profilePicUrl = document.getString("profilePic")
+                        if (!profilePicUrl.isNullOrEmpty()) {
+                            // Glide를 사용하여 원본 이미지를 로드합니다.
+                            Glide.with(this)
+                                .load(profilePicUrl)
+                                .into(popupImageView)
+                        } else {
+                            // 기본 이미지 사용
+                            popupImageView.setImageDrawable(binding.profileImageView.drawable)
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "Failed to load original image: ", exception)
+                    // 기본 이미지 사용
+                    popupImageView.setImageDrawable(binding.profileImageView.drawable)
+                }
+        }
 
         val builder = AlertDialog.Builder(activity)
         builder.setView(dialogView)
@@ -168,6 +192,7 @@ class SettingFragment : Fragment() {
         }
         builder.create().show()
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -191,10 +216,11 @@ class SettingFragment : Fragment() {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
                         if (document != null) {
-                            if (document.contains("profilePic") && document.getString("profilePic") != null) {
+                            if (document.contains("profilePic") && document.getString("profilePic") != null && document.getString("profilePic") != "null"){
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@SettingFragment)
                                     .load(profilePicUrl)
+                                    .apply(RequestOptions.circleCropTransform())
                                     .into(binding.profileImageView)
                             } else {
 

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityProfileChangeBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -81,6 +82,11 @@ class ProfileChangeActivity : AppCompatActivity() {
                 fileUri = Uri.parse("android.resource://${packageName}/${getResourceIdForImageView(imageView.id)}")
                 binding.imageViewYou.setImageURI(fileUri)
             }
+        }
+        binding.buttonReset.setOnClickListener {
+            clearSelection()
+            binding.imageViewYou.setImageResource(R.drawable.baseline_account_circle_24)
+            fileUri = null
         }
 
         binding.setProfileButton.setOnClickListener {
