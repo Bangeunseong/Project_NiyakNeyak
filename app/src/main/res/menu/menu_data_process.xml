@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:local="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/menu_save_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Save"
+        android:icon="@drawable/ic_save"
+        android:iconTint="@color/white_500"
+        android:visible="true"
+        app:showAsAction="ifRoom"/>
+</menu>

@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_main"
-        android:icon="@drawable/baseline_list_alt_24"
-        android:title="@string/toolbar_main_title"/>
+        android:icon="@drawable/ic_drug_entities"
+        android:title="@string/toolbar_main_title" />
     <item
         android:id="@+id/menu_time"
         android:icon="@drawable/baseline_timer_24"
@@ -13,7 +13,8 @@
         android:icon="@drawable/baseline_checklist_rtl_24"
         android:title="@string/toolbar_main_checklist"/>
     <item
-        android:id="@+id/menu_setting"
-        android:icon="@drawable/baseline_settings_24"
+        android:id="@+id/menu_account"
+        android:icon="@drawable/baseline_account_circle_24"
         android:title="@string/toolbar_main_settings"/>
+
 </menu>

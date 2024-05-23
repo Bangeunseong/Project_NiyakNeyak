@@ -13,6 +13,14 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold|italic</item>
     </style>
+    <style name="ToolbarTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="Theme.PopupOverlay.Menu" parent="ThemeOverlay.AppCompat.ActionBar" >
+        <item name="android:textColor">@android:color/white</item>
+    </style>
     <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/transparent</item>
         <item name="hintTextAppearance">@style/HintTextAppearance</item>
@@ -23,8 +31,12 @@
         <item name="android:textColor">@color/text_color</item>
         <item name="android:background">@drawable/item_dialog_submit_btn</item>
     </style>
-    <style name="DialogBackground" parent="ThemeOverlay.AppCompat.Dialog.Alert">
-        <item name="android:windowBackground">@drawable/item_dialog_bg</item>
+    <style name="DialogFragmentStyle" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.2</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/transparent_gray_500</item>
+        <item name="android:gravity">center</item>
     </style>
     <style name="TimePickerTheme" parent="ThemeOverlay.MaterialComponents.TimePicker">
         <item name="android:textSize">35sp</item>
@@ -32,13 +44,15 @@
         <item name="android:timePickerMode">spinner</item>
         <item name="android:background">@color/light_purple_500</item>
     </style>
-    <style name="customToolBarTheme" parent="Widget.AppCompat.Toolbar">
-        <item name="collapseIcon">@drawable/baseline_list_alt_24</item>
-        <item name="android:textAppearance">@style/toolBarTextAppearance</item>
-    </style>
     <style name="customAddBtnStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/gray_500</item>
         <item name="android:background">@drawable/item_dialog_timer_add_btn_bg</item>
+    </style>
+    <style name="customInspectBtnStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black_500</item>
+        <item name="android:background">@drawable/item_option_layout_bg</item>
     </style>
 </resources>
