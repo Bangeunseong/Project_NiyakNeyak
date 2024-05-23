@@ -3,11 +3,13 @@ package com.capstone.project_niyakneyak.main.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothAdapter.STATE_CONNECTED
 import android.bluetooth.BluetoothAdapter.STATE_ON
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.BOND_BONDED
 import android.bluetooth.BluetoothDevice.BOND_NONE
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -17,6 +19,7 @@ import android.content.pm.PackageManager.PERMISSION_DENIED
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelUuid
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -31,6 +34,8 @@ import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBindi
 import com.capstone.project_niyakneyak.main.adapter.BluetoothDeviceListAdapter
 import com.capstone.project_niyakneyak.main.listener.OnBTConnChangedListener
 import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.lang.IllegalStateException
 import java.lang.reflect.Method
 import java.util.UUID
@@ -64,6 +69,8 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                                 binding.bluetoothEnableBtn.text = "사용 안함"
                                 binding.bluetoothEnableBtn.isEnabled = true
                                 binding.bluetoothEnableBtn.invalidate()
+                                registeredAdapter?.clear()
+                                connectableAdapter?.clear()
                                 binding.bluetoothMainLayout.visibility = View.INVISIBLE
                             }
                             BluetoothAdapter.STATE_TURNING_OFF -> {
@@ -86,8 +93,9 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                             when(device.bondState){
                                 BOND_BONDED -> {
                                     connectableAdapter?.clear()
+                                    connectedDevices[device] = ConnectThread(device)
                                     registeredAdapter?.addDevice(device, false)
-                                    ConnectThread(device).start()
+                                    connectedDevices[device]?.start()
                                 }
                                 BOND_NONE -> {
                                     connectableAdapter?.clear()
@@ -139,11 +147,25 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                             registeredAdapter?.changeConnectionState(device, false)
                         }
                     }
+                    BluetoothDevice.ACTION_UUID -> {
+                        val uuids =
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                                intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID, ParcelUuid::class.java)
+                            }else {
+                                @Suppress("DEPRECATION")
+                                intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID) as Array<out ParcelUuid>
+                            }
+                        if (uuids != null) {
+                            for(uuid in uuids){
+                                Log.w("Bluetooth","${uuid.uuid}")
+                            }
+
+                        }
+                    }
                 }
             }
         }
     }
-
     private val bluetoothActiveLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             Toast.makeText(this, "블루투스가 활성화 되었습니다!", Toast.LENGTH_SHORT).show()
@@ -152,12 +174,20 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         }
     }
 
+
+    private val connectedDevices: MutableMap<BluetoothDevice, ConnectThread> = mutableMapOf()
+
     // Connection Thread
     @SuppressLint("MissingPermission")
     private inner class ConnectThread(device: BluetoothDevice): Thread(){
+        private var inputStream: InputStream? = null
+        private var outputStream: OutputStream? = null
         private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
             //TODO: Fix UUID
-            device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(""))
+            device.fetchUuidsWithSdp().let {
+                if(it) device.createInsecureRfcommSocketToServiceRecord(UUID.fromString("a23d00bc-217c-123b-9c00-fc44577136ee"))
+                else null
+            }
         }
 
         override fun run() {
@@ -166,6 +196,8 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
             mSocket?.let { socket ->
                 try{
                     socket.connect()
+                    inputStream = socket.inputStream
+                    outputStream = socket.outputStream
                 } catch (e: IOException){
                     Log.w("Bluetooth","Couldn't close the client socket: $e")
                 }
@@ -174,6 +206,8 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
 
         fun cancel(): Boolean{
             return try {
+                inputStream?.close()
+                outputStream?.close()
                 mSocket?.close()
                 true
             } catch (e: IOException){
@@ -182,7 +216,6 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
             }
         }
     }
-    private var connectionThread: ConnectThread? = null
 
     // Adapters
     private var registeredAdapter: BluetoothDeviceListAdapter? = null
@@ -193,6 +226,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         _binding = ActivityBluetoothSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -216,18 +250,6 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
             invalidateMenu()
         }
 
-        if(bluetoothAdapter?.isEnabled == true){
-            binding.bluetoothEnableBtn.text = "사용 중"
-            binding.bluetoothEnableBtn.isEnabled = false
-            getPairedDevices()
-            findDevice()
-            binding.bluetoothMainLayout.visibility = View.VISIBLE
-        } else{
-            binding.bluetoothEnableBtn.text = "사용 안함"
-            binding.bluetoothEnableBtn.isEnabled = true
-            binding.bluetoothMainLayout.visibility = View.INVISIBLE
-        }
-
         binding.bluetoothRegisteredDeviceView.setHasFixedSize(false)
         binding.bluetoothRegisteredDeviceView.layoutManager = LinearLayoutManager(this)
         binding.bluetoothRegisteredDeviceView.adapter = registeredAdapter
@@ -248,6 +270,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+        intentFilter.addAction(BluetoothDevice.ACTION_UUID)
 
         // RegisterReceiver
         registerReceiver(broadcastReceiver, intentFilter)
@@ -266,7 +289,44 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
             if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_DENIED)
                 permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
             if(permissions.isNotEmpty())
-                requestPermissions(permissions.toTypedArray(),101)
+                requestPermissions(permissions.toTypedArray(),101).let {
+                    if(bluetoothAdapter?.isEnabled == true){
+                        binding.bluetoothEnableBtn.text = "사용 중"
+                        binding.bluetoothEnableBtn.isEnabled = false
+                        getPairedDevices()
+                        findDevice()
+                        binding.bluetoothMainLayout.visibility = View.VISIBLE
+                    } else{
+                        binding.bluetoothEnableBtn.text = "사용 안함"
+                        binding.bluetoothEnableBtn.isEnabled = true
+                        binding.bluetoothMainLayout.visibility = View.INVISIBLE
+                    }
+                }
+            else{
+                if(bluetoothAdapter?.isEnabled == true){
+                    binding.bluetoothEnableBtn.text = "사용 중"
+                    binding.bluetoothEnableBtn.isEnabled = false
+                    getPairedDevices()
+                    findDevice()
+                    binding.bluetoothMainLayout.visibility = View.VISIBLE
+                } else{
+                    binding.bluetoothEnableBtn.text = "사용 안함"
+                    binding.bluetoothEnableBtn.isEnabled = true
+                    binding.bluetoothMainLayout.visibility = View.INVISIBLE
+                }
+            }
+        } else{
+            if(bluetoothAdapter?.isEnabled == true){
+                binding.bluetoothEnableBtn.text = "사용 중"
+                binding.bluetoothEnableBtn.isEnabled = false
+                getPairedDevices()
+                findDevice()
+                binding.bluetoothMainLayout.visibility = View.VISIBLE
+            } else{
+                binding.bluetoothEnableBtn.text = "사용 안함"
+                binding.bluetoothEnableBtn.isEnabled = true
+                binding.bluetoothMainLayout.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -344,18 +404,18 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     override fun onDestroy() {
         super.onDestroy()
 
-        connectionThread?.cancel()
         if(bluetoothAdapter?.isDiscovering == true) bluetoothAdapter?.cancelDiscovery()
         unregisterReceiver(broadcastReceiver)
     }
 
     @SuppressLint("MissingPermission")
     override fun requestConnection(device: BluetoothDevice) {
-        connectionThread = ConnectThread(device)
-        connectionThread?.start()
+        connectedDevices[device] = ConnectThread(device)
+        connectedDevices[device]?.start()
     }
 
     override fun requestDisconnection(device: BluetoothDevice) {
-        //TODO: Need to be discussed!
+        connectedDevices[device]?.cancel()
+        connectedDevices.remove(device)
     }
 }
