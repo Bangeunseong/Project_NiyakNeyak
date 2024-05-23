@@ -33,6 +33,7 @@ import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.BluetoothDeviceListAdapter
 import com.capstone.project_niyakneyak.main.listener.OnBTConnChangedListener
+import com.capstone.project_niyakneyak.util.bluetooth.BluetoothUuids
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -131,7 +132,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                                 @Suppress("DEPRECATION")
                                 intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                             }
-                        if(device != null){
+                        if(device != null) {
                             registeredAdapter?.changeConnectionState(device, true)
                         }
                     }
@@ -182,11 +183,18 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     private inner class ConnectThread(device: BluetoothDevice): Thread(){
         private var inputStream: InputStream? = null
         private var outputStream: OutputStream? = null
-        private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
-            //TODO: Fix UUID
-            device.fetchUuidsWithSdp().let {
-                if(it) device.createInsecureRfcommSocketToServiceRecord(UUID.fromString("a23d00bc-217c-123b-9c00-fc44577136ee"))
-                else null
+        private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            val uuids = device.uuids
+            if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.A2DP_UUID))){
+                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.A2DP_UUID))
+            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.SPP_UUID))){
+                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
+            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.HFP_UUID))) {
+                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.HFP_UUID))
+            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.AVRCP_UUID))) {
+                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.AVRCP_UUID))
+            } else {
+                null
             }
         }
 
