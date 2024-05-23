@@ -175,7 +175,7 @@ class SettingFragment : Fragment() {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
                         if (document != null) {
-                            if (document.contains("profilePic") && document.getString("profilePic") != null) {
+                            if (document.contains("profilePic") && document.getString("profilePic") != null && document.getString("profilePic") != "null"){
                                 val profilePicUrl = document.getString("profilePic")
                                 Glide.with(this@SettingFragment)
                                     .load(profilePicUrl)

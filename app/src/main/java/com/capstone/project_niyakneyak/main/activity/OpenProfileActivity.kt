@@ -204,7 +204,7 @@ class OpenProfileActivity : AppCompatActivity() {
             if (userId != null) {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
-                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != null) {
+                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != null && document.getString("profilePic") != "null"){
                             url = document.getString("profilePic")
                             val profilePicUrl = document.getString("profilePic")
                             Glide.with(this@OpenProfileActivity)
