@@ -39,6 +39,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.lang.IllegalStateException
 import java.lang.reflect.Method
+import java.nio.ByteBuffer
 import java.util.UUID
 
 class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
@@ -181,18 +182,16 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     // Connection Thread
     @SuppressLint("MissingPermission")
     private inner class ConnectThread(device: BluetoothDevice): Thread(){
-        private var inputStream: InputStream? = null
-        private var outputStream: OutputStream? = null
         private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.PUBLICATION) {
             val uuids = device.uuids
             if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.A2DP_UUID))){
                 device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.A2DP_UUID))
-            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.SPP_UUID))){
-                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
             } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.HFP_UUID))) {
                 device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.HFP_UUID))
             } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.AVRCP_UUID))) {
                 device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.AVRCP_UUID))
+            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.SPP_UUID))){
+                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
             } else {
                 null
             }
@@ -204,18 +203,14 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
             mSocket?.let { socket ->
                 try{
                     socket.connect()
-                    inputStream = socket.inputStream
-                    outputStream = socket.outputStream
                 } catch (e: IOException){
-                    Log.w("Bluetooth","Couldn't close the client socket: $e")
+                    Log.w("Bluetooth","Couldn't connect the client socket: $e")
                 }
             }
         }
 
         fun cancel(): Boolean{
             return try {
-                inputStream?.close()
-                outputStream?.close()
                 mSocket?.close()
                 true
             } catch (e: IOException){
@@ -412,11 +407,13 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     override fun onDestroy() {
         super.onDestroy()
 
+        for(device in connectedDevices.toList()){
+            device.second.cancel()
+        }
         if(bluetoothAdapter?.isDiscovering == true) bluetoothAdapter?.cancelDiscovery()
         unregisterReceiver(broadcastReceiver)
     }
 
-    @SuppressLint("MissingPermission")
     override fun requestConnection(device: BluetoothDevice) {
         connectedDevices[device] = ConnectThread(device)
         connectedDevices[device]?.start()

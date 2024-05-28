@@ -1,12 +1,17 @@
 package com.capstone.project_niyakneyak.main.fragment
 
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,24 +42,29 @@ import java.util.Date
  */
 
 class CheckFragment : Fragment(), OnCheckedChecklistListener {
+    // Params for View Binding
     private var _binding: FragmentCheckListBinding? = null
     private val binding get() = _binding!!
+
+    // Params for firebase connection
     private var _firestore: FirebaseFirestore? = null
     private val firestore get() = _firestore!!
     private var _firebaseAuth: FirebaseAuth? = null
     private val firebaseAuth get() = _firebaseAuth!!
+
+    // ViewModel
     private var _viewModel: CheckViewModel? = null
     private val viewModel get() = _viewModel!!
 
+    // Adapter
     private var adapter: CheckMedicineAdapter? = null
     private var query: Query? = null
 
+    // Login Activity Process launcher
     private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
         if(result.resultCode == Activity.RESULT_OK){
             viewModel.isSignedIn = true
-
             query = getCurrentMedicineQuery()
-
             query?.let {
                 adapter = object: CheckMedicineAdapter(it, this@CheckFragment){
                     override fun onDataChanged() {
@@ -77,6 +87,10 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         }
     }
 
+    // BluetoothSocket
+    private val bluetoothManager: BluetoothManager by lazy { requireActivity().getSystemService(BluetoothManager::class.java) }
+    private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCheckListBinding.inflate(layoutInflater)
         return binding.root
@@ -90,6 +104,15 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         // Setting Firestore and FirebaseAuth
         _firestore = Firebase.firestore
         _firebaseAuth = Firebase.auth
+
+        // Bluetooth Device Connection
+        val device =
+            try {
+                bluetoothAdapter?.getRemoteDevice("")
+            } catch (e: Exception){
+                Log.w("Bluetooth", "Device Not Found!")
+                null
+            }
 
         if(firebaseAuth.currentUser != null){
             query = getCurrentMedicineQuery()
