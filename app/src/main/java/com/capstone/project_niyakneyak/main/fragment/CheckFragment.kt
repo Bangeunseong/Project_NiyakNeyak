@@ -2,6 +2,7 @@ package com.capstone.project_niyakneyak.main.fragment
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +24,7 @@ import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.viewmodel.CheckViewModel
 import com.capstone.project_niyakneyak.main.listener.OnCheckedChecklistListener
+import com.capstone.project_niyakneyak.util.bluetooth.ConnectThread
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -90,6 +90,7 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
     // BluetoothSocket
     private val bluetoothManager: BluetoothManager by lazy { requireActivity().getSystemService(BluetoothManager::class.java) }
     private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
+    private var connectedDevice: BluetoothDevice? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCheckListBinding.inflate(layoutInflater)
@@ -106,13 +107,14 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         _firebaseAuth = Firebase.auth
 
         // Bluetooth Device Connection
-        val device =
+        connectedDevice =
             try {
                 bluetoothAdapter?.getRemoteDevice("")
             } catch (e: Exception){
                 Log.w("Bluetooth", "Device Not Found!")
                 null
             }
+
 
         if(firebaseAuth.currentUser != null){
             query = getCurrentMedicineQuery()
@@ -154,7 +156,8 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         }
 
         // Start Listening Data changes
-        adapter?.setQuery(getCurrentMedicineQuery())
+        if(connectedDevice != null)
+            ConnectThread(connectedDevice!!).start()
         adapter?.startListening()
     }
 
@@ -162,6 +165,8 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         super.onStop()
 
         // Stop Listening Data changes
+        if(connectedDevice != null)
+            ConnectThread(connectedDevice!!).disconnectSocket()
         adapter?.stopListening()
     }
 

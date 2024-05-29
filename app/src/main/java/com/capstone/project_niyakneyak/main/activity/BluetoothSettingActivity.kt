@@ -3,14 +3,11 @@ package com.capstone.project_niyakneyak.main.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothAdapter.STATE_CONNECTED
 import android.bluetooth.BluetoothAdapter.STATE_ON
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.BOND_BONDED
 import android.bluetooth.BluetoothDevice.BOND_NONE
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothProfile
-import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -33,14 +30,9 @@ import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.BluetoothDeviceListAdapter
 import com.capstone.project_niyakneyak.main.listener.OnBTConnChangedListener
-import com.capstone.project_niyakneyak.util.bluetooth.BluetoothUuids
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import com.capstone.project_niyakneyak.util.bluetooth.ConnectThread
 import java.lang.IllegalStateException
 import java.lang.reflect.Method
-import java.nio.ByteBuffer
-import java.util.UUID
 
 class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     // View Binding
@@ -178,47 +170,6 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
 
 
     private val connectedDevices: MutableMap<BluetoothDevice, ConnectThread> = mutableMapOf()
-
-    // Connection Thread
-    @SuppressLint("MissingPermission")
-    private inner class ConnectThread(device: BluetoothDevice): Thread(){
-        private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            val uuids = device.uuids
-            if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.A2DP_UUID))){
-                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.A2DP_UUID))
-            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.HFP_UUID))) {
-                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.HFP_UUID))
-            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.AVRCP_UUID))) {
-                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.AVRCP_UUID))
-            } else if(uuids.contains(ParcelUuid.fromString(BluetoothUuids.SPP_UUID))){
-                device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
-            } else {
-                null
-            }
-        }
-
-        override fun run() {
-            bluetoothAdapter?.cancelDiscovery()
-
-            mSocket?.let { socket ->
-                try{
-                    socket.connect()
-                } catch (e: IOException){
-                    Log.w("Bluetooth","Couldn't connect the client socket: $e")
-                }
-            }
-        }
-
-        fun cancel(): Boolean{
-            return try {
-                mSocket?.close()
-                true
-            } catch (e: IOException){
-                Log.w("Bluetooth","Couldn't close the client socket: $e")
-                false
-            }
-        }
-    }
 
     // Adapters
     private var registeredAdapter: BluetoothDeviceListAdapter? = null
@@ -408,7 +359,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         super.onDestroy()
 
         for(device in connectedDevices.toList()){
-            device.second.cancel()
+            device.second.disconnectSocket()
         }
         if(bluetoothAdapter?.isDiscovering == true) bluetoothAdapter?.cancelDiscovery()
         unregisterReceiver(broadcastReceiver)
@@ -420,7 +371,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     }
 
     override fun requestDisconnection(device: BluetoothDevice) {
-        connectedDevices[device]?.cancel()
+        connectedDevices[device]?.disconnectSocket()
         connectedDevices.remove(device)
     }
 }
