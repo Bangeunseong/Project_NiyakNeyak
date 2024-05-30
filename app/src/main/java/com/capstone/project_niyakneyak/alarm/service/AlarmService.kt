@@ -2,7 +2,9 @@ package com.capstone.project_niyakneyak.alarm.service
 
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
@@ -91,7 +93,12 @@ class AlarmService : Service() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setFullScreenIntent(pendingIntent, true)
             .build()
-        mediaPlayer!!.setOnPreparedListener { obj: MediaPlayer -> obj.start() }
+        mediaPlayer!!.setOnPreparedListener { obj: MediaPlayer ->
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val volume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
+            obj.setVolume(volume.toFloat(),volume.toFloat())
+            obj.start()
+        }
         if (alarm!!.isVibrate) {
             vibrator!!.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE))
         }

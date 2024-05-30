@@ -5,7 +5,9 @@
     android:id="@+id/item_alarm_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/item_recycler_bg_disabled">
+    android:background="@drawable/item_recycler_bg_disabled"
+    android:paddingHorizontal="15dp"
+    android:paddingVertical="12dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/textview_layout"

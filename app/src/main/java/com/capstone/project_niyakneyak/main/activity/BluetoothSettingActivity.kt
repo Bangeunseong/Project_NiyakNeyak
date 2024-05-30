@@ -41,7 +41,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
 
     // Params for bluetooth connection
     private var isSearching = MutableLiveData(false)
-    private val bluetoothManager: BluetoothManager by lazy { getSystemService(BluetoothManager::class.java) }
+    private val bluetoothManager: BluetoothManager by lazy { getSystemService(BLUETOOTH_SERVICE) as BluetoothManager }
     private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
     private val broadcastReceiver: BroadcastReceiver by lazy {
         object: BroadcastReceiver(){
@@ -63,12 +63,12 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                                 binding.bluetoothEnableBtn.text = "사용 안함"
                                 binding.bluetoothEnableBtn.isEnabled = true
                                 binding.bluetoothEnableBtn.invalidate()
-                                registeredAdapter?.clear()
-                                connectableAdapter?.clear()
                                 binding.bluetoothMainLayout.visibility = View.INVISIBLE
                             }
                             BluetoothAdapter.STATE_TURNING_OFF -> {
-
+                                bluetoothAdapter?.cancelDiscovery()
+                                registeredAdapter?.clear()
+                                connectableAdapter?.clear()
                             }
                             BluetoothAdapter.STATE_TURNING_ON -> {
 
@@ -84,7 +84,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                                 intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                             }
                         if(device != null){
-                            when(device.bondState){
+                            when(device.bondState) {
                                 BOND_BONDED -> {
                                     connectableAdapter?.clear()
                                     connectedDevices[device] = ConnectThread(device)
@@ -114,7 +114,8 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                                 intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                             }
                         if(device != null){
-                           connectableAdapter?.addDevice(device, false)
+                            if(!connectedDevices.containsKey(device))
+                                connectableAdapter?.addDevice(device, false)
                         }
                     }
                     BluetoothDevice.ACTION_ACL_CONNECTED -> {
@@ -153,7 +154,6 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                             for(uuid in uuids){
                                 Log.w("Bluetooth","${uuid.uuid}")
                             }
-
                         }
                     }
                 }
@@ -311,6 +311,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                         } catch (e: IllegalStateException){
                             Log.w("Bluetooth", "Error Occurred!: $e")
                         }
+                        connectedDevices[device] = ConnectThread(device)
                         registeredAdapter?.addDevice(device, connected)
                     }
                 }
@@ -365,7 +366,9 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         unregisterReceiver(broadcastReceiver)
     }
 
+    @SuppressLint("MissingPermission")
     override fun requestConnection(device: BluetoothDevice) {
+        bluetoothAdapter?.cancelDiscovery()
         connectedDevices[device] = ConnectThread(device)
         connectedDevices[device]?.start()
     }
