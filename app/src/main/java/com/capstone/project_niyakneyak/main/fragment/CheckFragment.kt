@@ -34,6 +34,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.toObject
 import java.util.Date
 
 /**
@@ -65,6 +66,17 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         if(result.resultCode == Activity.RESULT_OK){
             viewModel.isSignedIn = true
             query = getCurrentMedicineQuery()
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get()
+                .addOnSuccessListener {
+                    val account = it.toObject<UserAccount>()
+                    connectedDevice =
+                        try {
+                            bluetoothAdapter?.getRemoteDevice(account?.address)
+                        } catch (e: Exception){
+                            Log.w("Bluetooth", "Device Not Found!")
+                            null
+                        }
+                }
             query?.let {
                 adapter = object: CheckMedicineAdapter(it, this@CheckFragment){
                     override fun onDataChanged() {
@@ -107,17 +119,20 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         _firebaseAuth = Firebase.auth
 
         // Bluetooth Device Connection
-        connectedDevice =
-            try {
-                bluetoothAdapter?.getRemoteDevice("")
-            } catch (e: Exception){
-                Log.w("Bluetooth", "Device Not Found!")
-                null
-            }
-
 
         if(firebaseAuth.currentUser != null){
             query = getCurrentMedicineQuery()
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get()
+                .addOnSuccessListener {
+                    val account = it.toObject<UserAccount>()
+                    connectedDevice =
+                        try {
+                            bluetoothAdapter?.getRemoteDevice(account?.address)
+                        } catch (e: Exception){
+                            Log.w("Bluetooth", "Device Not Found!")
+                            null
+                        }
+                }
         }
 
         query?.let {
