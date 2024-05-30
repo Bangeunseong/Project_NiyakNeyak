@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -37,7 +36,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.toObject
-import java.util.Calendar
 
 /**
  * This Fragment is used for showing currently registered alarmList.
@@ -71,10 +69,11 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
                 adapter = object: AlarmAdapter(it, this@AlarmFragment){
                     override fun onDataChanged() {
                         if(itemCount == 0) {
-                            binding.contentTimeLeftBeforeAlarm.setText(R.string.dialog_meds_time_timer_error)
+                            binding.contentTimeLeftBeforeAlarm.visibility = View.VISIBLE
                             binding.contentTimeTable.visibility = View.GONE
                         }
                         else {
+                            binding.contentTimeLeftBeforeAlarm.visibility = View.GONE
                             binding.contentTimeTable.visibility = View.VISIBLE
                         }
                     }
@@ -128,10 +127,11 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
             adapter = object: AlarmAdapter(it, this@AlarmFragment){
                 override fun onDataChanged() {
                     if(itemCount == 0) {
-                        binding.contentTimeLeftBeforeAlarm.setText(R.string.dialog_meds_time_timer_error)
+                        binding.contentTimeLeftBeforeAlarm.visibility = View.VISIBLE
                         binding.contentTimeTable.visibility = View.GONE
                     }
                     else {
+                        binding.contentTimeLeftBeforeAlarm.visibility = View.GONE
                         binding.contentTimeTable.visibility = View.VISIBLE
                     }
                 }
@@ -231,90 +231,6 @@ class AlarmFragment : Fragment(), OnAlarmChangedListener {
 
     private fun shouldStartSignIn(): Boolean {
         return !viewModel.isSignedIn && firebaseAuth.currentUser == null
-    }
-
-    //Functions for getting time difference between next time and current time
-    /*private fun showTime() {
-
-        val timeDifference = timeDifference
-        if (timeDifference != null) {
-            val days = timeDifference / (24 * 60 * 60 * 1000)
-            val hours = timeDifference % (24 * 60 * 60 * 1000) / (60 * 60 * 1000)
-            val minutes = timeDifference % (24 * 60 * 60 * 1000) % (60 * 60 * 1000) / (60 * 1000)
-            binding.contentTimeLeftBeforeAlarm.text = String.format(
-                "%d Days %d hours %d minutes left for next timer rings",
-                days,
-                hours,
-                minutes
-            )
-        } else binding.contentTimeLeftBeforeAlarm.setText(R.string.dialog_meds_time_timer_error)
-        handler!!.postDelayed(runnable!!, 60000)
-    }
-
-    private val timeDifference: Long?
-        get() {
-            val today = Calendar.getInstance()
-            today.timeInMillis = System.currentTimeMillis()
-            var timeDifference: Long? = null
-            if (alarms == null) return null
-            for (alarm in alarms!!) {
-                if (!alarm.isStarted) continue
-                timeDifference = getMinTimeDifference(alarm, today, timeDifference)
-            }
-            return timeDifference
-        }
-
-    private fun getMinTimeDifference(alarm: Alarm?, today: Calendar, timeDifference: Long?): Long {
-        var timeDifference = timeDifference
-        val alarmTime: Calendar = if (!alarm!!.isRecurring) {
-            getAlarmTime(alarm, today)
-        } else {
-            getRecurringAlarmTime(alarm, today)
-        }
-        timeDifference =
-            minTimeDifference(timeDifference, alarmTime.timeInMillis - today.timeInMillis)
-        return timeDifference
-    }*/
-
-    private fun compareTime(target: Calendar, subject: Calendar): Boolean {
-        return target.timeInMillis > subject.timeInMillis
-    }
-
-    private fun getAlarmTime(alarm: Alarm?, today: Calendar): Calendar {
-        val alarmTime = Calendar.getInstance()
-        alarmTime.timeInMillis = System.currentTimeMillis()
-        alarmTime[Calendar.HOUR_OF_DAY] = alarm!!.hour
-        alarmTime[Calendar.MINUTE] = alarm.min
-        alarmTime[Calendar.SECOND] = 0
-        alarmTime[Calendar.MILLISECOND] = 0
-        if (!compareTime(alarmTime, today)) alarmTime.add(Calendar.DAY_OF_MONTH, 1)
-        return alarmTime
-    }
-
-    private fun getRecurringAlarmTime(alarm: Alarm?, today: Calendar): Calendar {
-        val alarmTime = getAlarmTime(alarm, today)
-        var flag = 0
-        var i = alarmTime[Calendar.DAY_OF_WEEK] - 1
-        while (flag < 7) {
-            when (i) {
-                0 -> { if (alarm!!.isSun) return alarmTime }
-                1 -> { if (alarm!!.isMon) return alarmTime }
-                2 -> { if (alarm!!.isTue) return alarmTime }
-                3 -> { if (alarm!!.isWed) return alarmTime }
-                4 -> { if (alarm!!.isThu) return alarmTime }
-                5 -> { if (alarm!!.isFri) return alarmTime }
-                6 -> { if (alarm!!.isSat) return alarmTime }
-            }
-            alarmTime.add(Calendar.DAY_OF_MONTH, 1)
-            i = (i + 1) % 7
-            flag++
-        }
-        return alarmTime
-    }
-
-    private fun minTimeDifference(target: Long?, subject: Long): Long {
-        if (target == null) return subject
-        return if (target < subject) target else subject
     }
 
     companion object{

@@ -77,13 +77,13 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
         fun bind(snapshot: DocumentSnapshot, query: Query?, listener: OnCheckedChecklistListener){
             val medicineData = snapshot.toObject<MedicineData>() ?: return
 
-            binding.checkItemImage.contentDescription = medicineData.itemName
+            binding.checkItemImage.contentDescription = String.format("${medicineData.itemName}")
             Glide.with(itemView).load(medicineData.bigPrdtImgUrl).placeholder(R.drawable.baseline_medication_liquid_24).into(binding.checkItemImage)
-            binding.checkItemName.text = medicineData.itemName
-            binding.checkItemAmount.text = String.format("%02d알", medicineData.dailyAmount)
-            binding.checkItemDetail.text = medicineData.medsDetail
+            binding.checkItemName.text = String.format("이름: ${medicineData.itemName}")
+            binding.checkItemAmount.text = String.format("매 섭취량: %d알", medicineData.dailyAmount)
+            binding.checkItemDetail.text = String.format("세부 사항: ${medicineData.medsDetail}")
             if(medicineData.medsStartDate != null && medicineData.medsEndDate != null){
-                binding.checkItemDuration.text = String.format(SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medicineData.medsStartDate!!) + "~" +
+                binding.checkItemDuration.text = String.format("섭취 기간: " + SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medicineData.medsStartDate!!) + "~" +
                         SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medicineData.medsEndDate!!))
             } else{
                 binding.checkItemDuration.text = "None"
