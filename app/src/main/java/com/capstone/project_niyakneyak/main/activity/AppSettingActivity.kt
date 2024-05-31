@@ -1,5 +1,7 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
@@ -49,6 +51,11 @@ class AppSettingActivity : AppCompatActivity() {
             } ?: run {
                 Toast.makeText(this, "User not found", Toast.LENGTH_LONG).show()
             }
+        }
+
+        binding.button2.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Bangeunseong"))
+            startActivity(browserIntent)
         }
     }
 
