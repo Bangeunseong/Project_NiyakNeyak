@@ -22,6 +22,7 @@ import com.google.firebase.firestore.firestore
 import java.util.Calendar
 import java.util.Random
 
+//TODO: Create message sending method
 class RingActivity : AppCompatActivity() {
     private val snoozeTime =
         ArrayList(mutableListOf("Five Minutes", "Ten Minutes", "Fifteen Minutes"))

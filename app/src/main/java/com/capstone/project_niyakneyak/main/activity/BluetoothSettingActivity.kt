@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothAdapter.STATE_ON
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.BOND_BONDED
+import android.bluetooth.BluetoothDevice.BOND_BONDING
 import android.bluetooth.BluetoothDevice.BOND_NONE
 import android.bluetooth.BluetoothManager
 import android.content.BroadcastReceiver
@@ -31,6 +32,11 @@ import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBindi
 import com.capstone.project_niyakneyak.main.adapter.BluetoothDeviceListAdapter
 import com.capstone.project_niyakneyak.main.listener.OnBTConnChangedListener
 import com.capstone.project_niyakneyak.util.bluetooth.ConnectThread
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import java.lang.IllegalStateException
 import java.lang.reflect.Method
 
@@ -38,6 +44,12 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     // View Binding
     private var _binding: ActivityBluetoothSettingBinding? = null
     private val binding get() = _binding!!
+
+    // Params for device registration
+    private var _firestore: FirebaseFirestore? = null
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firestore get() = _firestore!!
+    private val firebaseAuth get() = _firebaseAuth!!
 
     // Params for bluetooth connection
     private var isSearching = MutableLiveData(false)
@@ -86,10 +98,11 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                         if(device != null){
                             when(device.bondState) {
                                 BOND_BONDED -> {
-                                    connectableAdapter?.clear()
-                                    connectedDevices[device] = ConnectThread(device)
+                                    connectableAdapter?.removeDevice(device)
                                     registeredAdapter?.addDevice(device, false)
-                                    connectedDevices[device]?.start()
+                                }
+                                BOND_BONDING -> {
+                                    connectedDevices[device] = ConnectThread(device)
                                 }
                                 BOND_NONE -> {
                                     connectableAdapter?.clear()
@@ -197,6 +210,9 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
             setResult(RESULT_CANCELED)
             finish()
         }
+
+        if(_firestore == null) _firestore = Firebase.firestore
+        if(_firebaseAuth == null) _firebaseAuth = Firebase.auth
 
         registeredAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf(), this)
         connectableAdapter = BluetoothDeviceListAdapter(mutableListOf(), mutableListOf(), this)
@@ -369,12 +385,22 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
     @SuppressLint("MissingPermission")
     override fun requestConnection(device: BluetoothDevice) {
         bluetoothAdapter?.cancelDiscovery()
-        connectedDevices[device] = ConnectThread(device)
-        connectedDevices[device]?.start()
+        if(device.name.contains("NiyakNeyak")){
+            if(!connectedDevices.containsKey(device))
+                connectedDevices[device] = ConnectThread(device)
+            connectedDevices[device]?.start()
+        } else{
+            Toast.makeText(this, "이 기기와 앱은 서로 호환되지 않습니다!", Toast.LENGTH_SHORT).show()
+        }
     }
 
+    @SuppressLint("MissingPermission")
     override fun requestDisconnection(device: BluetoothDevice) {
-        connectedDevices[device]?.disconnectSocket()
-        connectedDevices.remove(device)
+        if(device.name.contains("NiyakNeyak")){
+            connectedDevices[device]?.disconnectSocket()
+            connectedDevices.remove(device)
+        } else{
+            Toast.makeText(this, "이 기기와 연결을 해제할 수 없습니다!", Toast.LENGTH_SHORT).show()
+        }
     }
 }

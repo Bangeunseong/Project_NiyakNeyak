@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -62,8 +63,13 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         setContentView(binding.root)
 
         binding.toolbar4.setTitle(R.string.toolbar_search_activity)
+        binding.toolbar4.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.toolbar4)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar4.navigationIcon?.mutate().let { icon ->
+            icon?.setTint(Color.WHITE)
+            binding.toolbar4.navigationIcon = icon
+        }
 
         // Observe Data changes of radio button selected position
         viewModel.searchQueryObserver.observe(this){

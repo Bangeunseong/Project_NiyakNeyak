@@ -119,7 +119,6 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         _firebaseAuth = Firebase.auth
 
         // Bluetooth Device Connection
-
         if(firebaseAuth.currentUser != null){
             query = getCurrentMedicineQuery()
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).get()
@@ -213,7 +212,8 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
     }
 
     override fun onItemClicked(data: MedicineData, alarm: Alarm) {
-        TODO("Not yet Implemented")
+        firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection("")
     }
 
     companion object {

@@ -16,16 +16,20 @@ class ConnectThread(device: BluetoothDevice): Thread(){
     private val device: BluetoothDevice? by lazy { device }
     private var inputStream: InputStream? = null
     private var outputStream: OutputStream? = null
-    private val mSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
-        device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
-    }
+    private var mSocket: BluetoothSocket? = null
 
     override fun run() {
+        if(mSocket == null)
+            mSocket = device?.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
+
         mSocket?.let { socket ->
             try{
                 if(device?.bondState == BOND_NONE)
                     device?.createBond()
-                else socket.connect()
+                else {
+                    socket.connect()
+                    write("Buzz".toByteArray())
+                }
             } catch (e: IOException){
                 Log.w("BluetoothSocket", "Error Occurred!: $e")
             }
@@ -33,6 +37,9 @@ class ConnectThread(device: BluetoothDevice): Thread(){
     }
 
     fun read(): String?{
+        if(mSocket == null)
+            mSocket = device?.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
+
         val buffer = ByteArray(1024)
         var bytes: Int
         mSocket?.let { socket ->
@@ -57,6 +64,9 @@ class ConnectThread(device: BluetoothDevice): Thread(){
     }
 
     fun write(bytes: ByteArray): Boolean{
+        if(mSocket == null)
+            mSocket = device?.createInsecureRfcommSocketToServiceRecord(UUID.fromString(BluetoothUuids.SPP_UUID))
+
         mSocket?.let { socket ->
             try {
                 if(outputStream == null) outputStream = socket.outputStream
@@ -76,8 +86,8 @@ class ConnectThread(device: BluetoothDevice): Thread(){
 
     fun disconnectSocket(): Boolean{
         return try {
-            if(inputStream != null) inputStream?.close()
-            if(outputStream != null) outputStream?.close()
+            inputStream?.close()
+            outputStream?.close()
             mSocket?.close()
             true
         } catch (e: IOException){

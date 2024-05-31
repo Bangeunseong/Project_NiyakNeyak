@@ -18,7 +18,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
-import com.capstone.project_niyakneyak.data.alarm_valid_model.AlarmV
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityLoginBinding
 import com.capstone.project_niyakneyak.login.etc.LoggedInUserView
@@ -68,8 +67,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val requestToken = intent.getIntExtra("request_token", 0)
-
         // Initialize GoogleSignInOptions and FirebaseAuth
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(default_web_client_id)
@@ -116,13 +113,8 @@ class LoginActivity : AppCompatActivity() {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID).where(Filter.equalTo(Alarm.FIELD_IS_STARTED, true)).get()
                     .addOnSuccessListener {
-                        if(requestToken == 1){
-                            val intentService = Intent(applicationContext, RescheduleAlarmService::class.java)
-                            applicationContext.startService(intentService)
-                        } else{
-                            val alarmV = AlarmV(alarmCode = 1, isStarted = true)
-                            alarmV.scheduleAlarm(applicationContext)
-                        }
+                        val intentService = Intent(applicationContext, RescheduleAlarmService::class.java)
+                        applicationContext.startService(intentService)
                         setResult(RESULT_OK)
                         finish()
                     }.addOnFailureListener {

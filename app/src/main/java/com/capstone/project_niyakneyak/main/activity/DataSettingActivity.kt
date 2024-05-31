@@ -48,6 +48,7 @@ import java.util.Random
 /**
  * This DialogFragment is used for setting [MedicineData] (which is Medication Info.).
  */
+// TODO: Modify timer selection module!
 class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var _binding: ActivityDataSettingBinding? = null
     private val binding get() = _binding!!
@@ -57,8 +58,10 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var originData: MedicineData? = null
     private var fetchedData: MedicineData = MedicineData()
     private var query: Query? = null
-    private var originAlarmID = mutableListOf<Int>()
-    private var includedAlarmID = mutableListOf<Int>()
+    private var _originAlarmID: MutableList<Int>? = null
+    private var _includedAlarmID: MutableList<Int>? = null
+    private val originAlarmID get() = _originAlarmID!!
+    private val includedAlarmID get() = _includedAlarmID!!
 
     private var _firestore: FirebaseFirestore? = null
     private val firestore get() = _firestore!!
@@ -104,16 +107,10 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     }
     private val alarmSettingLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
-            originAlarmID.clear()
-            includedAlarmID.clear()
             Toast.makeText(this, "Timer Successfully Added!", Toast.LENGTH_SHORT).show()
         } else{
             Toast.makeText(this, "Timer Addition Canceled!", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    companion object{
-        private const val TAG = "DATA_SETTING_ACTIVITY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,6 +124,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         _firebaseAuth = Firebase.auth
 
         snapshotId = intent.getStringExtra("snapshot_id")
+        _includedAlarmID = mutableListOf()
+        _originAlarmID = mutableListOf()
         if(snapshotId != null){
             val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID).document(snapshotId!!)
@@ -211,6 +210,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         _binding = null
         _firebaseAuth = null
         _firestore = null
+        _includedAlarmID = null
+        _originAlarmID = null
     }
 
     private fun setActivity(originData: MedicineData?, binding: ActivityDataSettingBinding){
@@ -242,9 +243,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                         SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsEndDate!!)))
             }
             for(id in originData.alarmList){
-                fetchedData.alarmList.add(id)
-                originAlarmID.add(id)
                 includedAlarmID.add(id)
+                originAlarmID.add(id)
             }
         } else fetchedData.medsID = codeGenerator()
 
@@ -306,7 +306,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     alarms.add(alarm)
                 }
 
-                // Data Write
                 data.alarmList.addAll(includedAlarmID)
 
                 if(data.medsStartDate == null || data.medsEndDate == null){
@@ -353,8 +352,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     }
                 }
 
-                // Data Write
-                data.alarmList.clear()
                 data.alarmList.addAll(includedAlarmID)
 
                 val maxPos =
@@ -384,11 +381,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     override fun onItemClicked(alarm: Alarm) {
         if(includedAlarmID.contains(alarm.alarmCode)){
-            fetchedData.alarmList.remove(alarm.alarmCode)
             includedAlarmID.remove(alarm.alarmCode)
-        }
-        else {
-            fetchedData.alarmList.add(alarm.alarmCode)
+        } else {
             includedAlarmID.add(alarm.alarmCode)
         }
     }
@@ -425,7 +419,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[0])
                     fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[1])
                 }
-
                 if(snapshotId == null) submitData(null, fetchedData)
                 else submitData(snapshotId, fetchedData)
 
@@ -436,5 +429,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             // 다른 메뉴 아이템 처리
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    companion object{
+        private const val TAG = "DATA_SETTING_ACTIVITY"
     }
 }

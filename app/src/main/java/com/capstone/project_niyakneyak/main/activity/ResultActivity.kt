@@ -1,5 +1,6 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.inspect_model.InspectData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityResultBinding
@@ -64,8 +66,13 @@ class ResultActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         binding.contentResultToolbar.title = "Inspection Results"
+        binding.contentResultToolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.contentResultToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.contentResultToolbar.navigationIcon?.mutate().let { icon ->
+            icon?.setTint(Color.WHITE)
+            binding.contentResultToolbar.navigationIcon = icon
+        }
 
         if(firebaseAuth.currentUser == null){
             setResult(RESULT_CANCELED)
