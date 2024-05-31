@@ -327,8 +327,11 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                         } catch (e: IllegalStateException){
                             Log.w("Bluetooth", "Error Occurred!: $e")
                         }
+
                         connectedDevices[device] = ConnectThread(device)
                         registeredAdapter?.addDevice(device, connected)
+                        if(device.name.contains("NiyakNeyak"))
+                            connectedDevices[device]?.start()
                     }
                 }
             }
@@ -376,7 +379,8 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         super.onDestroy()
 
         for(device in connectedDevices.toList()){
-            device.second.disconnectSocket()
+            if(device.first.name.contains("NiyakNeyak"))
+                device.second.disconnectSocket()
         }
         if(bluetoothAdapter?.isDiscovering == true) bluetoothAdapter?.cancelDiscovery()
         unregisterReceiver(broadcastReceiver)

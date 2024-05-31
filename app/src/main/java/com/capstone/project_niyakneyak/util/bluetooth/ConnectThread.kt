@@ -26,10 +26,7 @@ class ConnectThread(device: BluetoothDevice): Thread(){
             try{
                 if(device?.bondState == BOND_NONE)
                     device?.createBond()
-                else {
-                    socket.connect()
-                    write("Buzz".toByteArray())
-                }
+                else socket.connect()
             } catch (e: IOException){
                 Log.w("BluetoothSocket", "Error Occurred!: $e")
             }
