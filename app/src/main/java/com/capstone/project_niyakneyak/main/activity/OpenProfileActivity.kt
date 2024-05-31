@@ -212,7 +212,7 @@ class OpenProfileActivity : AppCompatActivity() {
                                 .apply(RequestOptions.circleCropTransform())
                                 .into(binding.profileImageView)
                         } else {
-                            Toast.makeText(this@OpenProfileActivity, "no", Toast.LENGTH_SHORT).show()
+                            Log.d(TAG, "No such document")
                         }
                     }
                     .addOnFailureListener { exception ->

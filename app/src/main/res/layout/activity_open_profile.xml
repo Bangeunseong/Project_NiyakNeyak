@@ -397,7 +397,7 @@
                     android:layout_width="120sp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
-                    android:text="취소"
+                    android:text="뒤로 가기"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/modify_button"
                     app:layout_constraintStart_toStartOf="parent"
