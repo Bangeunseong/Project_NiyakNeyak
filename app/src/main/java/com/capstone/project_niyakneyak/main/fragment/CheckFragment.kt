@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineHistoryData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentCheckListBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
@@ -213,7 +214,10 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
 
     override fun onItemClicked(data: MedicineData, alarm: Alarm) {
         firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
-            .collection("")
+            .collection(MedicineHistoryData.COLLECTION_ID).document()
+            .set(MedicineHistoryData(
+                data.medsID, data.dailyAmount,
+                data.itemSeq,data.itemName))
     }
 
     companion object {

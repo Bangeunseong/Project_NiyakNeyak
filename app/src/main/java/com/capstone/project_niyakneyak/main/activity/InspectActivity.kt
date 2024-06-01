@@ -72,6 +72,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
     private val defaultScope get() = _defaultScope!!
     private val mainScope get() = _mainScope!!
     private val job = Job()
+    private var isCompleted = true
 
     // BackPressed Callback
     private var callback: OnBackPressedCallback? = null
@@ -162,6 +163,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                 return@setOnClickListener
             }
             mainScope.launch {
+                isCompleted = false
                 binding.contentCreateResultDocumentBtn.isClickable = false
                 binding.contentDocumentProgressBar.visibility = View.VISIBLE
 
@@ -253,6 +255,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
                     }
                 }
             }.invokeOnCompletion {
+                isCompleted = true
                 viewModel.isInspected = true
                 binding.contentCreateResultDocumentBtn.isClickable = true
                 binding.contentDocumentProgressBar.visibility = View.GONE
@@ -268,7 +271,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
             override fun handleOnBackPressed() {
                 if(medicineAdapter!!.itemCount > 0)
                     optionAdapter!!.cancelAllActiveCoroutines()
-                if(!job.isCompleted){
+                if(isCompleted){
                     if(viewModel.isInspected) setResult(RESULT_OK)
                     else setResult(RESULT_CANCELED)
                     finish()
@@ -291,6 +294,20 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
         super.onStop()
 
         medicineAdapter?.stopListening()
+        if(!job.isCompleted) job.cancel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        _binding = null
+        _viewModel = null
+        medicineAdapter = null
+        optionAdapter = null
+        _firestore = null
+        _firebaseAuth = null
+        _mainScope = null
+        _defaultScope = null
     }
 
     override fun onOptionClicked(option: String, jsonObject: JSONObject?) {
@@ -310,7 +327,7 @@ class InspectActivity: AppCompatActivity(), OnClickedOptionListener {
             android.R.id.home -> {
                 if(medicineAdapter!!.itemCount > 0)
                     optionAdapter!!.cancelAllActiveCoroutines()
-                if(!job.isCompleted){
+                if(isCompleted){
                     if(viewModel.isInspected) setResult(RESULT_OK)
                     else setResult(RESULT_CANCELED)
                     finish()

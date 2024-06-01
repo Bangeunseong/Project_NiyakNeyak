@@ -55,8 +55,10 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var adapter: AlarmSelectionAdapter? = null
 
     private var snapshotId: String? = null
-    private var originData: MedicineData? = null
-    private var fetchedData: MedicineData = MedicineData()
+    private var _originData: MedicineData? = null
+    private val originData get() = _originData!!
+    private var _fetchedData: MedicineData? = null
+    private val fetchedData get() = _fetchedData!!
     private var query: Query? = null
     private var _originAlarmID: MutableList<Int>? = null
     private var _includedAlarmID: MutableList<Int>? = null
@@ -131,7 +133,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 .collection(MedicineData.COLLECTION_ID).document(snapshotId!!)
 
             medicationRef.get().addOnSuccessListener {
-                originData = it.toObject(MedicineData::class.java)
+                _originData = it.toObject(MedicineData::class.java)
 
                 // Setting toolbar title
                 binding.toolbar2.setTitle(R.string.dialog_modify_form_title)
@@ -212,25 +214,24 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         _firestore = null
         _includedAlarmID = null
         _originAlarmID = null
+        _originData = null
+        _fetchedData = null
     }
 
     private fun setActivity(originData: MedicineData?, binding: ActivityDataSettingBinding){
+        _fetchedData = MedicineData()
+
         if(originData != null){
-            fetchedData.medsID = originData.medsID
-            fetchedData.itemSeq = originData.itemSeq; fetchedData.itemName = originData.itemName
-            fetchedData.itemEngName = originData.itemEngName; fetchedData.entpName = originData.entpName
-            fetchedData.entpEngName = originData.entpEngName; fetchedData.entpSeq = originData.entpSeq
-            fetchedData.entpNo = originData.entpNo
-            if(originData.cancelDate != null)
-                fetchedData.itemPermDate = originData.itemPermDate
-            fetchedData.inDuty = originData.inDuty; fetchedData.prdlstStrdCode = originData.prdlstStrdCode
-            fetchedData.spcltyPblc = originData.spcltyPblc; fetchedData.pdtType = originData.pdtType
-            fetchedData.pdtPermNo = originData.pdtPermNo; fetchedData.itemIngrName = originData.itemIngrName
-            fetchedData.itemIngrCnt = originData.itemIngrCnt; fetchedData.bigPrdtImgUrl = originData.bigPrdtImgUrl
-            fetchedData.permKindCode= originData.permKindCode
-            if(originData.cancelDate != null)
-                fetchedData.cancelDate = originData.cancelDate
-            fetchedData.cancelName = originData.cancelName; fetchedData.ediCode = originData.ediCode; fetchedData.bizrNo = originData.bizrNo
+            _fetchedData = MedicineData(
+                originData.itemSeq,originData.itemName,originData.itemEngName,
+                originData.entpName,originData.entpEngName,originData.entpSeq,
+                originData.entpNo, originData.itemPermDate, originData.inDuty,
+                originData.prdlstStrdCode, originData.spcltyPblc, originData.pdtType,
+                originData.pdtPermNo, originData.itemIngrName, originData.itemIngrCnt,
+                originData.bigPrdtImgUrl, originData.permKindCode, originData.cancelDate,
+                originData.cancelName, originData.ediCode, originData.bizrNo,
+                originData.medsID, originData.dailyAmount, originData.medsDetail,
+                originData.medsStartDate, originData.medsEndDate, originData.alarmList)
             binding.medsNameText.setText(originData.itemName)
             if(originData.dailyAmount > 0){
                 binding.medsDailyAmountText.setText(originData.dailyAmount.toString())
@@ -246,7 +247,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 includedAlarmID.add(id)
                 originAlarmID.add(id)
             }
-        } else fetchedData.medsID = codeGenerator()
+        } else _fetchedData = MedicineData(medsID = codeGenerator())
 
         val amountFilter =
             InputFilter{ source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
@@ -352,6 +353,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     }
                 }
 
+                data.alarmList.clear()
                 data.alarmList.addAll(includedAlarmID)
 
                 val maxPos =
@@ -407,7 +409,11 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             }
             R.id.menu_save_data -> {
                 // Exception Handling -> last resort
-                if(fetchedData.itemName.isNullOrEmpty()) return true
+                if(fetchedData.itemName.isNullOrEmpty()) {
+                    setResult(RESULT_CANCELED)
+                    finish()
+                    return true
+                }
 
                 fetchedData.dailyAmount = binding.medsDailyAmountText.text.toString().toInt()
                 fetchedData.medsDetail =

@@ -8,9 +8,8 @@ import java.util.Date
 data class MedicineHistoryData(
     var medsID: Int = -1,
     var dailyAmount: Int = 0,
+    var itemSeq: String? = null,
     var itemName: String? = null,
-    var itemEngName: String? = null,
-    var bigPrdtImgUrl: String? = null,
     @ServerTimestamp
     var timeStamp: Date? = null) {
 

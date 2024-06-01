@@ -210,7 +210,7 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
                     Log.w(TAG, jsonObject.toString())
                     if (jsonObject != null) channel.send("Success")
                     else channel.send("Failed")
-                }.join()
+                }
 
                 // Start Setting Adapter View and Refresh page count
                 mainScope.launch {
@@ -275,10 +275,14 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         if(ioScope.isActive) ioScope.cancel()
         if(mainScope.isActive) mainScope.cancel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         _binding = null
         _apiFunctions = null
         adapter = null
