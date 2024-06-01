@@ -2,6 +2,9 @@ package com.capstone.project_niyakneyak.alarm.activity
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
@@ -12,27 +15,44 @@ import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.getSystemService
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.databinding.ActivityRingBinding
 import com.capstone.project_niyakneyak.alarm.service.AlarmService
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
+import com.capstone.project_niyakneyak.util.bluetooth.ConnectThread
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import java.util.Calendar
 import java.util.Random
 
 //TODO: Create message sending method
 class RingActivity : AppCompatActivity() {
-    private val snoozeTime =
-        ArrayList(mutableListOf("Five Minutes", "Ten Minutes", "Fifteen Minutes"))
-    private var snoozeVal = 0
+    // Params for View Binding
     private var _binding: ActivityRingBinding? = null
     private val binding get() = _binding!!
     private var alarm: Alarm? = null
 
     private var _firestore: FirebaseFirestore? = null
     private val firestore get() = _firestore!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
+
+    // Params for bluetooth service
+    private val bluetoothManager: BluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
+    private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
+    private var connectedDevice: BluetoothDevice? = null
+    private var connectThread: ConnectThread? = null
+
+    // Params for snooze
+    private val snoozeTime =
+        ArrayList(mutableListOf("Five Minutes", "Ten Minutes", "Fifteen Minutes"))
+    private var snoozeVal = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +61,7 @@ class RingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -61,6 +82,17 @@ class RingActivity : AppCompatActivity() {
                 bundle.getParcelable(getString(R.string.arg_alarm_obj))
             }
         }
+
+        firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .get().addOnSuccessListener {
+                val account = it.toObject<UserAccount>()
+                if(account?.address != null){
+                    connectedDevice = bluetoothAdapter?.getRemoteDevice(account.address)
+                    if(connectedDevice != null)
+                        connectThread = ConnectThread(connectedDevice!!)
+                }
+            }
+
         binding.alarmRingSnoozeTime.adapter = ArrayAdapter(applicationContext, android.R.layout.simple_spinner_dropdown_item, snoozeTime)
         binding.alarmRingSnoozeTime.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -77,10 +109,18 @@ class RingActivity : AppCompatActivity() {
         animateClock()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        connectThread?.start()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
         _firestore = null
+        connectThread?.disconnectSocket()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(false)
             setTurnScreenOn(false)
@@ -112,18 +152,18 @@ class RingActivity : AppCompatActivity() {
                 calendar[Calendar.HOUR_OF_DAY],
                 calendar[Calendar.MINUTE],
                 true,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                "Snooze",
-                RingtoneManager.getActualDefaultRingtoneUri(baseContext, RingtoneManager.TYPE_ALARM)
+                isRecurring = false,
+                isMon = false,
+                isTue = false,
+                isWed = false,
+                isThu = false,
+                isFri = false,
+                isSat = false,
+                isSun = false,
+                title = "Snooze",
+                tone = RingtoneManager.getActualDefaultRingtoneUri(baseContext, RingtoneManager.TYPE_ALARM)
                     .toString(),
-                false
+                isVibrate = false
             )
         }
         alarm!!.scheduleAlarm(applicationContext)
@@ -133,8 +173,10 @@ class RingActivity : AppCompatActivity() {
     }
 
     private fun dismissAlarm() {
+        connectThread?.write("buzz".toByteArray())
         if (alarm != null) {
-            val alarmsRef = firestore.collection("alarms").document(alarm!!.alarmCode.toString())
+            val alarmsRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(Alarm.COLLECTION_ID).document(alarm!!.alarmCode.toString())
             if (!alarm!!.isRecurring) {
                 alarm!!.cancelAlarm(baseContext)
                 alarmsRef.update(Alarm.FIELD_IS_STARTED, false)

@@ -30,5 +30,6 @@ data class UserAccount(
         const val PHONE_NUMBER = "phoneNum"
         const val BIRTH = "birth"
         const val PROFILE = "profilePic"
+        const val MAC_ADDRESS = "address"
     }
 }

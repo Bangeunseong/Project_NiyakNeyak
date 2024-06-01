@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityBluetoothSettingBinding
 import com.capstone.project_niyakneyak.main.adapter.BluetoothDeviceListAdapter
 import com.capstone.project_niyakneyak.main.listener.OnBTConnChangedListener
@@ -100,6 +101,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                                 BOND_BONDED -> {
                                     connectableAdapter?.removeDevice(device)
                                     registeredAdapter?.addDevice(device, false)
+                                    firestore.collection(UserAccount.COLLECTION_ID).document().update(UserAccount.MAC_ADDRESS, device.address)
                                 }
                                 BOND_BONDING -> {
                                     connectedDevices[device] = ConnectThread(device)
