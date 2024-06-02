@@ -15,7 +15,6 @@ import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.getSystemService
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.databinding.ActivityRingBinding
@@ -31,7 +30,6 @@ import com.google.firebase.firestore.toObject
 import java.util.Calendar
 import java.util.Random
 
-//TODO: Create message sending method
 class RingActivity : AppCompatActivity() {
     // Params for View Binding
     private var _binding: ActivityRingBinding? = null
@@ -173,7 +171,12 @@ class RingActivity : AppCompatActivity() {
     }
 
     private fun dismissAlarm() {
-        connectThread?.write("buzz".toByteArray())
+        try{
+            connectThread?.write("buzz".toByteArray())
+        } catch (e: Exception){
+            Log.w("TAG", "Could not connected to bluetooth socket!")
+        }
+
         if (alarm != null) {
             val alarmsRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(Alarm.COLLECTION_ID).document(alarm!!.alarmCode.toString())

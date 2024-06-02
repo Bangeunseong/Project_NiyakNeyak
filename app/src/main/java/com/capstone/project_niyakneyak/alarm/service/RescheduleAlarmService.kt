@@ -78,7 +78,7 @@ class RescheduleAlarmService : LifecycleService() {
                         .setAutoCancel(true)
                         .build()
                     notificationManager.notify(2, notification)
-                    stopForeground(STOP_FOREGROUND_DETACH)
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                 }.addOnFailureListener {
                     Log.w("RescheduleService", "Reschedule Failed: $it")
@@ -93,7 +93,7 @@ class RescheduleAlarmService : LifecycleService() {
                         .setAutoCancel(true)
                         .build()
                     notificationManager.notify(2, notification)
-                    stopForeground(STOP_FOREGROUND_DETACH)
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                 }
         } else{
