@@ -240,8 +240,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             if (originData.medsStartDate != null && originData.medsEndDate != null) {
                 binding.medsDateText.setText(
                     String.format("%s~%s",
-                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsStartDate!!),
-                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsEndDate!!)))
+                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREA).format(originData.medsStartDate!!),
+                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREA).format(originData.medsEndDate!!)))
             }
             for(id in originData.alarmList){
                 includedAlarmID.add(id)
@@ -285,7 +285,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 val end = Date()
                 start.time = selection.first
                 end.time = selection.second!!
-                val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN)
+                val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd",Locale.KOREA)
                 binding.medsDateText.setText(String.format("%s~%s", dateFormat.format(start), dateFormat.format(end)))
             }
             datePicker.addOnNegativeButtonClickListener { }
@@ -422,8 +422,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     if (binding.medsDateText.text.isNullOrEmpty()) null else binding.medsDateText.text.toString()
                 if (medsDateText!!.isNotEmpty()) {
                     val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                    fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[0])
-                    fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[1])
+                    fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREA).parse(dates[0])
+                    fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREA).parse(dates[1])
                 }
                 if(snapshotId == null) submitData(null, fetchedData)
                 else submitData(snapshotId, fetchedData)

@@ -36,7 +36,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.toObject
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 /**
  * This Fragment is used for showing daily Medication list by using [CheckFragment.adapter].
@@ -213,11 +215,13 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
     }
 
     override fun onItemClicked(data: MedicineData, alarm: Alarm) {
+
+
         val query =
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(MedicineHistoryData.COLLECTION_ID).document()
         firestore.runTransaction { transaction ->
-            transaction.set(query, MedicineHistoryData(data.medsID, data.dailyAmount, data.itemSeq, data.itemName))
+            transaction.set(query, MedicineHistoryData(data.medsID, data.dailyAmount, data.itemSeq, data.itemName, alarm.alarmCode))
         }
     }
 

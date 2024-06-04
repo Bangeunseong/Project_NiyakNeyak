@@ -42,7 +42,7 @@ class RingActivity : AppCompatActivity() {
     private val firebaseAuth get() = _firebaseAuth!!
 
     // Params for bluetooth service
-    private val bluetoothManager: BluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
+    private val bluetoothManager: BluetoothManager by lazy { getSystemService(BLUETOOTH_SERVICE) as BluetoothManager }
     private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
     private var connectedDevice: BluetoothDevice? = null
     private var connectThread: ConnectThread? = null

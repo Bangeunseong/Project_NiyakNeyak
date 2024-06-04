@@ -6,18 +6,67 @@ import androidx.recyclerview.widget.RecyclerView
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
+import com.capstone.project_niyakneyak.data.medication_model.MedicineHistoryData
+import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerCheckItemBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedChecklistListener
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 /**
  *
  */
 open class CheckAlarmAdapter(query: Query, private val medicineData: MedicineData, private val onCheckedChecklistListener: OnCheckedChecklistListener) :
     FireStoreAdapter<CheckAlarmAdapter.ViewHolder>(query){
+    private var _firestore: FirebaseFirestore? = null
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firestore get() = _firestore!!
+    private val firebaseAuth get() = _firebaseAuth!!
+    private var documents: MutableList<MedicineHistoryData>? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
+        documents = mutableListOf()
+
+        val start = Calendar.getInstance(Locale.KOREA)
+        val end = Calendar.getInstance(Locale.KOREA)
+        start.timeInMillis =  System.currentTimeMillis()
+        end.timeInMillis = System.currentTimeMillis()
+        start.set(Calendar.HOUR_OF_DAY, 0)
+        start.set(Calendar.MINUTE, 0)
+        start.set(Calendar.SECOND, 0)
+        end.set(Calendar.HOUR_OF_DAY, 23)
+        end.set(Calendar.MINUTE, 59)
+        end.set(Calendar.SECOND, 59)
+
+        firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(MedicineHistoryData.COLLECTION_ID)
+            .where(
+                Filter.and(
+                    Filter.greaterThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(start.timeInMillis)),
+                    Filter.lessThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(end.timeInMillis)),
+                    Filter.equalTo(MedicineHistoryData.FIELD_MEDICINE_ID, medicineData.medsID))
+            ).get().addOnSuccessListener {
+                if(!it.isEmpty){
+                    documents?.clear()
+                    for(document in it.documents){
+                        val medicineHistoryData = document.toObject<MedicineHistoryData>() ?: continue
+                        documents?.add(medicineHistoryData)
+                    }
+                }
+            }
+
         return ViewHolder(ItemRecyclerCheckItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
@@ -45,7 +94,18 @@ open class CheckAlarmAdapter(query: Query, private val medicineData: MedicineDat
                 binding.clockVibrationIcon.contentDescription = "notVibrating"
                 binding.clockVibrationIcon.setImageResource(R.drawable.ic_sound_off_icon)
             }
-            binding.clockCheckBox.setOnClickListener { listener.onItemClicked(medicineData, alarm) }
+
+            if(documents != null){
+                for(document in documents!!){
+                    if(document.alarmCode == alarm.alarmCode){
+                        binding.clockCheckBox.isChecked = true
+                        binding.clockCheckBox.isEnabled = false
+                    }
+                }
+            }
+            binding.clockCheckBox.setOnClickListener {
+                listener.onItemClicked(medicineData, alarm)
+            }
         }
     }
 }

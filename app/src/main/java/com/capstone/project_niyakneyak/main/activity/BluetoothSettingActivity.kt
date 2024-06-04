@@ -101,7 +101,8 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
                                 BOND_BONDED -> {
                                     connectableAdapter?.removeDevice(device)
                                     registeredAdapter?.addDevice(device, false)
-                                    firestore.collection(UserAccount.COLLECTION_ID).document().update(UserAccount.MAC_ADDRESS, device.address)
+                                    firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                                        .update(UserAccount.MAC_ADDRESS, device.address)
                                 }
                                 BOND_BONDING -> {
                                     connectedDevices[device] = ConnectThread(device)
