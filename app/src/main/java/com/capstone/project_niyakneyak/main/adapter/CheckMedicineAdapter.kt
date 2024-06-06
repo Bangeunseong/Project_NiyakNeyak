@@ -52,28 +52,18 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
         val medicineData = snapshot.toObject<MedicineData>() ?: return
 
         FirebaseFirestore.setLoggingEnabled(true)
-        if(_firestore == null) _firestore = Firebase.firestore
-        if(_firebaseAuth == null) _firebaseAuth = Firebase.auth
+        if (_firestore == null) _firestore = Firebase.firestore
+        if (_firebaseAuth == null) _firebaseAuth = Firebase.auth
 
-        if(firebaseAuth.currentUser != null){
+        if (firebaseAuth.currentUser != null) {
             secondQuery = getCurrentDateQuery(medicineData)
         }
 
         holder.bind(snapshot, secondQuery, listener)
     }
 
-    override fun onViewAttachedToWindow(holder: ViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.startListening()
-    }
-
-    override fun onViewDetachedFromWindow(holder: ViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.stopListening()
-    }
-
     inner class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
-        private lateinit var adapter: CheckAlarmAdapter
+        private var adapter: CheckAlarmAdapter? = null
         fun bind(snapshot: DocumentSnapshot, query: Query?, listener: OnCheckedChecklistListener){
             val medicineData = snapshot.toObject<MedicineData>() ?: return
 
@@ -111,16 +101,15 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
             binding.alarmCheckList.layoutManager = LinearLayoutManager(binding.root.context)
 
             binding.checkVisibilityBtn.setOnClickListener {
-                if(binding.alarmCheckList.isVisible) binding.alarmCheckList.visibility = View.GONE
-                else binding.alarmCheckList.visibility = View.VISIBLE
+                if(binding.alarmCheckList.isVisible) {
+                    adapter?.stopListening()
+                    binding.alarmCheckList.visibility = View.GONE
+                }
+                else {
+                    adapter?.startListening()
+                    binding.alarmCheckList.visibility = View.VISIBLE
+                }
             }
-        }
-
-        fun startListening(){
-            adapter.startListening()
-        }
-        fun stopListening(){
-            adapter.stopListening()
         }
     }
 

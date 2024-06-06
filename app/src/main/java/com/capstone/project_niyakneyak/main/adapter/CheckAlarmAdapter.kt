@@ -1,7 +1,11 @@
 package com.capstone.project_niyakneyak.main.adapter
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
@@ -9,11 +13,13 @@ import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.data.medication_model.MedicineHistoryData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerCheckItemBinding
+import com.capstone.project_niyakneyak.main.fragment.AlarmFragment
 import com.capstone.project_niyakneyak.main.listener.OnCheckedChecklistListener
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -64,6 +70,7 @@ open class CheckAlarmAdapter(query: Query, private val medicineData: MedicineDat
                         val medicineHistoryData = document.toObject<MedicineHistoryData>() ?: continue
                         documents?.add(medicineHistoryData)
                     }
+                    notifyDataSetChanged()
                 }
             }
 
@@ -98,13 +105,26 @@ open class CheckAlarmAdapter(query: Query, private val medicineData: MedicineDat
             if(documents != null){
                 for(document in documents!!){
                     if(document.alarmCode == alarm.alarmCode){
+                        Log.w("CheckAlarmAdapter", "Found Medicine: ${medicineData.medsID}, ${alarm.alarmCode}")
                         binding.clockCheckBox.isChecked = true
                         binding.clockCheckBox.isEnabled = false
                     }
                 }
             }
+
             binding.clockCheckBox.setOnClickListener {
-                listener.onItemClicked(medicineData, alarm)
+                val builder = AlertDialog.Builder(itemView.context)
+                builder.setTitle("주의!")
+                builder.setMessage(String.format("${medicineData.itemName}을 %02d:%02d에 맞춰 드셨습니까?\n이를 기록하시면 취소할 수 없습니다!", alarm.hour, alarm.min))
+                builder.setPositiveButton("네") { _: DialogInterface?, _: Int ->
+                    listener.onItemClicked(medicineData, alarm)
+                    binding.clockCheckBox.isChecked = true
+                    binding.clockCheckBox.isEnabled = false
+                }
+                builder.setNegativeButton("아니요") { _: DialogInterface?, _: Int ->
+                    binding.clockCheckBox.isChecked = false
+                }
+                builder.create().show()
             }
         }
     }

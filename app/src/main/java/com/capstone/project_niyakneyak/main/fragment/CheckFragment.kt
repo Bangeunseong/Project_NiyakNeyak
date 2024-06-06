@@ -215,8 +215,6 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
     }
 
     override fun onItemClicked(data: MedicineData, alarm: Alarm) {
-
-
         val query =
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
             .collection(MedicineHistoryData.COLLECTION_ID).document()
