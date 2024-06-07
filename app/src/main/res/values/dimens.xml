@@ -1,3 +1,5 @@
 <resources>
+    <dimen name="dot_size">8dp</dimen>
+    <dimen name="dot_margin">4dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
 </resources>

@@ -43,6 +43,9 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+        <activity android:name=".main.activity.HowToUseActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.ProfileChangeActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>

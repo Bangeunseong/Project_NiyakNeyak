@@ -20,6 +20,7 @@ import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
+import com.capstone.project_niyakneyak.main.activity.HowToUseActivity
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -93,6 +94,11 @@ class SettingFragment : Fragment() {
 
         binding.reportSettings.setOnClickListener {
             sendFeedback()
+        }
+
+        binding.howtoSettings.setOnClickListener {
+            val intent = Intent(activity, HowToUseActivity::class.java)
+            startActivity(intent)
         }
 
         firestore.collection("users").document(firebaseAuth.currentUser!!.uid).get()
