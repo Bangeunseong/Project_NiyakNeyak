@@ -14,7 +14,8 @@ class HowToUseActivity : AppCompatActivity() {
         R.drawable.how_to_img1,
         R.drawable.how_to_img2,
         R.drawable.how_to_img3,
-        R.drawable.how_to_img4
+        R.drawable.how_to_img4,
+        R.drawable.how_to_img5
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
