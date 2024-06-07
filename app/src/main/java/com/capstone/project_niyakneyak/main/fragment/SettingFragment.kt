@@ -22,6 +22,7 @@ import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
 import com.capstone.project_niyakneyak.main.activity.HowToUseActivity
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
+import com.capstone.project_niyakneyak.main.activity.PolicyActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -98,6 +99,11 @@ class SettingFragment : Fragment() {
 
         binding.howtoSettings.setOnClickListener {
             val intent = Intent(activity, HowToUseActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.policySettings.setOnClickListener {
+            val intent = Intent(activity, PolicyActivity::class.java)
             startActivity(intent)
         }
 

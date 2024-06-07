@@ -46,6 +46,9 @@
         <activity android:name=".main.activity.HowToUseActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".main.activity.PolicyActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".main.activity.ProfileChangeActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
