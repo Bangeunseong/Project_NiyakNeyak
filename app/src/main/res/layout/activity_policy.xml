@@ -160,7 +160,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="약관에 대한 질문이 있거나 기타 문의 사항이 있는 경우, 다음 연락처로 문의해 주시기 바랍니다:\n이메일: support@[yourappdomain].com"
+                android:text="약관에 대한 질문이 있거나 기타 문의 사항이 있는 경우, 다음 연락처로 문의해 주시기 바랍니다:\n이메일: kochinko021024@gmail.com"
                 android:paddingBottom="16dp"/>
 
             <TextView
@@ -229,7 +229,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="사용자는 언제든지 자신의 개인정보에 접근하거나 수정할 수 있습니다. 개인정보 접근 및 수정 요청은 support@[yourappdomain].com으로 문의해 주시기 바랍니다."
+                android:text="사용자는 언제든지 자신의 개인정보에 접근하거나 수정할 수 있습니다. 개인정보 접근 및 수정 요청은 kochinko021024@gmail.com으로 문의해 주시기 바랍니다."
                 android:paddingBottom="16dp"/>
 
             <TextView
@@ -253,7 +253,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="개인정보 보호정책에 대한 질문이 있거나 기타 문의 사항이 있는 경우, 다음 연락처로 문의해 주시기 바랍니다:\n이메일: support@[yourappdomain].com"
+                android:text="개인정보 보호정책에 대한 질문이 있거나 기타 문의 사항이 있는 경우, 다음 연락처로 문의해 주시기 바랍니다:\n이메일: kochinko021024@gmail.com"
                 android:paddingBottom="16dp"/>
 
         </LinearLayout>
