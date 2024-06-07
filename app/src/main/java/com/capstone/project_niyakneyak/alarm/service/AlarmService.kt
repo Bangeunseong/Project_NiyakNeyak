@@ -1,7 +1,6 @@
 package com.capstone.project_niyakneyak.alarm.service
 
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
@@ -14,13 +13,14 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
 import com.capstone.project_niyakneyak.App
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.alarm.activity.RingActivity
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import java.io.IOException
 
-class AlarmService : Service() {
+class AlarmService : LifecycleService() {
     private var mediaPlayer: MediaPlayer? = null
     private var vibrator: Vibrator? = null
     var alarm: Alarm? = null
@@ -42,8 +42,9 @@ class AlarmService : Service() {
         )
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val bundle = intent.getBundleExtra(getString(R.string.arg_alarm_bundle_obj))
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+        val bundle = intent?.getBundleExtra(getString(R.string.arg_alarm_bundle_obj))
         if(bundle != null){
             alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getParcelable(getString(R.string.arg_alarm_obj), Alarm::class.java)
@@ -93,6 +94,7 @@ class AlarmService : Service() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setFullScreenIntent(pendingIntent, true)
             .build()
+        startForeground(1, notification)
         mediaPlayer!!.setOnPreparedListener { obj: MediaPlayer ->
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             val volume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
@@ -102,7 +104,6 @@ class AlarmService : Service() {
         if (alarm!!.isVibrate) {
             vibrator!!.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE))
         }
-        startForeground(1, notification)
         return START_NOT_STICKY
     }
 
@@ -113,6 +114,7 @@ class AlarmService : Service() {
     }
 
     override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
         return null
     }
 }

@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingVertical="4dp"
+    android:background="@drawable/item_inspect_current_medicine_bg">
 
     <ImageView
         android:id="@+id/default_img"

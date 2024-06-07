@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -29,17 +30,21 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_main"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_main_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Project_NiyakNeyak"
         android:enableOnBackInvokedCallback="true"
         tools:targetApi="34">
 
-        <service android:name=".alarm.service.AlarmService" />
-        <service android:name=".alarm.service.RescheduleAlarmService" />
-        <service android:name=".util.service.AlarmValidationService" />
+        <service android:name=".alarm.service.AlarmService"
+            android:foregroundServiceType="mediaPlayback"
+            android:enabled="true"/>
+        <service android:name=".alarm.service.RescheduleAlarmService"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".util.service.AlarmValidationService"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver
             android:name=".alarm.receiver.AlarmReceiver"

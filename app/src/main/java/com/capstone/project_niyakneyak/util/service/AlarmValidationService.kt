@@ -2,11 +2,11 @@ package com.capstone.project_niyakneyak.util.service
 
 import android.app.Notification
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
 import com.capstone.project_niyakneyak.App
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
@@ -23,7 +23,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import java.util.Date
 
-class AlarmValidationService: Service() {
+class AlarmValidationService: LifecycleService() {
     // Params for Firebase Access
     private var _firestore: FirebaseFirestore? = null
     private var _firebaseAuth: FirebaseAuth? = null
@@ -44,8 +44,9 @@ class AlarmValidationService: Service() {
         _firebaseAuth = Firebase.auth
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val bundle = intent.getBundleExtra(getString(R.string.arg_alarm_bundle_obj))
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+        val bundle = intent?.getBundleExtra(getString(R.string.arg_alarm_bundle_obj))
 
         alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             bundle?.getParcelable(getString(R.string.arg_alarm_obj), AlarmV::class.java)
@@ -198,7 +199,8 @@ class AlarmValidationService: Service() {
         return START_NOT_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
         return null
     }
 

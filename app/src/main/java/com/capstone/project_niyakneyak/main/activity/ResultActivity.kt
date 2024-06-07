@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.inspect_model.InspectData
@@ -65,7 +66,7 @@ class ResultActivity: AppCompatActivity() {
         _binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.contentResultToolbar.title = "Inspection Results"
+        binding.contentResultToolbar.title = "검사 결과"
         binding.contentResultToolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.contentResultToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -209,6 +210,27 @@ class ResultActivity: AppCompatActivity() {
         binding.contentPrgntWomenAttnView.layoutManager = LinearLayoutManager(this)
         binding.contentPrgntWomenAttnView.addItemDecoration(VerticalItemDecorator(10))
         binding.contentPrgntWomenAttnView.addItemDecoration(HorizontalItemDecorator(10))
+
+        binding.contentUsageJointText.setOnClickListener {
+            if(binding.contentUsageJointViewLayout.isVisible) binding.contentUsageJointViewLayout.visibility = View.GONE
+            else binding.contentUsageJointViewLayout.visibility = View.VISIBLE
+        }
+        binding.contentElderlyAttnText.setOnClickListener {
+            if(binding.contentElderlyAttnViewLayout.isVisible) binding.contentElderlyAttnViewLayout.visibility = View.GONE
+            else binding.contentElderlyAttnViewLayout.visibility = View.VISIBLE
+        }
+        binding.contentConsumeDurationAttnText.setOnClickListener {
+            if(binding.contentConsumeDurationAttnViewLayout.isVisible) binding.contentConsumeDurationAttnViewLayout.visibility = View.GONE
+            else binding.contentConsumeDurationAttnViewLayout.visibility = View.VISIBLE
+        }
+        binding.contentSpcfcAgeGradeAttnText.setOnClickListener {
+            if(binding.contentSpcfcAgeGradeAttnViewLayout.isVisible) binding.contentSpcfcAgeGradeAttnViewLayout.visibility = View.GONE
+            else binding.contentSpcfcAgeGradeAttnViewLayout.visibility = View.VISIBLE
+        }
+        binding.contentPrgntWomenAttnText.setOnClickListener {
+            if(binding.contentPrgntWomenAttnViewLayout.isVisible) binding.contentPrgntWomenAttnViewLayout.visibility = View.GONE
+            else binding.contentPrgntWomenAttnViewLayout.visibility = View.VISIBLE
+        }
     }
 
     override fun onAttachedToWindow() {
