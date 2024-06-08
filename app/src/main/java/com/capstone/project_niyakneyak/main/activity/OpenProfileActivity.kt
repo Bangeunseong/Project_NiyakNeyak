@@ -38,7 +38,7 @@ class OpenProfileActivity : AppCompatActivity() {
     private var url: String? = null
 
     companion object {
-        private const val TAG = "OPEN_PROFILE_ACTIVITY"
+        const val TAG = "OPEN_PROFILE_ACTIVITY"
         private const val IMAGE_PICK_CODE = 1000
     }
 
@@ -204,7 +204,7 @@ class OpenProfileActivity : AppCompatActivity() {
             if (userId != null) {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
-                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != null && document.getString("profilePic") != "null"){
+                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != "default_profile_image_url"){
                             url = document.getString("profilePic")
                             val profilePicUrl = document.getString("profilePic")
                             Glide.with(this@OpenProfileActivity)
@@ -212,7 +212,9 @@ class OpenProfileActivity : AppCompatActivity() {
                                 .apply(RequestOptions.circleCropTransform())
                                 .into(binding.profileImageView)
                         } else {
-                            Log.d(TAG, "No such document")
+                            // 프로필 이미지가 없을 경우 기본 이미지로 설정
+                            binding.profileImageView.setImageResource(R.drawable.baseline_account_circle_24)
+                            Log.d(TAG, "Profile picture URL is null or empty, reverting to default image")
                         }
                     }
                     .addOnFailureListener { exception ->

@@ -3,6 +3,7 @@ package com.capstone.project_niyakneyak.main.fragment
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,6 +36,7 @@ class SettingFragment : Fragment() {
 
     private var userId: String? = null
     private val uiScope = CoroutineScope(Dispatchers.Main)
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
@@ -115,6 +117,7 @@ class SettingFragment : Fragment() {
         }
     }
 
+
     private fun showImagePopup() {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_image_popup, null)
         val popupImageView = dialogView.findViewById<ImageView>(R.id.popupImageView)
@@ -126,15 +129,20 @@ class SettingFragment : Fragment() {
                 .addOnSuccessListener { document ->
                     if (document != null && document.contains("profilePic")) {
                         val profilePicUrl = document.getString("profilePic")
-                        if (!profilePicUrl.isNullOrEmpty()) {
+                        if (!profilePicUrl.isNullOrEmpty() && profilePicUrl != "default_profile_image_url") {
                             // Glide를 사용하여 원본 이미지를 로드합니다.
+                            val uri = Uri.parse(profilePicUrl)
                             Glide.with(this)
-                                .load(profilePicUrl)
+                                .load(uri)
+                                .error(binding.profileImageView.drawable)
                                 .into(popupImageView)
                         } else {
                             // 기본 이미지 사용
                             popupImageView.setImageDrawable(binding.profileImageView.drawable)
                         }
+                    } else {
+                        // 기본 이미지 사용
+                        popupImageView.setImageDrawable(binding.profileImageView.drawable)
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -151,7 +159,6 @@ class SettingFragment : Fragment() {
         }
         builder.create().show()
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -174,18 +181,16 @@ class SettingFragment : Fragment() {
                 userDocument.get()
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
-                        if (document != null) {
-                            if (document.contains("profilePic") && document.getString("profilePic") != null && document.getString("profilePic") != "null"){
-                                val profilePicUrl = document.getString("profilePic")
-                                Glide.with(this@SettingFragment)
-                                    .load(profilePicUrl)
-                                    .apply(RequestOptions.circleCropTransform())
-                                    .into(binding.profileImageView)
-                            } else {
-
-                            }
+                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != "default_profile_image_url"){
+                            val profilePicUrl = document.getString("profilePic")
+                            Glide.with(this@SettingFragment)
+                                .load(profilePicUrl)
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(binding.profileImageView)
                         } else {
-                            Log.d(TAG, "No such document")
+                            // 프로필 이미지가 없을 경우 기본 이미지로 설정
+                            binding.profileImageView.setImageResource(R.drawable.baseline_account_circle_24)
+                            Log.d(SettingFragment.TAG, "Profile picture URL is null or empty, reverting to default image")
                         }
                     }
                     .addOnFailureListener { exception ->
