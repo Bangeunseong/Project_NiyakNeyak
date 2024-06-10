@@ -4,12 +4,15 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.MedicineHistoryData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityHistoryBinding
+import com.capstone.project_niyakneyak.main.adapter.MedicineHistoryAdapter
 import com.capstone.project_niyakneyak.main.decorator.EventDecorator
 import com.capstone.project_niyakneyak.main.decorator.TodayDecorator
 import com.google.firebase.Firebase
@@ -17,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
@@ -37,6 +41,7 @@ class HistoryActivity: AppCompatActivity() {
 
     // Params for recycler view
     private var query: Query? = null
+    private var adapter: MedicineHistoryAdapter? = null
 
     // Params for date validation
     private var firstOfMonth: Calendar? = null
@@ -69,12 +74,48 @@ class HistoryActivity: AppCompatActivity() {
         // Fetching Data from firestore and Setting Calendar Layout Invalidation Process
         setTimeSection(binding.calendar.currentDate.date)
         binding.calendar.addDecorator(TodayDecorator())
-        binding.calendar.setOnMonthChangedListener { widget, date ->
+        binding.calendar.setOnMonthChangedListener { _, date ->
             setTimeSection(date.date)
+            query = setQuery(date.date)
+            adapter?.setQuery(query!!)
         }
-        binding.calendar.setOnDateChangedListener { widget, date, selected ->
+        binding.calendar.setOnDateChangedListener { _, date, selected ->
+            query = setQuery(date.date)
+            adapter?.setQuery(query!!)
+        }
 
+        // Setting Adapter
+        query = setQuery(Date(System.currentTimeMillis()))
+        query?.let {
+            adapter = object: MedicineHistoryAdapter(it){
+                override fun onDataChanged() {
+                    if(itemCount == 0) {
+                        binding.contentHistoryNotFoundTxt.visibility = View.VISIBLE
+                        binding.contentHistory.visibility = View.GONE
+                    } else {
+                        binding.contentHistoryNotFoundTxt.visibility = View.GONE
+                        binding.contentHistory.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onError(e: FirebaseFirestoreException) {
+                    Toast.makeText(this@HistoryActivity, "Error: check logs for info.", Toast.LENGTH_LONG).show()
+                }
+            }
+            binding.contentHistory.adapter = adapter
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        adapter?.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        adapter?.stopListening()
     }
 
     private fun setTimeSection(targetDate: Date){
@@ -111,6 +152,29 @@ class HistoryActivity: AppCompatActivity() {
             }.addOnFailureListener {
                 Log.w(TAG, "Error Occurred!: $it")
             }
+    }
+
+    private fun setQuery(targetDate: Date?): Query?{
+        if(targetDate == null) return null
+
+        val firstOfDay = Calendar.getInstance()
+        firstOfDay.timeInMillis = targetDate.time
+        firstOfDay.set(Calendar.HOUR_OF_DAY, 0)
+        firstOfDay.set(Calendar.MINUTE, 0)
+        firstOfDay.set(Calendar.SECOND, 0)
+
+        val lastOfDay = Calendar.getInstance()
+        lastOfDay.timeInMillis = targetDate.time
+        lastOfDay.set(Calendar.HOUR_OF_DAY, 23)
+        lastOfDay.set(Calendar.MINUTE, 59)
+        lastOfDay.set(Calendar.SECOND, 59)
+
+        return firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+            .collection(MedicineHistoryData.COLLECTION_ID)
+            .where(Filter.and(
+                Filter.greaterThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(firstOfDay.timeInMillis)),
+                Filter.lessThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(lastOfDay.timeInMillis)))
+            )
     }
 
     companion object{

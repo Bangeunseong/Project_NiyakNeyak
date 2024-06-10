@@ -1,21 +1,41 @@
 package com.capstone.project_niyakneyak.main.adapter
 
+import android.icu.util.Calendar
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.capstone.project_niyakneyak.databinding.ItemRecyclerMedsBinding
+import com.capstone.project_niyakneyak.data.medication_model.MedicineHistoryData
+import com.capstone.project_niyakneyak.databinding.ItemRecyclerHistoryBinding
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.toObject
 
-class MedicineHistoryAdapter(query: Query) :
-    FireStoreAdapter<MedicationAdapter.ViewHolder>(query) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedicationAdapter.ViewHolder {
-        TODO("Not yet implemented")
+open class MedicineHistoryAdapter(query: Query) :
+    FireStoreAdapter<MedicineHistoryAdapter.ViewHolder>(query) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(ItemRecyclerHistoryBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun onBindViewHolder(holder: MedicationAdapter.ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getSnapshot(position))
     }
 
-    inner class ViewHolder(val binding: ItemRecyclerMedsBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemRecyclerHistoryBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(snapshot: DocumentSnapshot){
+            val historyData = snapshot.toObject<MedicineHistoryData>() ?: return
 
+            // Setting Time Value
+            val timeData = Calendar.getInstance()
+            timeData.time = historyData.timeStamp
+            if(timeData.get(Calendar.AM_PM) == Calendar.AM)
+                binding.contentHistoryTime.text = String.format("오전 ${timeData.get(Calendar.HOUR)}:%02d", timeData.get(Calendar.MINUTE))
+            else binding.contentHistoryTime.text = String.format("오후 ${timeData.get(Calendar.HOUR)}:%02d", timeData.get(Calendar.MINUTE))
+
+            // Setting Item Name
+            binding.contentHistoryItemName.text = historyData.itemName
+
+            // Setting Item Amount
+            binding.contentHistoryItemAmount.text = String.format("${historyData.dailyAmount}정")
+        }
     }
 }
