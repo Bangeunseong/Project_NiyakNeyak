@@ -13,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
@@ -69,6 +70,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private val firestore get() = _firestore!!
     private var _firebaseAuth: FirebaseAuth? = null
     private val firebaseAuth get() = _firebaseAuth!!
+
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
 
     private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
@@ -205,6 +209,19 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
         // Stop Listening Data changes from firebase when activity stops
         adapter?.stopListening()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
     }
 
     override fun onDestroy() {

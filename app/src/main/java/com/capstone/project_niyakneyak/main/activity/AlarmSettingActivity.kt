@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -50,6 +51,9 @@ class AlarmSettingActivity : AppCompatActivity() {
     private var alarm: Alarm? = null
     private var ringtone: Ringtone? = null
     private var isRecurring = false
+
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
 
     private val mStartForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { o: ActivityResult ->
@@ -477,6 +481,19 @@ class AlarmSettingActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_data_process, menu)
         menu!!.findItem(R.id.menu_save_data).isVisible = true
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

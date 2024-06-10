@@ -21,7 +21,7 @@
     <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION"
         android:usesPermissionFlags="neverForLocation"
-        android:minSdkVersion="31"/>
+        android:minSdkVersion="31" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
@@ -63,6 +63,9 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".main.activity.HistoryActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".main.activity.BluetoothSettingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />

@@ -108,6 +108,7 @@
     <string name="sort_direction">정렬 방향:</string>
     <string name="action_main_inspect_medicine">약물 검사</string>
     <string name="toolbar_search_activity">약물 검색</string>
+    <string name="toolbar_history_activity">섭취 기록</string>
     <string name="action_inspect_current_medicines_text">현재 등록된 약물들</string>
     <string name="current_meds_recycler_state_text">등록된 약물을 찾을 수 없습니다!\n(앱을 재시작 하거나 개발자에게 버그 문의를 해주세요!)</string>
     <string name="bluetooth_setting_txt">advanced_setting</string>

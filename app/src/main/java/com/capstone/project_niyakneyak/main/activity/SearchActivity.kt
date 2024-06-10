@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
@@ -49,6 +50,9 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
     private val mainScope get() = _mainScope!!
     private val channel = Channel<String>()
     private val job = Job()
+
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -302,6 +306,19 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
             adapter!!.notifyItemChanged(prevPos)
         adapter!!.notifyItemChanged(nextPos)
         viewModel.selectedPositionObserver.value = nextPos
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
