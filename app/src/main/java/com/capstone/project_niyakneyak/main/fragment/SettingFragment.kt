@@ -4,12 +4,14 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -19,7 +21,9 @@ import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.FragmentSettingBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
+import com.capstone.project_niyakneyak.main.activity.HowToUseActivity
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
+import com.capstone.project_niyakneyak.main.activity.PolicyActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -91,6 +95,20 @@ class SettingFragment : Fragment() {
             startActivity(intentSetting)
         }
 
+        binding.reportSettings.setOnClickListener {
+            sendFeedback()
+        }
+
+        binding.howtoSettings.setOnClickListener {
+            val intent = Intent(activity, HowToUseActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.policySettings.setOnClickListener {
+            val intent = Intent(activity, PolicyActivity::class.java)
+            startActivity(intent)
+        }
+
         firestore.collection("users").document(firebaseAuth.currentUser!!.uid).get()
             .addOnSuccessListener {
                 if (it.exists()) {
@@ -117,6 +135,40 @@ class SettingFragment : Fragment() {
         }
     }
 
+    private fun sendFeedback() {
+        val recipient = "kochinko021024@gmail.com"
+        val subject = "사용자 의견"
+        val body = """
+            이곳에 사용자 의견을 작성해 주세요.
+            
+            
+            
+            
+            * 오류의 경우, 오류화면의 스크린 샷을 첨부해 주세요.
+            저희 서비스를 개선하는데 큰 도움이 됩니다.
+            
+            니약내약을 사용해주셔서 감사합니다.
+            
+            Device Info:
+            Brand: ${Build.BRAND}
+            Model: ${Build.MODEL}
+            Manufacturer: ${Build.MANUFACTURER}
+            SDK: ${Build.VERSION.SDK_INT}
+            """.trimIndent()
+
+        val emailIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "message/rfc822"
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send email using..."))
+        } catch (ex: android.content.ActivityNotFoundException) {
+            Toast.makeText(this.context, "No email clients installed.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun showImagePopup() {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_image_popup, null)
@@ -159,6 +211,7 @@ class SettingFragment : Fragment() {
         }
         builder.create().show()
     }
+
 
     override fun onStart() {
         super.onStart()
