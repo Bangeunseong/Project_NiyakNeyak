@@ -4,7 +4,11 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -26,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.util.Calendar
 
 class OpenProfileActivity : AppCompatActivity() {
@@ -113,9 +118,21 @@ class OpenProfileActivity : AppCompatActivity() {
         }
 
         binding.profileImageView.setOnClickListener {
-            val intent = Intent(this, ProfileChangeActivity::class.java)
+            val profileImageUri = (binding.profileImageView.drawable as? BitmapDrawable)?.bitmap?.let { bitmap ->
+                val bytes = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+                val path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "ProfileImage", null)
+                Uri.parse(path)
+            }
+
+            val intent = Intent(this, ProfileChangeActivity::class.java).apply {
+                putExtra("profileImageUri", profileImageUri.toString())
+            }
             startActivity(intent)
+
+
         }
+
 
         binding.logoutButton.setOnClickListener {
             AlertDialog.Builder(this@OpenProfileActivity).apply {

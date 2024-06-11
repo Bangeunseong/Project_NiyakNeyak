@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class ProfileChangeActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
@@ -35,14 +34,15 @@ class ProfileChangeActivity : AppCompatActivity() {
     var userId: String? = null
     var fileUri: Uri? = null
 
-    private var url: String? = null
 
     val TAG = "ProfileChangeActivity"
+
 
     companion object {
         const val TAG = "PROFILE_CHANGE_ACTIVITY"
         private const val IMAGE_PICK_CODE = 1000
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,21 +53,26 @@ class ProfileChangeActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         user = auth.currentUser
 
+
         userId = auth.currentUser?.uid
+
+
+
         if (userId != null) {
             val userDocument = firestore.collection("users").document(userId!!)
             userDocument.get()
             firestore.collection("users").document(userId!!).get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.contains("profilePic") && document.getString("profilePic") != "default_profile_image_url") {
-                        url = document.getString("profilePic")
-                        val profilePicUrl = document.getString("profilePic")
-                        Glide.with(this@ProfileChangeActivity)
-                            .load(profilePicUrl)
-                            .into(binding.imageViewYou)
                         Log.d(TAG, "profilePic field already exists!")
+                        val profilePic = document.getString("profilePic")
+
+                        Glide.with(this)
+                            .load(profilePic)
+                            .error(R.drawable.baseline_account_circle_24)
+                            .into(binding.imageViewYou)
+
                     } else {
-                        binding.imageViewYou.setImageResource(R.drawable.baseline_account_circle_24)
                         Log.d(TAG, "Profile picture URL is null or empty, reverting to default image")
                         userDocument.update("profilePic", "default_profile_image_url")
                             .addOnSuccessListener {
@@ -76,6 +81,7 @@ class ProfileChangeActivity : AppCompatActivity() {
                             .addOnFailureListener { e ->
                                 Log.w(TAG, "Error adding profilePic field", e)
                             }
+                        binding.imageViewYou.setImageResource(R.drawable.baseline_account_circle_24)
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -84,7 +90,6 @@ class ProfileChangeActivity : AppCompatActivity() {
         } else {
             Log.d(TAG, "No such document")
         }
-
 
         val imageViews = listOf(binding.imageViewBoy, binding.imageViewGirl, binding.imageViewMan, binding.imageViewWoman)
 
@@ -173,11 +178,14 @@ class ProfileChangeActivity : AppCompatActivity() {
         }
 
         binding.selectFromGalleryButton.setOnClickListener {
+
+
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             Toast.makeText(this, intent.toString(), Toast.LENGTH_SHORT).show()
             photoLauncher.launch(intent)
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
