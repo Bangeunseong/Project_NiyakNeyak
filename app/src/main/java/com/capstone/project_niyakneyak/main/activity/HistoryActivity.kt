@@ -97,14 +97,6 @@ class HistoryActivity: AppCompatActivity() {
             binding.calendar.setDateSelected(date, true)
             query = setQuery(date.date)
             adapter?.setQuery(query!!)
-            if(!viewModel.isOpened){
-                binding.contentHistoryViewShowHideBtn.setImageResource(R.drawable.ic_arrow_down)
-                ObjectAnimator.ofFloat(binding.contentHistoryViewLayout, "translationY", (4f * Resources.getSystem().displayMetrics.density + 0.5f)).apply {
-                    duration = 1000
-                    start()
-                }
-                viewModel.isOpened = true
-            }
         }
         binding.calendar.setOnDateChangedListener { _, date, selected ->
             query = setQuery(date.date)
