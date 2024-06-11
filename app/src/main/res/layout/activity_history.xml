@@ -36,9 +36,11 @@
             app:mcv_showOtherDates="all" />
 
         <FrameLayout
+            android:id="@+id/content_history_view_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:translationY="4dp"
             app:layout_constraintBottom_toBottomOf="parent" >
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -73,7 +75,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/content_history_view_show_hide_btn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@color/transparent"

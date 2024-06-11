@@ -1,13 +1,18 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.animation.AnimatorInflater
+import android.animation.ObjectAnimator
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.MedicineHistoryData
@@ -17,6 +22,7 @@ import com.capstone.project_niyakneyak.main.adapter.MedicineHistoryAdapter
 import com.capstone.project_niyakneyak.main.decorator.EventDecorator
 import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.TodayDecorator
+import com.capstone.project_niyakneyak.main.viewmodel.HistoryActivityViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -34,6 +40,10 @@ class HistoryActivity: AppCompatActivity() {
     // Params for view binding
     private var _binding: ActivityHistoryBinding? = null
     private val binding get() = _binding!!
+
+    // Params for view model
+    private var _viewModel: HistoryActivityViewModel? = null
+    private val viewModel get() = _viewModel!!
 
     // Params for data fetch from firebase
     private var _firestore: FirebaseFirestore? = null
@@ -59,15 +69,18 @@ class HistoryActivity: AppCompatActivity() {
         _binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // View Model
+        _viewModel = ViewModelProvider(this)[HistoryActivityViewModel::class.java]
+
         // Setting Toolbar layout
         binding.toolbar7.setTitle(R.string.toolbar_history_activity)
         binding.toolbar7.setTitleTextAppearance(this@HistoryActivity, R.style.ToolbarTextAppearance)
+        setSupportActionBar(binding.toolbar7)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar7.navigationIcon?.mutate().let {
             it?.setTint(Color.WHITE)
             binding.toolbar7.navigationIcon = it
         }
-        setSupportActionBar(binding.toolbar7)
 
         // Initialize Firestore and FirebaseAuth
         _firestore = Firebase.firestore
@@ -76,14 +89,34 @@ class HistoryActivity: AppCompatActivity() {
         // Fetching Data from firestore and Setting Calendar Layout Invalidation Process
         setTimeSection(binding.calendar.currentDate.date)
         binding.calendar.addDecorator(TodayDecorator())
+        binding.calendar.setDateSelected(CalendarDay.today(), true)
+        viewModel.isOpened = true
         binding.calendar.setOnMonthChangedListener { _, date ->
+            binding.calendar.setDateSelected(binding.calendar.selectedDate, false)
             setTimeSection(date.date)
+            binding.calendar.setDateSelected(date, true)
             query = setQuery(date.date)
             adapter?.setQuery(query!!)
+            if(!viewModel.isOpened){
+                binding.contentHistoryViewShowHideBtn.setImageResource(R.drawable.ic_arrow_down)
+                ObjectAnimator.ofFloat(binding.contentHistoryViewLayout, "translationY", (4f * Resources.getSystem().displayMetrics.density + 0.5f)).apply {
+                    duration = 1000
+                    start()
+                }
+                viewModel.isOpened = true
+            }
         }
         binding.calendar.setOnDateChangedListener { _, date, selected ->
             query = setQuery(date.date)
             adapter?.setQuery(query!!)
+            if(!viewModel.isOpened){
+                binding.contentHistoryViewShowHideBtn.setImageResource(R.drawable.ic_arrow_down)
+                ObjectAnimator.ofFloat(binding.contentHistoryViewLayout, "translationY", (4f * Resources.getSystem().displayMetrics.density + 0.5f)).apply {
+                    duration = 1000
+                    start()
+                }
+                viewModel.isOpened = true
+            }
         }
 
         // Setting Adapter
@@ -108,6 +141,24 @@ class HistoryActivity: AppCompatActivity() {
         }
         binding.contentHistory.layoutManager = LinearLayoutManager(this)
         binding.contentHistory.addItemDecoration(HorizontalItemDecorator(10))
+
+        // Adapter Layout Show, Hide Button Action
+        binding.contentHistoryViewShowHideBtn.setOnClickListener {
+            if(viewModel.isOpened){
+                binding.contentHistoryViewShowHideBtn.setImageResource(R.drawable.ic_arrow_up)
+                ObjectAnimator.ofFloat(binding.contentHistoryViewLayout, "translationY", (308f * Resources.getSystem().displayMetrics.density + 0.5f)).apply {
+                    duration = 1000
+                    start()
+                }
+            } else{
+                binding.contentHistoryViewShowHideBtn.setImageResource(R.drawable.ic_arrow_down)
+                ObjectAnimator.ofFloat(binding.contentHistoryViewLayout, "translationY", (4f * Resources.getSystem().displayMetrics.density + 0.5f)).apply {
+                    duration = 1000
+                    start()
+                }
+            }
+            viewModel.isOpened = !viewModel.isOpened
+        }
     }
 
     override fun onStart() {
@@ -143,7 +194,7 @@ class HistoryActivity: AppCompatActivity() {
             .where(Filter.and(
                 Filter.greaterThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(firstOfMonth!!.timeInMillis)),
                 Filter.lessThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(lastOfMonth!!.timeInMillis)))
-            ).get()
+            ).orderBy(MedicineHistoryData.FIELD_TIME_STAMP).get()
             .addOnSuccessListener {
                 val dateList = mutableSetOf<CalendarDay>()
                 if(it.documents.isNotEmpty()){
@@ -178,7 +229,7 @@ class HistoryActivity: AppCompatActivity() {
             .where(Filter.and(
                 Filter.greaterThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(firstOfDay.timeInMillis)),
                 Filter.lessThanOrEqualTo(MedicineHistoryData.FIELD_TIME_STAMP, Date(lastOfDay.timeInMillis)))
-            )
+            ).orderBy(MedicineHistoryData.FIELD_TIME_STAMP)
     }
 
     companion object{
