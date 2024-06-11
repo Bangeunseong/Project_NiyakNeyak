@@ -9,6 +9,7 @@ import com.capstone.project_niyakneyak.databinding.ItemRecyclerHistoryBinding
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
+import java.util.Locale
 
 open class MedicineHistoryAdapter(query: Query) :
     FireStoreAdapter<MedicineHistoryAdapter.ViewHolder>(query) {
@@ -27,7 +28,7 @@ open class MedicineHistoryAdapter(query: Query) :
             // Setting Time Value
             val timeData = Calendar.getInstance()
             timeData.time = historyData.timeStamp
-            if(timeData.get(Calendar.AM_PM) == Calendar.AM)
+            if(timeData.get(Calendar.HOUR_OF_DAY) < 12)
                 binding.contentHistoryTime.text = String.format("오전 ${timeData.get(Calendar.HOUR)}:%02d", timeData.get(Calendar.MINUTE))
             else binding.contentHistoryTime.text = String.format("오후 ${timeData.get(Calendar.HOUR)}:%02d", timeData.get(Calendar.MINUTE))
 

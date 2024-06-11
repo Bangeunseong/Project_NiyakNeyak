@@ -38,7 +38,6 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:translationY="4dp"
             android:layout_gravity="bottom"
             app:layout_constraintBottom_toBottomOf="parent" >
 
@@ -68,7 +67,7 @@
                     android:id="@+id/content_history"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:paddingTop="24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

@@ -8,12 +8,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.MedicineHistoryData
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityHistoryBinding
 import com.capstone.project_niyakneyak.main.adapter.MedicineHistoryAdapter
 import com.capstone.project_niyakneyak.main.decorator.EventDecorator
+import com.capstone.project_niyakneyak.main.decorator.HorizontalItemDecorator
 import com.capstone.project_niyakneyak.main.decorator.TodayDecorator
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -85,7 +87,7 @@ class HistoryActivity: AppCompatActivity() {
         }
 
         // Setting Adapter
-        query = setQuery(Date(System.currentTimeMillis()))
+        query = setQuery(binding.calendar.currentDate.date)
         query?.let {
             adapter = object: MedicineHistoryAdapter(it){
                 override fun onDataChanged() {
@@ -104,6 +106,8 @@ class HistoryActivity: AppCompatActivity() {
             }
             binding.contentHistory.adapter = adapter
         }
+        binding.contentHistory.layoutManager = LinearLayoutManager(this)
+        binding.contentHistory.addItemDecoration(HorizontalItemDecorator(10))
     }
 
     override fun onStart() {
