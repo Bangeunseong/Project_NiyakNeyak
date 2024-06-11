@@ -1,22 +1,18 @@
 package com.capstone.project_niyakneyak.alarm.service
 
-import android.Manifest
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.ServiceNotificationBehavior
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import com.capstone.project_niyakneyak.App
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
+import com.capstone.project_niyakneyak.data.alarm_valid_model.AlarmV
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -28,13 +24,20 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.firestore
 
 class RescheduleAlarmService : LifecycleService() {
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
+    private var _firestore: FirebaseFirestore? = null
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firestore get() = _firestore!!
+    private val firebaseAuth get() = _firebaseAuth!!
+
+    override fun onCreate() {
+        super.onCreate()
+
+        _firestore = Firebase.firestore
+        _firebaseAuth = Firebase.auth
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
 
         if(firebaseAuth.currentUser != null){
             var notification: Notification
@@ -44,7 +47,7 @@ class RescheduleAlarmService : LifecycleService() {
             val processNotification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                 .setContentTitle("Project_NiyakNeyak")
                 .setContentText("Currently Rescheduling Alarms!")
-                .setSmallIcon(R.drawable.ic_alarm_purple)
+                .setSmallIcon(R.drawable.ic_timer_addition)
                 .setSound(null)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -56,6 +59,9 @@ class RescheduleAlarmService : LifecycleService() {
             firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid).collection(Alarm.COLLECTION_ID)
                 .where(Filter.equalTo(Alarm.FIELD_IS_STARTED, true)).get()
                 .addOnSuccessListener {
+                    val alarmV = AlarmV(alarmCode = 1, isStarted = true)
+                    alarmV.scheduleAlarm(applicationContext)
+
                     for(snapshot in it.documents){
                         val alarm = snapshot.toObject<Alarm>() ?: continue
                         alarm.scheduleAlarm(applicationContext)
@@ -64,7 +70,7 @@ class RescheduleAlarmService : LifecycleService() {
                     notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                         .setContentTitle("Project_NiyakNeyak")
                         .setContentText("Alarms rescheduled!")
-                        .setSmallIcon(R.drawable.ic_alarm_purple)
+                        .setSmallIcon(R.drawable.ic_timer_addition)
                         .setSound(null)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -72,14 +78,14 @@ class RescheduleAlarmService : LifecycleService() {
                         .setAutoCancel(true)
                         .build()
                     notificationManager.notify(2, notification)
-                    stopForeground(STOP_FOREGROUND_DETACH)
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                 }.addOnFailureListener {
                     Log.w("RescheduleService", "Reschedule Failed: $it")
                     notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                         .setContentTitle("Project_NiyakNeyak")
                         .setContentText("Failed to reschedule Alarms")
-                        .setSmallIcon(R.drawable.ic_alarm_purple)
+                        .setSmallIcon(R.drawable.ic_timer_addition)
                         .setSound(null)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -87,10 +93,10 @@ class RescheduleAlarmService : LifecycleService() {
                         .setAutoCancel(true)
                         .build()
                     notificationManager.notify(2, notification)
-                    stopForeground(STOP_FOREGROUND_DETACH)
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                 }
-        }else{
+        } else{
             val notificationIntent = Intent(this, LoginActivity::class.java)
             notificationIntent.putExtra("request_token", 1)
             val pendingIntent =
@@ -101,7 +107,7 @@ class RescheduleAlarmService : LifecycleService() {
             val notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
                 .setContentTitle("Project_NiyakNeyak")
                 .setContentText("Login to set alarms for medications!")
-                .setSmallIcon(R.drawable.ic_alarm_purple)
+                .setSmallIcon(R.drawable.ic_timer_addition)
                 .setSound(null)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -116,5 +122,12 @@ class RescheduleAlarmService : LifecycleService() {
     override fun onBind(intent: Intent): IBinder? {
         super.onBind(intent)
         return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        _firestore = null
+        _firebaseAuth = null
     }
 }

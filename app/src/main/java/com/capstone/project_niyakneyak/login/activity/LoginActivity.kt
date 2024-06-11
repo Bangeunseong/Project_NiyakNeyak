@@ -3,7 +3,6 @@ package com.capstone.project_niyakneyak.login.activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.UnderlineSpan
@@ -11,15 +10,12 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.alarm.service.RescheduleAlarmService
 import com.capstone.project_niyakneyak.data.alarm_model.Alarm
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
@@ -28,7 +24,6 @@ import com.capstone.project_niyakneyak.login.etc.LoggedInUserView
 import com.capstone.project_niyakneyak.login.etc.LoginResult
 import com.capstone.project_niyakneyak.login.viewmodel.LoginViewModel
 import com.capstone.project_niyakneyak.main.activity.AppSettingActivity.Companion.TAG
-import com.capstone.project_niyakneyak.main.activity.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -41,7 +36,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
+
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
@@ -71,8 +66,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val requestToken = intent.getIntExtra("request_token", 0)
 
         // Initialize GoogleSignInOptions and FirebaseAuth
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -120,14 +113,8 @@ class LoginActivity : AppCompatActivity() {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID).where(Filter.equalTo(Alarm.FIELD_IS_STARTED, true)).get()
                     .addOnSuccessListener {
-                        for(snapshot in it.documents){
-                            val alarm = snapshot.toObject<Alarm>() ?: continue
-                            alarm.scheduleAlarm(applicationContext)
-                        }
-                        if(requestToken == 1){
-                            val intentService = Intent(applicationContext, RescheduleAlarmService::class.java)
-                            applicationContext.stopService(intentService)
-                        }
+                        val intentService = Intent(applicationContext, RescheduleAlarmService::class.java)
+                        applicationContext.startService(intentService)
                         setResult(RESULT_OK)
                         finish()
                     }.addOnFailureListener {

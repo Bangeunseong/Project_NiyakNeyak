@@ -1,14 +1,17 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.Container
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.databinding.ActivitySearchBinding
@@ -48,6 +51,9 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
     private val channel = Channel<String>()
     private val job = Job()
 
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,9 +66,14 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         adapter = MedicineListAdapter(JSONArray(), this)
         setContentView(binding.root)
 
-        binding.toolbar4.title = "Search Medicine"
+        binding.toolbar4.setTitle(R.string.toolbar_search_activity)
+        binding.toolbar4.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.toolbar4)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar4.navigationIcon?.mutate().let { icon ->
+            icon?.setTint(Color.WHITE)
+            binding.toolbar4.navigationIcon = icon
+        }
 
         // Observe Data changes of radio button selected position
         viewModel.searchQueryObserver.observe(this){
@@ -268,10 +279,14 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         if(ioScope.isActive) ioScope.cancel()
         if(mainScope.isActive) mainScope.cancel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         _binding = null
         _apiFunctions = null
         adapter = null
@@ -291,6 +306,19 @@ class SearchActivity: AppCompatActivity(), OnCheckedSearchItemListener {
             adapter!!.notifyItemChanged(prevPos)
         adapter!!.notifyItemChanged(nextPos)
         viewModel.selectedPositionObserver.value = nextPos
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

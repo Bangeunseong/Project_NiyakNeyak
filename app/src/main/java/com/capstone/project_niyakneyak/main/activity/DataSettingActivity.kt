@@ -1,6 +1,9 @@
 package com.capstone.project_niyakneyak.main.activity
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
@@ -10,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
@@ -36,10 +40,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import java.sql.Array
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Arrays
 import java.util.Date
 import java.util.Locale
 import java.util.Random
@@ -47,22 +49,30 @@ import java.util.Random
 /**
  * This DialogFragment is used for setting [MedicineData] (which is Medication Info.).
  */
+// TODO: Modify timer selection module!
 class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
     private var _binding: ActivityDataSettingBinding? = null
     private val binding get() = _binding!!
     private var adapter: AlarmSelectionAdapter? = null
 
     private var snapshotId: String? = null
-    private var originData: MedicineData? = null
-    private var fetchedData: MedicineData = MedicineData()
+    private var _originData: MedicineData? = null
+    private val originData get() = _originData!!
+    private var _fetchedData: MedicineData? = null
+    private val fetchedData get() = _fetchedData!!
     private var query: Query? = null
-    private var originAlarmID = mutableListOf<Int>()
-    private var includedAlarmID = mutableListOf<Int>()
+    private var _originAlarmID: MutableList<Int>? = null
+    private var _includedAlarmID: MutableList<Int>? = null
+    private val originAlarmID get() = _originAlarmID!!
+    private val includedAlarmID get() = _includedAlarmID!!
 
     private var _firestore: FirebaseFirestore? = null
     private val firestore get() = _firestore!!
     private var _firebaseAuth: FirebaseAuth? = null
     private val firebaseAuth get() = _firebaseAuth!!
+
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
 
     private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
@@ -91,6 +101,13 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             fetchedData.cancelName = container.cancelName; fetchedData.ediCode = container.ediCode; fetchedData.bizrNo = container.bizrNo
 
             binding.medsNameText.setText(fetchedData.itemName)
+
+            if(checkSelfPermission(NOTIFICATION_SERVICE) == PackageManager.PERMISSION_DENIED){
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),101)
+                }
+            }
+
             invalidateMenu()
         }
     }
@@ -100,10 +117,6 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         } else{
             Toast.makeText(this, "Timer Addition Canceled!", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    companion object{
-        private const val TAG = "DATA_SETTING_ACTIVITY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,18 +130,24 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         _firebaseAuth = Firebase.auth
 
         snapshotId = intent.getStringExtra("snapshot_id")
+        _includedAlarmID = mutableListOf()
+        _originAlarmID = mutableListOf()
         if(snapshotId != null){
             val medicationRef = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID).document(snapshotId!!)
 
             medicationRef.get().addOnSuccessListener {
-                originData = it.toObject(MedicineData::class.java)
+                _originData = it.toObject(MedicineData::class.java)
 
                 // Setting toolbar title
                 binding.toolbar2.setTitle(R.string.dialog_modify_form_title)
+                binding.toolbar2.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
                 setSupportActionBar(binding.toolbar2)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+                binding.toolbar2.navigationIcon?.mutate().let { icon ->
+                    icon?.setTint(Color.WHITE)
+                    binding.toolbar2.navigationIcon = icon
+                }
                 // Setting Activity Components
                 setActivity(originData, binding)
             }.addOnFailureListener {
@@ -139,8 +158,14 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         }
         else {
             binding.toolbar2.setTitle(R.string.dialog_add_form_title)
+            binding.toolbar2.setTitleTextColor(Color.WHITE)
+            binding.toolbar2.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
             setSupportActionBar(binding.toolbar2)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbar2.navigationIcon?.mutate().let {
+                it?.setTint(Color.WHITE)
+                binding.toolbar2.navigationIcon = it
+            }
             setActivity(null, binding)
         }
 
@@ -186,30 +211,44 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
         adapter?.stopListening()
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
         _firebaseAuth = null
         _firestore = null
+        _includedAlarmID = null
+        _originAlarmID = null
+        _originData = null
+        _fetchedData = null
     }
 
     private fun setActivity(originData: MedicineData?, binding: ActivityDataSettingBinding){
+        _fetchedData = MedicineData()
+
         if(originData != null){
-            fetchedData.medsID = originData.medsID
-            fetchedData.itemSeq = originData.itemSeq; fetchedData.itemName = originData.itemName
-            fetchedData.itemEngName = originData.itemEngName; fetchedData.entpName = originData.entpName
-            fetchedData.entpEngName = originData.entpEngName; fetchedData.entpSeq = originData.entpSeq
-            fetchedData.entpNo = originData.entpNo
-            if(originData.cancelDate != null)
-                fetchedData.itemPermDate = originData.itemPermDate
-            fetchedData.inDuty = originData.inDuty; fetchedData.prdlstStrdCode = originData.prdlstStrdCode
-            fetchedData.spcltyPblc = originData.spcltyPblc; fetchedData.pdtType = originData.pdtType
-            fetchedData.pdtPermNo = originData.pdtPermNo; fetchedData.itemIngrName = originData.itemIngrName
-            fetchedData.itemIngrCnt = originData.itemIngrCnt; fetchedData.bigPrdtImgUrl = originData.bigPrdtImgUrl
-            fetchedData.permKindCode= originData.permKindCode
-            if(originData.cancelDate != null)
-                fetchedData.cancelDate = originData.cancelDate
-            fetchedData.cancelName = originData.cancelName; fetchedData.ediCode = originData.ediCode; fetchedData.bizrNo = originData.bizrNo
+            _fetchedData = MedicineData(
+                originData.itemSeq,originData.itemName,originData.itemEngName,
+                originData.entpName,originData.entpEngName,originData.entpSeq,
+                originData.entpNo, originData.itemPermDate, originData.inDuty,
+                originData.prdlstStrdCode, originData.spcltyPblc, originData.pdtType,
+                originData.pdtPermNo, originData.itemIngrName, originData.itemIngrCnt,
+                originData.bigPrdtImgUrl, originData.permKindCode, originData.cancelDate,
+                originData.cancelName, originData.ediCode, originData.bizrNo,
+                originData.medsID, originData.dailyAmount, originData.medsDetail,
+                originData.medsStartDate, originData.medsEndDate, originData.alarmList)
             binding.medsNameText.setText(originData.itemName)
             if(originData.dailyAmount > 0){
                 binding.medsDailyAmountText.setText(originData.dailyAmount.toString())
@@ -218,15 +257,14 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             if (originData.medsStartDate != null && originData.medsEndDate != null) {
                 binding.medsDateText.setText(
                     String.format("%s~%s",
-                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsStartDate!!),
-                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(originData.medsEndDate!!)))
+                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREA).format(originData.medsStartDate!!),
+                        SimpleDateFormat("yyyy/MM/dd", Locale.KOREA).format(originData.medsEndDate!!)))
             }
             for(id in originData.alarmList){
-                fetchedData.alarmList.add(id)
-                originAlarmID.add(id)
                 includedAlarmID.add(id)
+                originAlarmID.add(id)
             }
-        } else fetchedData.medsID = codeGenerator()
+        } else _fetchedData = MedicineData(medsID = codeGenerator())
 
         val amountFilter =
             InputFilter{ source: CharSequence, start: Int, end: Int, _: Spanned?, _: Int, _: Int ->
@@ -264,7 +302,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                 val end = Date()
                 start.time = selection.first
                 end.time = selection.second!!
-                val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN)
+                val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd",Locale.KOREA)
                 binding.medsDateText.setText(String.format("%s~%s", dateFormat.format(start), dateFormat.format(end)))
             }
             datePicker.addOnNegativeButtonClickListener { }
@@ -286,13 +324,24 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     alarms.add(alarm)
                 }
 
-                // Data Write
-                for(alarm in alarms){
-                    if(!alarm.isStarted) {
-                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
-                        alarm.scheduleAlarm(applicationContext)
+                data.alarmList.addAll(includedAlarmID)
+
+                if(data.medsStartDate == null || data.medsEndDate == null){
+                    for(alarm in alarms){
+                        if(!alarm.isStarted) {
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
+                            alarm.scheduleAlarm(applicationContext)
+                        }
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
                     }
-                    transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                } else if(data.medsStartDate!!.before(Date(System.currentTimeMillis())) && data.medsEndDate!!.after(Date(System.currentTimeMillis()))){
+                    for(alarm in alarms){
+                        if(!alarm.isStarted) {
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, true)
+                            alarm.scheduleAlarm(applicationContext)
+                        }
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayUnion(data.medsID))
+                    }
                 }
                 transaction.set(medicationRef.document(data.medsID.toString()), data)
             }.addOnSuccessListener {
@@ -300,7 +349,7 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             }.addOnFailureListener { Log.w(TAG, "Medication Data Addition Failed!: $it") }
         }
         else{
-            firestore.runTransaction {transaction ->
+            firestore.runTransaction { transaction ->
                 // Data Read -> Need to be executed before Write Process
                 val includedAlarms = mutableListOf<Alarm>()
                 val deletedAlarms = mutableListOf<Alarm>()
@@ -321,7 +370,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     }
                 }
 
-                // Data Write
+                data.alarmList.clear()
+                data.alarmList.addAll(includedAlarmID)
+
                 val maxPos =
                     if(includedAlarms.size > deletedAlarms.size) includedAlarms.size
                     else deletedAlarms.size
@@ -349,11 +400,8 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     override fun onItemClicked(alarm: Alarm) {
         if(includedAlarmID.contains(alarm.alarmCode)){
-            fetchedData.alarmList.remove(alarm.alarmCode)
             includedAlarmID.remove(alarm.alarmCode)
-        }
-        else {
-            fetchedData.alarmList.add(alarm.alarmCode)
+        } else {
             includedAlarmID.add(alarm.alarmCode)
         }
     }
@@ -378,7 +426,11 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             }
             R.id.menu_save_data -> {
                 // Exception Handling -> last resort
-                if(fetchedData.itemName.isNullOrEmpty()) return true
+                if(fetchedData.itemName.isNullOrEmpty()) {
+                    setResult(RESULT_CANCELED)
+                    finish()
+                    return true
+                }
 
                 fetchedData.dailyAmount = binding.medsDailyAmountText.text.toString().toInt()
                 fetchedData.medsDetail =
@@ -387,10 +439,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
                     if (binding.medsDateText.text.isNullOrEmpty()) null else binding.medsDateText.text.toString()
                 if (medsDateText!!.isNotEmpty()) {
                     val dates = medsDateText.split("~".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                    fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[0])
-                    fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREAN).parse(dates[1])
+                    fetchedData.medsStartDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREA).parse(dates[0])
+                    fetchedData.medsEndDate = SimpleDateFormat("yyyy/MM/dd",Locale.KOREA).parse(dates[1])
                 }
-
                 if(snapshotId == null) submitData(null, fetchedData)
                 else submitData(snapshotId, fetchedData)
 
@@ -401,5 +452,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
             // 다른 메뉴 아이템 처리
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    companion object{
+        private const val TAG = "DATA_SETTING_ACTIVITY"
     }
 }

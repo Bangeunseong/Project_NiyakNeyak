@@ -9,6 +9,5 @@
 
     <style name="Theme.Project_NiyakNeyak" parent="Base.Theme.Project_NiyakNeyak">
         <item name="progressBarStyle">?android:attr/progressBarStyle</item>
-        <item name="toolbarStyle">@style/customToolBarTheme</item>
     </style>
 </resources>

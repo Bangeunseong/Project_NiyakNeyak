@@ -13,6 +13,14 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold|italic</item>
     </style>
+    <style name="ToolbarTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="Theme.PopupOverlay.Menu" parent="ThemeOverlay.AppCompat.ActionBar" >
+        <item name="android:textColor">@android:color/white</item>
+    </style>
     <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/transparent</item>
         <item name="hintTextAppearance">@style/HintTextAppearance</item>
@@ -35,10 +43,6 @@
         <item name="android:textStyle">bold</item>
         <item name="android:timePickerMode">spinner</item>
         <item name="android:background">@color/light_purple_500</item>
-    </style>
-    <style name="customToolBarTheme" parent="Widget.AppCompat.Toolbar">
-        <item name="collapseIcon">@drawable/baseline_list_alt_24</item>
-        <item name="android:textAppearance">@style/toolBarTextAppearance</item>
     </style>
     <style name="customAddBtnStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textSize">14sp</item>

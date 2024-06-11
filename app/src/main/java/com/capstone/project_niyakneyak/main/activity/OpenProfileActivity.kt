@@ -22,9 +22,12 @@ import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityOpenProfileBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +64,9 @@ class OpenProfileActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         user = auth.currentUser
+        auth = Firebase.auth // Firebase Auth 초기화
+        firestore = Firebase.firestore // Firestore 초기화
+        user = auth.currentUser // 현재 사용자 가져오기
 
         binding.progressBarModify.visibility = View.VISIBLE
         binding.modifyButton.isEnabled = false

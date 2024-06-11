@@ -38,8 +38,10 @@ import java.util.Locale
 open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChecklistListener) :
     FireStoreAdapter<CheckMedicineAdapter.ViewHolder>(query) {
     private var secondQuery: Query? = null
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _firebaseAuth: FirebaseAuth? = null
+    private val firebaseAuth get() = _firebaseAuth!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemRecyclerCheckBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -50,38 +52,28 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
         val medicineData = snapshot.toObject<MedicineData>() ?: return
 
         FirebaseFirestore.setLoggingEnabled(true)
-        firestore = Firebase.firestore
-        firebaseAuth = Firebase.auth
+        if (_firestore == null) _firestore = Firebase.firestore
+        if (_firebaseAuth == null) _firebaseAuth = Firebase.auth
 
-        if(firebaseAuth.currentUser != null){
+        if (firebaseAuth.currentUser != null) {
             secondQuery = getCurrentDateQuery(medicineData)
         }
 
         holder.bind(snapshot, secondQuery, listener)
     }
 
-    override fun onViewAttachedToWindow(holder: ViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.startListening()
-    }
-
-    override fun onViewDetachedFromWindow(holder: ViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.stopListening()
-    }
-
     inner class ViewHolder(val binding: ItemRecyclerCheckBinding): RecyclerView.ViewHolder(binding.root){
-        private lateinit var adapter: CheckAlarmAdapter
+        private var adapter: CheckAlarmAdapter? = null
         fun bind(snapshot: DocumentSnapshot, query: Query?, listener: OnCheckedChecklistListener){
             val medicineData = snapshot.toObject<MedicineData>() ?: return
 
-            binding.checkItemImage.contentDescription = medicineData.itemName
+            binding.checkItemImage.contentDescription = String.format("${medicineData.itemName}")
             Glide.with(itemView).load(medicineData.bigPrdtImgUrl).placeholder(R.drawable.baseline_medication_liquid_24).into(binding.checkItemImage)
-            binding.checkItemName.text = medicineData.itemName
-            binding.checkItemAmount.text = String.format("%02d알", medicineData.dailyAmount)
-            binding.checkItemDetail.text = medicineData.medsDetail
+            binding.checkItemName.text = String.format("이름: ${medicineData.itemName}")
+            binding.checkItemAmount.text = String.format("매 섭취량: %d알", medicineData.dailyAmount)
+            binding.checkItemDetail.text = String.format("세부 사항: ${medicineData.medsDetail}")
             if(medicineData.medsStartDate != null && medicineData.medsEndDate != null){
-                binding.checkItemDuration.text = String.format(SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medicineData.medsStartDate!!) + "~" +
+                binding.checkItemDuration.text = String.format("섭취 기간: " + SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medicineData.medsStartDate!!) + "~" +
                         SimpleDateFormat("yyyy/MM/dd", Locale.KOREAN).format(medicineData.medsEndDate!!))
             } else{
                 binding.checkItemDuration.text = "None"
@@ -109,16 +101,15 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
             binding.alarmCheckList.layoutManager = LinearLayoutManager(binding.root.context)
 
             binding.checkVisibilityBtn.setOnClickListener {
-                if(binding.alarmCheckList.isVisible) binding.alarmCheckList.visibility = View.GONE
-                else binding.alarmCheckList.visibility = View.VISIBLE
+                if(binding.alarmCheckList.isVisible) {
+                    adapter?.stopListening()
+                    binding.alarmCheckList.visibility = View.GONE
+                }
+                else {
+                    adapter?.startListening()
+                    binding.alarmCheckList.visibility = View.VISIBLE
+                }
             }
-        }
-
-        fun startListening(){
-            adapter.startListening()
-        }
-        fun stopListening(){
-            adapter.stopListening()
         }
     }
 
@@ -130,36 +121,50 @@ open class CheckMedicineAdapter(query: Query, private val listener: OnCheckedChe
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_SUNDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.MONDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_MONDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.TUESDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_TUESDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.WEDNESDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_WEDNESDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.THURSDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_THURSDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.FRIDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_FRIDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             Calendar.SATURDAY -> {
                 firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                     .collection(Alarm.COLLECTION_ID)
                     .where(Filter.and(Filter.arrayContains(Alarm.FIELD_MEDICATION_LIST, medicineData.medsID), Filter.equalTo(Alarm.FIELD_IS_STARTED, true), Filter.equalTo(Alarm.FIELD_IS_SATURDAY, true)))
+                    .orderBy(Alarm.FIELD_HOUR)
+                    .orderBy(Alarm.FIELD_MINUTE)
             }
             else -> {null}
         }
