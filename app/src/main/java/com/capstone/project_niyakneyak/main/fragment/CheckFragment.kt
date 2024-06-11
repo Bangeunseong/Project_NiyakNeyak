@@ -36,9 +36,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.toObject
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 /**
  * This Fragment is used for showing daily Medication list by using [CheckFragment.adapter].
@@ -173,8 +171,9 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         }
 
         // Start Listening Data changes
-        if(connectedDevice != null)
+        if(connectedDevice != null && bluetoothAdapter?.isEnabled == true){
             ConnectThread(connectedDevice!!).start()
+        }
         adapter?.startListening()
     }
 
@@ -182,8 +181,10 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         super.onStop()
 
         // Stop Listening Data changes
-        if(connectedDevice != null)
+        if(connectedDevice != null && bluetoothAdapter?.isEnabled == true){
             ConnectThread(connectedDevice!!).disconnectSocket()
+        }
+
         adapter?.stopListening()
     }
 
