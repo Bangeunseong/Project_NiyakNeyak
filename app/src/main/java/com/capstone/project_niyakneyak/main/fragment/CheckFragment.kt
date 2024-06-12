@@ -104,6 +104,7 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
     private val bluetoothManager: BluetoothManager by lazy { requireActivity().getSystemService(BluetoothManager::class.java) }
     private val bluetoothAdapter: BluetoothAdapter? by lazy { bluetoothManager.adapter }
     private var connectedDevice: BluetoothDevice? = null
+    private var connectThread: ConnectThread? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCheckListBinding.inflate(layoutInflater)
@@ -132,6 +133,9 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
                             Log.w("Bluetooth", "Device Not Found!")
                             null
                         }
+                    connectedDevice?.let { bluetoothDevice ->
+                        connectThread = ConnectThread(bluetoothDevice)
+                    }
                 }
         }
 
@@ -171,8 +175,7 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         }
 
         // Start Listening Data changes
-        if(connectedDevice != null && bluetoothAdapter?.isEnabled == true)
-            ConnectThread(connectedDevice!!).start()
+        connectThread?.start()
         adapter?.startListening()
     }
 
@@ -180,8 +183,7 @@ class CheckFragment : Fragment(), OnCheckedChecklistListener {
         super.onStop()
 
         // Stop Listening Data changes
-        if(connectedDevice != null && bluetoothAdapter?.isEnabled == true)
-            ConnectThread(connectedDevice!!).disconnectSocket()
+        connectThread?.disconnectSocket()
         adapter?.stopListening()
     }
 
