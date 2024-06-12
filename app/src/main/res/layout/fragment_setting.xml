@@ -32,18 +32,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="My Account"
+                    android:text="내 프로필"
                     android:textStyle="bold"
                     android:paddingBottom="5dp"
                     android:textSize="20sp" />
 
                 <ImageView
-
                     android:id="@+id/profileImageView"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/baseline_account_circle_24" />
+                    android:src="@drawable/baseline_account_circle_24"
+                    android:background="@drawable/rounded_image"
+                    android:scaleType="centerCrop"
+                    android:clipToOutline="true" />
 
                 <TextView
                     android:id="@+id/your_current_name_textview"
