@@ -96,7 +96,7 @@ class HistoryActivity: AppCompatActivity() {
             query = setQuery(date.date)
             adapter?.setQuery(query!!)
         }
-        binding.calendar.setOnDateChangedListener { _, date, selected ->
+        binding.calendar.setOnDateChangedListener { _, date, _ ->
             query = setQuery(date.date)
             adapter?.setQuery(query!!)
             if(!viewModel.isOpened){

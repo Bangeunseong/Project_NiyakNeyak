@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -22,10 +23,13 @@ import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityOpenProfileBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,13 +38,23 @@ import java.io.ByteArrayOutputStream
 import java.util.Calendar
 
 class OpenProfileActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityOpenProfileBinding
-    private lateinit var firestore: FirebaseFirestore
+    // Params for view binding
+    private var _binding: ActivityOpenProfileBinding? = null
+    private val binding get() = _binding!!
+
+    // Params for firebase
+    private var _firestore: FirebaseFirestore? = null
+    private val firestore get() = _firestore!!
+    private var _auth: FirebaseAuth? = null
+    private val auth get() = _auth!!
     private var user: FirebaseUser? = null
-    private lateinit var auth: FirebaseAuth
+
+
     private var userId: String? = null
     private val uiScope = CoroutineScope(Dispatchers.Main)
     private var url: String? = null
+
+
 
     companion object {
         const val TAG = "OPEN_PROFILE_ACTIVITY"
@@ -49,23 +63,27 @@ class OpenProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityOpenProfileBinding.inflate(layoutInflater)
+        _binding = ActivityOpenProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.toolbarOpenProfile.title = getString(R.string.toolbar_modification)
+        binding.toolbarOpenProfile.setTitleTextAppearance(this@OpenProfileActivity, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.toolbarOpenProfile)
         supportActionBar?.setDisplayShowTitleEnabled(true)
-        supportActionBar?.title = getString(R.string.toolbar_modification)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Log.d("Toolbar", "Toolbar title set to: ${getString(R.string.toolbar_modification)}")
+        binding.toolbarOpenProfile.navigationIcon?.mutate().let {
+            it?.setTint(Color.WHITE)
+            binding.toolbarOpenProfile.navigationIcon = it
+        }
 
-        auth = Firebase.auth // Firebase Auth 초기화
-        firestore = Firebase.firestore // Firestore 초기화
+        _auth = Firebase.auth // Firebase Auth 초기화
+        _firestore = Firebase.firestore // Firestore 초기화
         user = auth.currentUser // 현재 사용자 가져오기
+        userId = auth.currentUser?.uid
 
         binding.progressBarModify.visibility = View.VISIBLE
         binding.modifyButton.isEnabled = false
 
-        userId = auth.currentUser?.uid
         if (userId != null) {
             firestore.collection("users").document(userId!!).get().addOnSuccessListener { documentSnapshot ->
                 val user = documentSnapshot.toObject<UserAccount>()
@@ -129,8 +147,6 @@ class OpenProfileActivity : AppCompatActivity() {
                 putExtra("profileImageUri", profileImageUri.toString())
             }
             startActivity(intent)
-
-
         }
 
 
@@ -285,7 +301,7 @@ class OpenProfileActivity : AppCompatActivity() {
     private fun reloadUserProfile() {
         userId = auth.currentUser?.uid
         if (userId != null) {
-            firestore.collection("users").document(userId!!).get().addOnSuccessListener { documentSnapshot ->
+            firestore.collection(UserAccount.COLLECTION_ID).document(userId!!).get().addOnSuccessListener { documentSnapshot ->
                 val user = documentSnapshot.toObject<UserAccount>()
                 val age = user?.age.toString()
                 if (user != null) {
