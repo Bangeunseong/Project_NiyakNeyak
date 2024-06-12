@@ -3,16 +3,12 @@ package com.capstone.project_niyakneyak.main.activity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -39,13 +35,6 @@ class MainActivity : AppCompatActivity() {
     private var _navController: NavController? = null
     private val navController get() = _navController!!
     private var isPressed = false
-    private var isIgnoringOptimization = false
-
-    private val batteryOptimizationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == RESULT_OK){
-            isIgnoringOptimization = false
-        }
-    }
 
     // BackPressed Callback
     private val callback: OnBackPressedCallback by lazy {
@@ -149,8 +138,6 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        isIgnoringOptimization = (getSystemService(POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(getString(R.string.app_name))
-
         binding.toolbar.setTitle(R.string.toolbar_main_title)
         binding.toolbar.setTitleTextAppearance(this@MainActivity, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.toolbar)
@@ -162,12 +149,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
-        if(!isIgnoringOptimization){
-            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-            intent.data = Uri.parse("package:${getString(R.string.app_name)}")
-            batteryOptimizationLauncher.launch(intent)
-        }
 
         if(checkSelfPermission(NOTIFICATION_SERVICE) == PackageManager.PERMISSION_DENIED ||
             checkSelfPermission(ALARM_SERVICE) == PackageManager.PERMISSION_DENIED){

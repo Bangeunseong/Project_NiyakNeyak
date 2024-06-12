@@ -4,12 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.annotation.GlideModule
 import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.medication_model.MedicineData
 import com.capstone.project_niyakneyak.databinding.ItemRecyclerMedicineBinding
 import com.capstone.project_niyakneyak.main.listener.OnCheckedSearchItemListener
-import org.checkerframework.framework.qual.AnnotatedFor
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -44,11 +42,11 @@ open class MedicineListAdapter(private var jsonArray: JSONArray, private val onC
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(jsonArray.getJSONObject(position))
-        holder.binding.radioButton.isChecked = positionList[holder.adapterPosition]
+        holder.binding.radioButton.isChecked = positionList[holder.absoluteAdapterPosition]
         holder.binding.radioButton.setOnClickListener {
             val prevPos = selectedPos
             if(prevPos != -1) positionList[prevPos] = false
-            selectedPos = holder.adapterPosition
+            selectedPos = holder.absoluteAdapterPosition
             positionList[selectedPos] = true
             onCheckedSearchItemListener.onItemClicked(prevPos, selectedPos)
         }
