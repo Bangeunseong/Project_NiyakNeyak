@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".main.activity.PolicyActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="알람 앱 이용 약관"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:paddingBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="최종 업데이트: 2024년 6월 7일"
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. 소개"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="이 약관은 [니약내약] (이하 '앱')의 사용과 관련된 조건을 규정합니다. 앱을 다운로드하거나 사용함으로써, 사용자는 이 약관에 동의하는 것으로 간주됩니다. 이 약관에 동의하지 않으면 앱을 사용하지 마십시오."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. 서비스 제공"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 사용자가 설정한 시간에 알람을 제공하는 서비스를 제공합니다. 본 서비스는 '있는 그대로' 제공되며, 서비스 제공자가 서비스의 중단, 지연, 오류 등에 대해 어떠한 책임도 지지 않습니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3. 사용자 책임"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="사용자는 앱을 합법적이고 윤리적인 방식으로 사용해야 합니다. 사용자는 다음 행위를 하지 않을 것을 동의합니다:\n- 불법적이거나 사기적인 활동\n- 다른 사용자의 서비스 사용을 방해하거나 저해하는 행위\n- 서비스 제공자의 지적 재산권을 침해하는 행위"
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4. 개인정보 보호"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 사용자의 개인정보를 보호하기 위해 최선을 다합니다. 개인정보 보호정책을 통해 개인정보 수집, 사용, 공유 방식에 대해 자세히 설명하고 있습니다. 앱을 사용함으로써, 사용자는 개인정보 보호정책에 동의하는 것으로 간주됩니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5. 지적 재산권"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱과 그 안의 모든 콘텐츠, 기능, 디자인, 그래픽, 코드는 서비스 제공자의 지적 재산입니다. 사용자는 서비스 제공자의 명시적인 동의 없이 이를 복사, 수정, 배포할 수 없습니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6. 광고 및 제3자 링크"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 제3자 광고나 링크를 포함할 수 있습니다. 서비스 제공자는 제3자의 콘텐츠나 행위에 대해 책임지지 않습니다. 사용자는 제3자 사이트를 방문할 때 그들의 약관과 개인정보 보호정책을 검토해야 합니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7. 면책 조항"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 사용자가 설정한 알람이 정확하게 작동할 것을 보장하지 않습니다. 서비스 제공자는 알람이 작동하지 않음으로 인해 발생한 어떠한 손해에 대해서도 책임지지 않습니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="8. 약관 변경"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="서비스 제공자는 언제든지 본 약관을 변경할 권리를 가집니다. 약관이 변경될 경우, 사용자는 변경된 약관에 동의함을 인정합니다. 변경된 약관은 앱 내 공지하거나 이메일 등을 통해 사용자에게 통지됩니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="9. 종료"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="사용자는 언제든지 앱 사용을 중지할 수 있습니다. 서비스 제공자는 사용자가 본 약관을 위반하는 경우, 사전 통지 없이 앱 사용을 종료할 수 있습니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="10. 준거법"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="본 약관은 대한민국 법률에 따라 해석되고 적용됩니다. 본 약관과 관련하여 발생하는 모든 분쟁은 대한민국 법원의 전속 관할에 따릅니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="11. 연락처"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="약관에 대한 질문이 있거나 기타 문의 사항이 있는 경우, 다음 연락처로 문의해 주시기 바랍니다:\n이메일: kochinko021024@gmail.com"
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="개인정보 보호정책"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. 개인정보 수집 항목"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 다음과 같은 개인정보를 수집할 수 있습니다:\n- 사용자 이름 및 이메일 주소\n- 디바이스 정보 및 로그 데이터\n- 알람 설정 정보"
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. 개인정보 이용 목적"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="수집된 개인정보는 다음 목적을 위해 사용됩니다:\n- 알람 서비스 제공 및 개선\n- 사용자 문의 대응\n- 마케팅 및 광고 제공"
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3. 개인정보 공유"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 법률에 의해 요구되는 경우를 제외하고, 사용자의 동의 없이 개인정보를 제3자와 공유하지 않습니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4. 보안"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 사용자의 개인정보를 보호하기 위해 합리적인 보안 조치를 취합니다. 그러나, 인터넷을 통한 전송 또는 저장 방법은 100% 안전하지 않음을 유의하시기 바랍니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5. 개인정보 접근 및 수정"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="사용자는 언제든지 자신의 개인정보에 접근하거나 수정할 수 있습니다. 개인정보 접근 및 수정 요청은 kochinko021024@gmail.com으로 문의해 주시기 바랍니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6. 개인정보 보호정책 변경"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="앱은 개인정보 보호정책을 변경할 수 있습니다. 변경된 정책은 앱 내 공지하거나 이메일 등을 통해 사용자에게 통지됩니다."
+                android:paddingBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7. 문의"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="개인정보 보호정책에 대한 질문이 있거나 기타 문의 사항이 있는 경우, 다음 연락처로 문의해 주시기 바랍니다:\n이메일: kochinko021024@gmail.com"
+                android:paddingBottom="16dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="뒤로가기"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

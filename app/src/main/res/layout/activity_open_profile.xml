@@ -41,25 +41,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/profile_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:padding="5sp"
-
                 app:layout_constraintTop_toTopOf="parent">
 
-
+                <TextView
+                    android:id="@+id/Profile_modification_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="5dp"
+                    android:text="프로필 수정"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-
                     android:id="@+id/profile_imageView"
                     android:layout_width="100sp"
                     android:layout_height="100sp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/baseline_account_circle_24" />
-
+                    android:src="@drawable/baseline_account_circle_24"
+                    android:background="@drawable/rounded_image"
+                    android:scaleType="centerCrop"
+                    android:clipToOutline="true"
+                    app:layout_constraintTop_toBottomOf="@+id/Profile_modification_text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <TextView
                     android:id="@+id/your_current_name_textview"
@@ -68,9 +81,22 @@
                     android:layout_gravity="center_horizontal"
                     android:text="yourname"
                     android:textColor="#321061"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    app:layout_constraintTop_toBottomOf="@id/profile_imageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/pencil"
+                    app:layout_constraintBottom_toBottomOf="@id/profile_imageView"
+                    app:layout_constraintEnd_toEndOf="@id/profile_imageView"
+                    android:layout_marginBottom="0dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="0dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/name_layout"
@@ -253,64 +279,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/password_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16sp"
-                app:layout_constraintTop_toBottomOf="@id/id_layout">
-
-                <TextView
-                    android:id="@+id/password_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="10sp"
-                    android:text="비밀번호"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.05"
-                    app:layout_constraintHorizontal_chainStyle="spread"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/password_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text="-"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.6"
-                    app:layout_constraintStart_toEndOf="@id/password_title"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <EditText
-                    android:id="@+id/password_text_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text="-"
-                    android:textAlignment="center"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.6"
-                    app:layout_constraintStart_toEndOf="@id/password_title"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/phonenumber_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16sp"
-                app:layout_constraintTop_toBottomOf="@id/password_layout">
+                app:layout_constraintTop_toBottomOf="@id/id_layout">
 
                 <TextView
                     android:id="@+id/phonenumber_title"
@@ -436,7 +410,7 @@
                     android:layout_width="120sp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
-                    android:text="취소"
+                    android:text="뒤로 가기"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/modify_button"
                     app:layout_constraintStart_toStartOf="parent"

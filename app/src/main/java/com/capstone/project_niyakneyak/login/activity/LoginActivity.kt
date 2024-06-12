@@ -177,6 +177,17 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 // Change LiveData about LoginResult as Success
                 loginViewModel.loginResult.value = LoginResult(LoggedInUserView(firebaseAuth.currentUser!!.uid))
+                // Firestore에 비밀번호 갱신
+                val userId = firebaseAuth.currentUser!!.uid
+                val userRef = firestore.collection(UserAccount.COLLECTION_ID).document(userId)
+                userRef.update("password", password)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Password updated in Firestore.")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(TAG, "Error updating password in Firestore", e)
+                    }
+
             } else {
                 // Change LiveData about LoginResult as Failed
                 loginViewModel.loginResult.value = LoginResult(task.exception)

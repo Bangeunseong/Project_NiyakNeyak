@@ -2,10 +2,12 @@
     <string name="app_name">Project_NiyakNeyak</string>
     <string name="app_version"> v1.0.0 </string>
 
+    <string name="image_desc">Image description</string>
+    <string name="close">Close</string>
+
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_data_setting">DataSettingActivity</string>
-
     <string name="arg_origin_data">Medication_Data</string>
 
     <string name="reset_password"> 비밀번호를 잊어버렸습니다. </string>

@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 when (navController.currentDestination!!.id){
                     R.id.mainPageFragment -> {
                         if(!isPressed){
-                            Toast.makeText(applicationContext, "ÇÑ¹ø ´õ ´©¸£¸é Á¾·áµË´Ï´Ù!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, "í•œë²ˆ ë” ëˆ„ë¥´ë©´ ì¢…ë£Œë©ë‹ˆë‹¤!", Toast.LENGTH_LONG).show()
                             CoroutineScope(Dispatchers.Default).launch {
                                 isPressed = true
                                 delay(2000)

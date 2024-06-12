@@ -1,6 +1,5 @@
 package com.capstone.project_niyakneyak.main.activity
 
-import android.animation.AnimatorInflater
 import android.animation.ObjectAnimator
 import android.content.res.Resources
 import android.graphics.Color
@@ -8,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -112,7 +110,7 @@ class HistoryActivity: AppCompatActivity() {
         }
 
         // Setting Adapter
-        query = setQuery(binding.calendar.currentDate.date)
+        query = setQuery(Date(System.currentTimeMillis()))
         query?.let {
             adapter = object: MedicineHistoryAdapter(it){
                 override fun onDataChanged() {
