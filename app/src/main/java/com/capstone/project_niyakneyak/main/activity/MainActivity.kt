@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 when (navController.currentDestination!!.id){
                     R.id.mainPageFragment -> {
                         if(!isPressed){
-                            Toast.makeText(applicationContext, "�ѹ� �� ������ ����˴ϴ�!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, "한번 더 누르면 종료됩니다!", Toast.LENGTH_LONG).show()
                             CoroutineScope(Dispatchers.Default).launch {
                                 isPressed = true
                                 delay(2000)

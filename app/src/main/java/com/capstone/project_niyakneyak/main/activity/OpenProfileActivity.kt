@@ -62,9 +62,6 @@ class OpenProfileActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Log.d("Toolbar", "Toolbar title set to: ${getString(R.string.toolbar_modification)}")
 
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-        user = auth.currentUser
         auth = Firebase.auth // Firebase Auth 초기화
         firestore = Firebase.firestore // Firestore 초기화
         user = auth.currentUser // 현재 사용자 가져오기
@@ -152,6 +149,8 @@ class OpenProfileActivity : AppCompatActivity() {
                 putExtra("profileImageUri", profileImageUri.toString())
             }
             startActivity(intent)
+
+
         }
 
 
@@ -242,7 +241,7 @@ class OpenProfileActivity : AppCompatActivity() {
             if (userId != null) {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
-                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != "default_profile_image_url" && document.getString("profilePic") != null){
+                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != "default_profile_image_url"){
                             url = document.getString("profilePic")
                             val profilePicUrl = document.getString("profilePic")
                             Glide.with(this@OpenProfileActivity)
