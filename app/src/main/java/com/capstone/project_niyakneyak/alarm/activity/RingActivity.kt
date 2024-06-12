@@ -86,8 +86,10 @@ class RingActivity : AppCompatActivity() {
                 val account = it.toObject<UserAccount>()
                 if(account?.address != null){
                     connectedDevice = bluetoothAdapter?.getRemoteDevice(account.address)
-                    if(connectedDevice != null)
+                    if(connectedDevice != null){
                         connectThread = ConnectThread(connectedDevice!!)
+                        connectThread?.start()
+                    }
                 }
             }
 
@@ -105,12 +107,6 @@ class RingActivity : AppCompatActivity() {
         binding.alarmRingReschedule.setOnClickListener { rescheduleAlarm() }
         binding.alarmRingOff.setOnClickListener { dismissAlarm() }
         animateClock()
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        connectThread?.start()
     }
 
     override fun onDestroy() {
