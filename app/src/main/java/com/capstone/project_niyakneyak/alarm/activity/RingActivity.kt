@@ -110,16 +110,14 @@ class RingActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        if(bluetoothAdapter?.isEnabled == true)
-            connectThread?.start()
+        connectThread?.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
         _firestore = null
-        if(bluetoothAdapter?.isEnabled == true)
-            connectThread?.disconnectSocket()
+        connectThread?.disconnectSocket()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(false)
