@@ -1,4 +1,4 @@
-package com.capstone.project_niyakneyak.util
+package com.capstone.project_niyakneyak.util.initializer
 
 import android.content.Context
 import androidx.startup.Initializer

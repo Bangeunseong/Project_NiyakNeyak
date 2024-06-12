@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/item_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="기록"
+        android:visible="false"
+        android:icon="@drawable/ic_history"
+        android:iconTint="@color/white_500"
+        app:showAsAction="ifRoom" />
+</menu>

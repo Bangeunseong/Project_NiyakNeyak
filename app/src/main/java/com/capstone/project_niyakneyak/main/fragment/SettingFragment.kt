@@ -4,6 +4,10 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
+import android.Manifest
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +28,7 @@ import com.capstone.project_niyakneyak.main.activity.AppSettingActivity
 import com.capstone.project_niyakneyak.main.activity.HowToUseActivity
 import com.capstone.project_niyakneyak.main.activity.OpenProfileActivity
 import com.capstone.project_niyakneyak.main.activity.PolicyActivity
+import com.capstone.project_niyakneyak.main.activity.BluetoothSettingActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,7 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SettingFragment : Fragment() {
+class SettingFragment: Fragment() {
     private lateinit var binding: FragmentSettingBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
@@ -90,11 +95,24 @@ class SettingFragment : Fragment() {
                 }
         }
 
+        binding.bluetoothSettings.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if(requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED){
+                    val intent = Intent(context, BluetoothSettingActivity::class.java)
+                    startActivity(intent)
+                } else{
+                    requireActivity().requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 101)
+                }
+            } else{
+                val intent = Intent(context, BluetoothSettingActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
         binding.appSettings.setOnClickListener {
             val intentSetting = Intent(activity, AppSettingActivity::class.java)
             startActivity(intentSetting)
         }
-
         binding.reportSettings.setOnClickListener {
             sendFeedback()
         }
@@ -130,7 +148,6 @@ class SettingFragment : Fragment() {
                 val intent = Intent(activity, LoginActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
-                activity?.finish()
             }
         }
     }
@@ -215,6 +232,7 @@ class SettingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
         firebaseAuth.addAuthStateListener(authStateListener)
         updateProfile()
         firestore.collection(UserAccount.COLLECTION_ID)

@@ -2,6 +2,7 @@ package com.capstone.project_niyakneyak.main.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -13,6 +14,7 @@ import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +51,9 @@ class AlarmSettingActivity : AppCompatActivity() {
     private var alarm: Alarm? = null
     private var ringtone: Ringtone? = null
     private var isRecurring = false
+
+    // BackPressed Callback
+    private var callback: OnBackPressedCallback? = null
 
     private val mStartForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { o: ActivityResult ->
@@ -88,20 +93,35 @@ class AlarmSettingActivity : AppCompatActivity() {
                 .collection(Alarm.COLLECTION_ID).document(snapshotId!!).get()
                 .addOnSuccessListener {
                     alarm = it.toObject(Alarm::class.java)
-                    binding.toolbar5.title = "Change Timer"
+                    binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_modify)
+                    binding.toolbar5.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
                     setSupportActionBar(binding.toolbar5)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    binding.toolbar5.navigationIcon?.mutate().let { icon ->
+                        icon?.setTint(Color.WHITE)
+                        binding.toolbar5.navigationIcon = icon
+                    }
                     setActivity(alarm)
                 }.addOnFailureListener {
-                    binding.toolbar5.title = "Add Timer"
+                    binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_register)
+                    binding.toolbar5.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
                     setSupportActionBar(binding.toolbar5)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    binding.toolbar5.navigationIcon?.mutate().let { icon ->
+                        icon?.setTint(Color.WHITE)
+                        binding.toolbar5.navigationIcon = icon
+                    }
                     setActivity(alarm)
                 }
         } else {
-            binding.toolbar5.title = "Add Timer"
+            binding.toolbar5.setTitle(R.string.dialog_alarm_toolbar_register)
+            binding.toolbar5.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
             setSupportActionBar(binding.toolbar5)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbar5.navigationIcon?.mutate().let { icon ->
+                icon?.setTint(Color.WHITE)
+                binding.toolbar5.navigationIcon = icon
+            }
             setActivity(null)
         }
     }
@@ -281,7 +301,7 @@ class AlarmSettingActivity : AppCompatActivity() {
         binding.alarmRingtoneLayout.setOnClickListener {
             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Sound")
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "알람음 선택")
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(tone))
             mStartForResult.launch(intent)
         }
@@ -461,6 +481,19 @@ class AlarmSettingActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_data_process, menu)
         menu!!.findItem(R.id.menu_save_data).isVisible = true
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        callback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback as OnBackPressedCallback)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

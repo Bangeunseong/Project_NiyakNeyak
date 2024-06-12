@@ -28,6 +28,7 @@ open class AlarmSelectionAdapter(query: Query, private val medsID: String?, priv
             binding.clockRecursion.text = alarm.daysText
             if(medsID != null)
                 binding.clockCheckbox.isChecked = alarm.medsList.contains(medsID.toInt())
+            else binding.clockCheckbox.isChecked = false
             binding.clockCheckbox.setOnClickListener {
                 onCheckedAlarmListener.onItemClicked(alarm)
             }

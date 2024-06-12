@@ -58,9 +58,9 @@ class OpenProfileActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Log.d("Toolbar", "Toolbar title set to: ${getString(R.string.toolbar_modification)}")
 
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-        user = auth.currentUser
+        auth = Firebase.auth // Firebase Auth 초기화
+        firestore = Firebase.firestore // Firestore 초기화
+        user = auth.currentUser // 현재 사용자 가져오기
 
         binding.progressBarModify.visibility = View.VISIBLE
         binding.modifyButton.isEnabled = false

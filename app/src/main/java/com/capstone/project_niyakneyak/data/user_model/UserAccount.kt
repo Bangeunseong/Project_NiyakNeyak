@@ -16,7 +16,8 @@ data class UserAccount(
     var gender: String? = null,
     var phoneNum: String? = null,
     var age: Int? = null,
-    var profilePic: String? = null
+    var profilePic: String? = null,
+    var address: String? = null
 )
 {
     companion object{
@@ -29,5 +30,6 @@ data class UserAccount(
         const val PHONE_NUMBER = "phoneNum"
         const val BIRTH = "birth"
         const val PROFILE = "profilePic"
+        const val MAC_ADDRESS = "address"
     }
 }

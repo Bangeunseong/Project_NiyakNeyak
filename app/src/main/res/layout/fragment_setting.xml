@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -61,6 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="프로필 변경" />
+
             </LinearLayout>
 
             <!-- 가족 회원관리 삭제 -->
@@ -116,7 +118,6 @@
                     android:text="약관 보기"
                     android:textSize="18sp" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/howto_settings"
                 android:layout_width="match_parent"
@@ -172,12 +173,7 @@
                     android:text="블루투스 기기 연결"
                     android:textSize="18sp" />
 
-                <Switch
-                    android:id="@+id/bluetooth_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>

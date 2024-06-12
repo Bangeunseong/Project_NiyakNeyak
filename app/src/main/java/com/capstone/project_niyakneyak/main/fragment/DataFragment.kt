@@ -28,7 +28,6 @@ import com.capstone.project_niyakneyak.main.decorator.VerticalItemDecorator
 import com.capstone.project_niyakneyak.main.etc.Filters
 import com.capstone.project_niyakneyak.main.viewmodel.DataViewModel
 import com.capstone.project_niyakneyak.main.listener.OnMedicationChangedListener
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,9 +60,45 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     private var adapter: MedicationAdapter? = null
 
     // Intent Launchers for Login Process
-    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == RESULT_OK){
+    private val loginProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        if(result.resultCode == RESULT_OK){
             viewModel.isSignedIn = true
+            query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(MedicineData.COLLECTION_ID)
+                .orderBy(MedicineData.FIELD_ITEM_NAME_FB, Query.Direction.ASCENDING)
+
+            firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
+                .collection(InspectData.COLLECTION_ID).document(InspectData.PARAM_CHANGE_DOCUMENT_ID).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if(documentSnapshot.data == null) return@addOnSuccessListener
+                    viewModel.isChanged = documentSnapshot.data!!["changed"] as Boolean
+                    if(viewModel.isChanged) binding.contentMainInspect.setImageResource(R.drawable.ic_search_alert_icon)
+                    else binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
+                }.addOnFailureListener {
+                    viewModel.isChanged = false
+                    binding.contentMainInspect.setImageResource(R.drawable.ic_search_icon)
+                }
+
+            query?.let {
+                adapter = object: MedicationAdapter(it, this@DataFragment){
+                    override fun onDataChanged() {
+                        if(itemCount == 0) {
+                            binding.contentMainGuide.visibility = View.VISIBLE
+                            binding.contentMainMeds.visibility = View.GONE
+                        }
+                        else {
+                            binding.contentMainGuide.visibility = View.GONE
+                            binding.contentMainMeds.visibility = View.VISIBLE
+                        }
+                    }
+
+                    override fun onError(e: FirebaseFirestoreException) {
+                        Toast.makeText(context, "Error: check logs for info.", Toast.LENGTH_LONG).show()
+                    }
+                }
+                binding.contentMainMeds.adapter = adapter
+            }
+            adapter?.startListening()
         }
     }
     private val dataProcessLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -103,6 +138,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
         _firebaseAuth = Firebase.auth
         _firestore = Firebase.firestore
 
+
         if(firebaseAuth.currentUser != null){
             query = firestore.collection(UserAccount.COLLECTION_ID).document(firebaseAuth.currentUser!!.uid)
                 .collection(MedicineData.COLLECTION_ID)
@@ -136,7 +172,7 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
                 }
 
                 override fun onError(e: FirebaseFirestoreException) {
-                    Snackbar.make(binding.root, "Error: check logs for info.", Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(context, "Error: check logs for info.", Toast.LENGTH_LONG).show()
                 }
             }
             binding.contentMainMeds.adapter = adapter
@@ -173,7 +209,6 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
             loginProcessLauncher.launch(intent)
             return
         }
-
         // Start Listening Data changes from firebase when activity starts
         adapter?.startListening()
     }
@@ -215,20 +250,34 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
 
         alarmList.get().addOnSuccessListener { querySnapshot ->
             val alarms = querySnapshot.documents
+            val alarmData = mutableListOf<Alarm>()
             firestore.runTransaction { transaction ->
                 for(snapshotId in alarms){
                     val alarm = transaction.get(alarmRef.document(snapshotId.id)).toObject<Alarm>()
-                    if(alarm!!.medsList.size <= 1){
-                        transaction.update(alarmRef.document(snapshotId.id), Alarm.FIELD_IS_STARTED, false)
+                    alarmData.add(alarm!!)
+                    if(alarm.medsList.size <= 1){
                         alarm.cancelAlarm(requireContext())
                     }
-                    transaction.update(alarmRef.document(snapshotId.id), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(target.id.toInt()))
                 }
                 transaction.delete(medicationRef)
             }.addOnSuccessListener {
-                Log.w(TAG, "Successfully Updated Alarm Data")
+                firestore.runTransaction { transaction ->
+                    for(alarm in alarmData){
+                        if(alarm.medsList.size <= 1) {
+                            transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_IS_STARTED, false)
+                        }
+                        transaction.update(alarmRef.document(alarm.alarmCode.toString()), Alarm.FIELD_MEDICATION_LIST, FieldValue.arrayRemove(target.id.toInt()))
+                    }
+                    transaction.delete(medicationRef)
+                }.addOnSuccessListener {
+                    Log.w(TAG, "Successfully Updated Alarm Data")
+                    Toast.makeText(context, "Deleted Medicine!", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Log.w(TAG, "Failed to Update Alarm Data: $it")
+                    FirebaseFirestoreException.Code.ABORTED
+                }
             }.addOnFailureListener {
-                Log.w(TAG, "Failed to Update Alarm Data")
+                Log.w(TAG, "Failed to delete medicine data: $it")
                 FirebaseFirestoreException.Code.ABORTED
             }
         }.addOnFailureListener {
@@ -263,5 +312,4 @@ class DataFragment : Fragment(), OnMedicationChangedListener, FilterDialogFragme
     companion object {
         private const val TAG = "DATA_FRAGMENT"
     }
-
 }

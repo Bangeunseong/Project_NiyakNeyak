@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/content_toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white_500"
+        app:layout_constraintTop_toBottomOf="@id/content_toolbar_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:mcv_allowClickDaysOutsideCurrentMonth="true"
+            app:mcv_selectionColor="@color/light_gray_500"
+            app:mcv_showOtherDates="all" />
+
+        <FrameLayout
+            android:id="@+id/content_history_view_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:translationY="4dp"
+            app:layout_constraintBottom_toBottomOf="parent" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="333dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="8dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/item_recycler_history_bg">
+
+                <TextView
+                    android:id="@+id/content_history_not_found_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="섭취 기록을 찾을 수 없습니다!"
+                    android:textSize="16sp"
+                    android:textAlignment="gravity"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/content_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="visible"
+                    android:paddingTop="24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageButton
+                android:id="@+id/content_history_view_show_hide_btn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_arrow_down"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="content_updown"/>
+
+        </FrameLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
