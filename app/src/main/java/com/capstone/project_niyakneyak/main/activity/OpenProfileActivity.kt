@@ -3,6 +3,7 @@ package com.capstone.project_niyakneyak.main.activity
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -124,19 +125,33 @@ class OpenProfileActivity : AppCompatActivity() {
         }
 
         binding.profileImageView.setOnClickListener {
-            val profileImageUri = (binding.profileImageView.drawable as? BitmapDrawable)?.bitmap?.let { bitmap ->
-                val bytes = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-                val path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "ProfileImage", null)
-                Uri.parse(path)
+            val profileImageBitmap = (binding.profileImageView.drawable as? BitmapDrawable)?.bitmap
+            val profileImageUri = profileImageBitmap?.let { bitmap ->
+                val outputStream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                val imageBytes = outputStream.toByteArray()
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, "ProfileImage")
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+
+                val uri: Uri? = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                uri?.let {
+                    contentResolver.openOutputStream(it)?.use { outputStream ->
+                        outputStream.write(imageBytes)
+                        contentValues.clear()
+                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                        contentResolver.update(it, contentValues, null, null)
+                    }
+                }
+                uri
             }
 
             val intent = Intent(this, ProfileChangeActivity::class.java).apply {
                 putExtra("profileImageUri", profileImageUri.toString())
             }
             startActivity(intent)
-
-
         }
 
 
@@ -227,7 +242,7 @@ class OpenProfileActivity : AppCompatActivity() {
             if (userId != null) {
                 firestore.collection("users").document(userId!!).get()
                     .addOnSuccessListener { document ->
-                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != "default_profile_image_url"){
+                        if (document != null && document.contains("profilePic") && document.getString("profilePic") != "default_profile_image_url" && document.getString("profilePic") != null){
                             url = document.getString("profilePic")
                             val profilePicUrl = document.getString("profilePic")
                             Glide.with(this@OpenProfileActivity)
