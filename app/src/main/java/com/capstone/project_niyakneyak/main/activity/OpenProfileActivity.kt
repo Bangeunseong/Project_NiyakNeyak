@@ -3,13 +3,8 @@ package com.capstone.project_niyakneyak.main.activity
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.ContentValues
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -23,18 +18,14 @@ import com.capstone.project_niyakneyak.R
 import com.capstone.project_niyakneyak.data.user_model.UserAccount
 import com.capstone.project_niyakneyak.databinding.ActivityOpenProfileBinding
 import com.capstone.project_niyakneyak.login.activity.LoginActivity
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 import java.util.Calendar
 
 class OpenProfileActivity : AppCompatActivity() {
@@ -62,8 +53,8 @@ class OpenProfileActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Log.d("Toolbar", "Toolbar title set to: ${getString(R.string.toolbar_modification)}")
 
-        auth = Firebase.auth // Firebase Auth 초기화
-        firestore = Firebase.firestore // Firestore 초기화
+        auth = FirebaseAuth.getInstance() // Firebase Auth 초기화
+        firestore = FirebaseFirestore.getInstance() // Firestore 초기화
         user = auth.currentUser // 현재 사용자 가져오기
 
         binding.progressBarModify.visibility = View.VISIBLE
@@ -122,37 +113,9 @@ class OpenProfileActivity : AppCompatActivity() {
         }
 
         binding.profileImageView.setOnClickListener {
-            val profileImageBitmap = (binding.profileImageView.drawable as? BitmapDrawable)?.bitmap
-            val profileImageUri = profileImageBitmap?.let { bitmap ->
-                val outputStream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                val imageBytes = outputStream.toByteArray()
-                val contentValues = ContentValues().apply {
-                    put(MediaStore.Images.Media.DISPLAY_NAME, "ProfileImage")
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                    put(MediaStore.Images.Media.IS_PENDING, 1)
-                }
-
-                val uri: Uri? = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-                uri?.let {
-                    contentResolver.openOutputStream(it)?.use { outputStream ->
-                        outputStream.write(imageBytes)
-                        contentValues.clear()
-                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                        contentResolver.update(it, contentValues, null, null)
-                    }
-                }
-                uri
-            }
-
-            val intent = Intent(this, ProfileChangeActivity::class.java).apply {
-                putExtra("profileImageUri", profileImageUri.toString())
-            }
+            val intent = Intent(this, ProfileChangeActivity::class.java)
             startActivity(intent)
-
-
         }
-
 
         binding.logoutButton.setOnClickListener {
             AlertDialog.Builder(this@OpenProfileActivity).apply {

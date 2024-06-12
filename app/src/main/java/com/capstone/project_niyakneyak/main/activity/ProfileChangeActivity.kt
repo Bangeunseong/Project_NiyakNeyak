@@ -181,16 +181,7 @@ class ProfileChangeActivity : AppCompatActivity() {
 
 
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            Toast.makeText(this, intent.toString(), Toast.LENGTH_SHORT).show()
             photoLauncher.launch(intent)
-        }
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            binding.imageViewYou.setImageURI(data?.data)
         }
     }
 
