@@ -200,7 +200,7 @@ class BluetoothSettingActivity: AppCompatActivity(), OnBTConnChangedListener {
         _binding = ActivityBluetoothSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.toolbar6.setTitle("블루투스")
+        binding.toolbar6.title = "블루투스"
         binding.toolbar6.setTitleTextAppearance(this, R.style.ToolbarTextAppearance)
         setSupportActionBar(binding.toolbar6)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

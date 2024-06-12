@@ -5,8 +5,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.Manifest
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.os.Bundle
@@ -32,7 +30,7 @@ import com.capstone.project_niyakneyak.main.activity.BluetoothSettingActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -261,7 +259,7 @@ class SettingFragment: Fragment() {
                         } else {
                             // 프로필 이미지가 없을 경우 기본 이미지로 설정
                             binding.profileImageView.setImageResource(R.drawable.baseline_account_circle_24)
-                            Log.d(SettingFragment.TAG, "Profile picture URL is null or empty, reverting to default image")
+                            Log.d(TAG, "Profile picture URL is null or empty, reverting to default image")
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -280,8 +278,5 @@ class SettingFragment: Fragment() {
 
     companion object { // 이 메소드로 외부에서 이 프래그먼트에 접근할 수 있음
         const val TAG = "SettingFragment"
-        fun newInstance(): SettingFragment {
-            return SettingFragment()
-        }
     }
 }
