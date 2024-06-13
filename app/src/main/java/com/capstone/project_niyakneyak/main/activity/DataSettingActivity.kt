@@ -1,11 +1,13 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.Manifest
+import android.app.AlarmManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.InputFilter
 import android.text.Spanned
 import android.util.Log
@@ -73,6 +75,9 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     // BackPressed Callback
     private var callback: OnBackPressedCallback? = null
+
+    // Params for checking exact alarm permission
+    private val alarmManager: AlarmManager by lazy { getSystemService(ALARM_SERVICE) as AlarmManager }
 
     private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
@@ -199,6 +204,15 @@ class DataSettingActivity : AppCompatActivity(), OnCheckedAlarmListener {
 
     override fun onStart() {
         super.onStart()
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Intent().also { intent ->
+                    intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    startActivity(intent)
+                }
+            }
+        }
 
         // Start Listening Data changes from firebase when activity starts
         adapter?.startListening()

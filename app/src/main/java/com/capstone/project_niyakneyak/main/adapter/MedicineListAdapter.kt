@@ -42,11 +42,11 @@ open class MedicineListAdapter(private var jsonArray: JSONArray, private val onC
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(jsonArray.getJSONObject(position))
-        holder.binding.radioButton.isChecked = positionList[holder.absoluteAdapterPosition]
+        holder.binding.radioButton.isChecked = positionList[holder.adapterPosition]
         holder.binding.radioButton.setOnClickListener {
             val prevPos = selectedPos
             if(prevPos != -1) positionList[prevPos] = false
-            selectedPos = holder.absoluteAdapterPosition
+            selectedPos = holder.adapterPosition
             positionList[selectedPos] = true
             onCheckedSearchItemListener.onItemClicked(prevPos, selectedPos)
         }

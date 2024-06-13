@@ -1,6 +1,7 @@
 package com.capstone.project_niyakneyak.main.activity
 
 import android.app.Activity
+import android.app.AlarmManager
 import android.content.Intent
 import android.graphics.Color
 import android.media.Ringtone
@@ -8,6 +9,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -54,6 +56,9 @@ class AlarmSettingActivity : AppCompatActivity() {
 
     // BackPressed Callback
     private var callback: OnBackPressedCallback? = null
+
+    // Params for checking exact alarm permission
+    private val alarmManager: AlarmManager by lazy { getSystemService(ALARM_SERVICE) as AlarmManager }
 
     private val mStartForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { o: ActivityResult ->
@@ -123,6 +128,19 @@ class AlarmSettingActivity : AppCompatActivity() {
                 binding.toolbar5.navigationIcon = icon
             }
             setActivity(null)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Intent().also { intent ->
+                    intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    startActivity(intent)
+                }
+            }
         }
     }
 
