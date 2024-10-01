@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
  * Linked fragments will be controlled by [MainActivity.navController] with
  * BottomNavigationBar(NavigationBar listener is created as ItemSelectionListener)
  */
+
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
